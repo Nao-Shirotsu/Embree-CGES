@@ -97,6 +97,4 @@ int main() {
   rtcReleaseScene(scene);
   /* デバイスを削除 */
   rtcReleaseDevice(device);
-
-  std::cout << "aaa" << std::endl;
 }
