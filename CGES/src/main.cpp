@@ -5,96 +5,76 @@
 #include <embree3/rtcore.h>
 #include <embree3/rtcore_ray.h>
 
-constexpr int32_t inf = std::numeric_limits<int32_t>::max();
-
-struct Triangle {
-  int32_t v0;
-  int32_t v1;
-  int32_t v2;
-};
-
-struct Vertex {
-  float x;
-  float y;
-  float z;
-};
+constexpr float INF = std::numeric_limits<float>::max();
 
 int main() {
   RTCDevice device = rtcNewDevice(nullptr);
+  if(!device) {
+    std::cout << "Device Error : " << rtcGetDeviceError(nullptr) << std::endl;
+  }
+
+  // ================= Init Scene  =================
   RTCScene scene = rtcNewScene(device);
-  /* ３角形ジオメトリを作成 */
-  RTCGeometry mesh = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
-  /*頂点の設定*/
-  Vertex* vertices = ( Vertex* )rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, sizeof(Vertex), 4);
-  vertices[0].x = 10;
-  vertices[0].y = 10;
-  vertices[0].z = 0; // 点Aの座標
-  vertices[1].x = 10;
-  vertices[1].y = -10;
-  vertices[1].z = 0; // 点Bの座標
-  vertices[2].x = -10;
-  vertices[2].y = 10;
-  vertices[2].z = 0; // 点Cの座標
-  vertices[3].x = -10;
-  vertices[3].y = -10;
-  vertices[3].z = 0; // 点Dの座標
+  RTCGeometry geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
+  float* vertices = static_cast<float*>(rtcSetNewGeometryBuffer(geometry,
+                                                                RTC_BUFFER_TYPE_VERTEX,
+                                                                0,
+                                                                RTC_FORMAT_FLOAT3,
+                                                                3 * sizeof(float),
+                                                                3));
+  uint32_t* indices = static_cast<unsigned*>(rtcSetNewGeometryBuffer(geometry,
+                                                                     RTC_BUFFER_TYPE_INDEX,
+                                                                     0,
+                                                                     RTC_FORMAT_UINT3,
+                                                                     3 * sizeof(uint32_t),
+                                                                     1));
+  
+  if (vertices && indices) {
+    vertices[0] = 0.f;
+    vertices[1] = 0.f;
+    vertices[2] = 0.f;
+    vertices[3] = 1.f;
+    vertices[4] = 0.f;
+    vertices[5] = 0.f;
+    vertices[6] = 0.f;
+    vertices[7] = 1.f;
+    vertices[8] = 0.f;
+    indices[0] = 0;
+    indices[1] = 1;
+    indices[2] = 2;
+  }
+  rtcCommitGeometry(geometry);
+  rtcAttachGeometry(scene, geometry);
+  rtcReleaseGeometry(geometry);
+  rtcCommitScene(scene);
+  // ================= Init Scene  =================
 
-  /*面の設定(用意?)*/
-  int tri = 0;
-  Triangle* triangles = ( Triangle* )rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, sizeof(Triangle), 2);
-  triangles[tri].v0 = 0;
-  triangles[tri].v1 = 1;
-  triangles[tri].v2 = 3;
-  tri++; // 三角形ABD
-  triangles[tri].v0 = 1;
-  triangles[tri].v1 = 2;
-  triangles[tri].v2 = 3;
-  tri++; // 三角形BCD
-
-  unsigned int geomID = rtcAttachGeometry(scene, mesh);
-
-
-  /*ジオメトリの削除*/
-  rtcReleaseGeometry(mesh);
-
-  /* シーンへ登録 */
-  rtcCommitGeometry(mesh);
-
-  /*/*レイ交差の初期化*/
+  // ================= Ray Casting  =================
   RTCIntersectContext context;
   rtcInitIntersectContext(&context);
-  RTCHit rtchit;
-  rtchit.geomID = RTC_INVALID_GEOMETRY_ID;
-
-  /* レイを生成する */
-  RTCRay rtcray;
-  /* レイの始点 */
-  rtcray.org_x = 0.0;  // x
-  rtcray.org_y = 0.0;  // y
-  rtcray.org_z = 20.0; // z
-  /* レイの方向 */
-  rtcray.dir_x = 0.0;  // x
-  rtcray.dir_y = 0.0;  // y
-  rtcray.dir_z = -1.0; // z
-  /* 交差判定する範囲を指定 */
-  rtcray.tnear = 0.0f; // 範囲の始点
-  rtcray.tfar = inf;   // 範囲の終点．交差判定後には交差点までの距離が格納される．
-  rtcray.time = 0;
-
-  /* 交差判定 */
-  RTCRayHit ray;
-  rtcIntersect1(scene, &context, &ray);
-  if (rtchit.geomID == RTC_INVALID_GEOMETRY_ID) {
-    /* 交差点が見つからなかった場合 */
-    std::cout << "Reject." << std::endl;
+  RTCRayHit rayhit;
+  rayhit.ray.org_x = 0;
+  rayhit.ray.org_y = 0;
+  rayhit.ray.org_z = -1;
+  rayhit.ray.dir_x = 0;
+  rayhit.ray.dir_y = 0;
+  rayhit.ray.dir_z = 1;
+  rayhit.ray.tnear = 0;
+  rayhit.ray.tfar = INF;
+  rayhit.ray.mask = 0;
+  rayhit.ray.flags = 0;
+  rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+  rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+  
+  rtcIntersect1(scene, &context, &rayhit);
+  if(rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
+    std::cout << "Intersected at" << rayhit.ray.tfar << std::endl;
   }
   else {
-    /* 交差点が見つかった場合 */
-    std::cout << "Intersect" << std::endl;
+    std::cout << "Not intersected" << std::endl;
   }
+  // ================= Ray Casting  =================
 
-  /* シーンを削除 */
   rtcReleaseScene(scene);
-  /* デバイスを削除 */
   rtcReleaseDevice(device);
 }
