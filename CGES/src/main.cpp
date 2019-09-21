@@ -5,7 +5,7 @@
 #include <embree3/rtcore.h>
 #include <embree3/rtcore_ray.h>
 #include <GLFW/glfw3.h>
-#include <GL/GL.h>
+#include <glm/vec4.hpp>
 
 void ExecEmbreeRayhit();
 void ExecOpenglProcess();
@@ -35,6 +35,7 @@ void ExecOpenglProcess() {
   glfwSwapInterval(1);
 
   while(glfwWindowShouldClose(window) == GL_FALSE) {
+    glm::vec4{ 1, 2, 3, 4 };
     glClearColor(0.25, 0.25, 0.25, 0);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapBuffers(window);
