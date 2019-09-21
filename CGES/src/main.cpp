@@ -14,17 +14,8 @@ void ExecEmbreeRayhit();
 void ExecOpenglProcess();
 
 int main() {
-  //ExecEmbreeRayhit();
+  ExecEmbreeRayhit();
   //ExecOpenglProcess();
-  constexpr int X = 100;
-  constexpr int Y = 100;
-  auto image = shi::RenderBuffer(100, 100);
-  for(int i = 0; i < Y; ++i) {
-    for(int j = 0; j < X; ++j) {
-      image[i][j] = {0, static_cast<uint8_t>(2 * i), static_cast<uint8_t>(2 * j), 0 };
-    }
-  }
-  std::cout << std::boolalpha << image.SaveAsPpm("test.ppm") << std::endl;
 }
 
 constexpr float INF = std::numeric_limits<float>::max();
@@ -66,7 +57,7 @@ void ExecEmbreeRayhit() {
   RTCScene scene = rtcNewScene(device);
   {
     auto object = shi::Object(device, scene);
-    object.LoadObjFile("hogehoge.obj");
+    std::cout << std::boolalpha << object.LoadObjFile("tetra.obj") << std::endl;
     object.AttachTo(scene);
   }
   rtcCommitScene(scene);
@@ -76,11 +67,11 @@ void ExecEmbreeRayhit() {
   RTCIntersectContext context;
   rtcInitIntersectContext(&context);
   RTCRayHit rayhit;
-  rayhit.ray.org_x = 0.25;
-  rayhit.ray.org_y = 0.25;
-  rayhit.ray.org_z = -1;
-  rayhit.ray.dir_x = 0.25;
-  rayhit.ray.dir_y = 0.25;
+  rayhit.ray.org_x = 0;
+  rayhit.ray.org_y = -1.3;
+  rayhit.ray.org_z = -3;
+  rayhit.ray.dir_x = 0.0;
+  rayhit.ray.dir_y = 0.0;
   rayhit.ray.dir_z = 1;
   rayhit.ray.tnear = 0;
   rayhit.ray.tfar = INF;
@@ -89,12 +80,17 @@ void ExecEmbreeRayhit() {
   rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
   rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 
-  rtcIntersect1(scene, &context, &rayhit);
-  if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
-    std::cout << "Intersected at" << rayhit.ray.tfar << std::endl;
-  }
-  else {
-    std::cout << "No intersection" << std::endl;
+  for (int i = 0; i < 22; ++i) {
+    auto testRay = rayhit;
+    testRay.ray.org_y += i * 0.2;
+    rtcIntersect1(scene, &context, &testRay);
+    if (testRay.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
+      std::cout << "Intersected";
+    }
+    else {
+      std::cout << "No intersection";
+    }
+    std::cout << " at y=" << testRay.ray.org_y << std::endl;
   }
   // ================= Ray Casting  =================
 
