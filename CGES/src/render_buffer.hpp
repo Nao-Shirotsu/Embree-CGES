@@ -1,21 +1,24 @@
 #pragma once
 
+#include "color.hpp"
+
 #include <cstdint>
 #include <memory>
 #include <fstream>
-#include <iostream>
+#include <array>
 
-#include "color.hpp"
+#include <glm/vec3.hpp>
 
 namespace shi {
 
 // 描画ターゲットになるスクリーンバッファクラス
 class RenderBuffer {
 public:
-  inline RenderBuffer(const size_t width, const size_t height)
+  inline RenderBuffer(const size_t width, const size_t height, const glm::vec3& centerPos)
       : m_width{ width }
       , m_height{ height }
-      , m_pixels{ std::make_unique<ColorARGB[]>(width * height) } {
+      , m_pixels{ std::make_unique<ColorARGB[]>(width * height) }
+      , m_centerPos{centerPos} {
   }
 
   inline RenderBuffer(RenderBuffer&& other) noexcept
@@ -75,6 +78,7 @@ private:
   size_t m_width;
   size_t m_height;
   std::unique_ptr<ColorARGB[]> m_pixels;
+  glm::vec3 m_centerPos;
 };
 
 }// namespace shi

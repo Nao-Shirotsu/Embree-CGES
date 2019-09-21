@@ -16,24 +16,22 @@ class Object {
 public:
   // とりあえず.obj(vとfのみ)からの読み込みだけ実装する
   inline Object(const RTCDevice device, const RTCScene scene)
-      : geometry{ nullptr }
-      , vertices{ nullptr }
-      , indices{ nullptr } {
-    geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
+      : m_geometry{ nullptr } {
+    m_geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
   }
 
   inline ~Object() {
-    rtcReleaseGeometry(geometry);
+    rtcReleaseGeometry(m_geometry);
   }
 
   inline void LoadDefault() {
-    vertices = static_cast<float*>(rtcSetNewGeometryBuffer(geometry,
+    auto vertices = static_cast<float*>(rtcSetNewGeometryBuffer(m_geometry,
                                                            RTC_BUFFER_TYPE_VERTEX,
                                                            0,
                                                            RTC_FORMAT_FLOAT3,
                                                            3 * sizeof(float),
                                                            3));
-    indices = static_cast<uint32_t*>(rtcSetNewGeometryBuffer(geometry,
+    auto indices = static_cast<uint32_t*>(rtcSetNewGeometryBuffer(m_geometry,
                                                              RTC_BUFFER_TYPE_INDEX,
                                                              0,
                                                              RTC_FORMAT_UINT3,
@@ -53,7 +51,7 @@ public:
       indices[1] = 1;
       indices[2] = 2;
     }
-    rtcCommitGeometry(geometry);
+    rtcCommitGeometry(m_geometry);
   }
 
   // ロード成功でtrue, 失敗でfalseを返す
@@ -98,13 +96,13 @@ public:
       }
     }
 
-    auto verBuf = static_cast<float*>(rtcSetNewGeometryBuffer(geometry,
+    auto verBuf = static_cast<float*>(rtcSetNewGeometryBuffer(m_geometry,
                                                               RTC_BUFFER_TYPE_VERTEX,
                                                               0,
                                                               RTC_FORMAT_FLOAT3,
                                                               sizeof(PolygonVertices),
                                                               vertices.size()));
-    auto idxBuf = static_cast<uint32_t*>(rtcSetNewGeometryBuffer(geometry,
+    auto idxBuf = static_cast<uint32_t*>(rtcSetNewGeometryBuffer(m_geometry,
                                                                  RTC_BUFFER_TYPE_INDEX,
                                                                  0,
                                                                  RTC_FORMAT_UINT3,
@@ -113,21 +111,19 @@ public:
     if (verBuf && idxBuf) {
       std::memcpy(verBuf, &vertices[0], sizeof(PolygonVertices) * vertices.size());
       std::memcpy(idxBuf, &indices[0], sizeof(PolygonIndices) * indices.size());
-      rtcCommitGeometry(geometry);
+      rtcCommitGeometry(m_geometry);
       return true;
     }
     return false;
   }
 
   inline uint32_t AttachTo(const RTCScene scene) {
-    return rtcAttachGeometry(scene, geometry);
+    return rtcAttachGeometry(scene, m_geometry);
   }
 
 private:
   //glm::vec3 origin; // モデル座標系原点
-  RTCGeometry geometry;
-  float* vertices;   // すべての頂点(VertexBuffer)
-  uint32_t* indices; // すべてのポリゴンの頂点番号(Index Buffer)
+  RTCGeometry m_geometry;
 };
 
 } // namespace shi
