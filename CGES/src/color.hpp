@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace shi {
+namespace cges {
 
 // •’Ê‚ÌFƒNƒ‰ƒX
 struct ColorARGB {
@@ -12,4 +12,4 @@ struct ColorARGB {
   uint8_t b;
 };
 
-} // namespace shi
+} // namespace cges

@@ -9,7 +9,7 @@
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
 
-namespace shi {
+namespace cges {
 
 // シーンに配置される任意の3Dモデルのクラス
 class Object {
@@ -126,4 +126,4 @@ private:
   RTCGeometry m_geometry;
 };
 
-} // namespace shi
+} // namespace cges

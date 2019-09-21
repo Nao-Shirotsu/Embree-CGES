@@ -2,12 +2,12 @@
 
 #include <glm/vec3.hpp>
 
-namespace shi {
+namespace cges {
 
 struct Camera {
   glm::vec3 pos;
   glm::vec3 forward;
-  glm::vec3 upward
+  glm::vec3 upward;
 };
 
-}
+}// namespace cges

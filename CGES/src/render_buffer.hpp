@@ -9,7 +9,7 @@
 
 #include <glm/vec3.hpp>
 
-namespace shi {
+namespace cges {
 
 // 描画ターゲットになるスクリーンバッファクラス
 class RenderBuffer {
@@ -81,4 +81,4 @@ private:
   glm::vec3 m_centerPos;
 };
 
-}// namespace shi
+}// namespace cges

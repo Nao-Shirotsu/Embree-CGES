@@ -26,14 +26,14 @@ int main() {
   // ================= Init Scene  =================
   RTCScene scene = rtcNewScene(device);
   {
-    auto object = shi::Object(device, scene);
+    auto object = cges::Object(device, scene);
     std::cout << std::boolalpha << object.LoadObjFile("tetra.obj") << std::endl;
     object.AttachTo(scene);
   }
   rtcCommitScene(scene);
   // ================= Init Scene  =================
 
-  auto renderTarget = shi::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT, {0, 0, -2});
+  auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT, {0, 0, -2});
   
 
   // ================= Ray Casting  =================
@@ -110,7 +110,7 @@ void ExecEmbreeRayhit() {
   // ================= Init Scene  =================
   RTCScene scene = rtcNewScene(device);
   {
-    auto object = shi::Object(device, scene);
+    auto object = cges::Object(device, scene);
     std::cout << std::boolalpha << object.LoadObjFile("tetra.obj") << std::endl;
     object.AttachTo(scene);
   }
