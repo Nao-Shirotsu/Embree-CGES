@@ -14,11 +14,10 @@ namespace cges {
 // 描画ターゲットになるスクリーンバッファクラス
 class RenderBuffer {
 public:
-  inline RenderBuffer(const size_t width, const size_t height, const glm::vec3& centerPos)
+  inline RenderBuffer(const size_t width, const size_t height)
       : m_width{ width }
       , m_height{ height }
-      , m_pixels{ std::make_unique<ColorARGB[]>(width * height) }
-      , m_centerPos{centerPos} {
+      , m_pixels{ std::make_unique<ColorARGB[]>(width * height) }{
   }
 
   inline RenderBuffer(RenderBuffer&& other) noexcept
@@ -46,7 +45,7 @@ public:
   }
 
   inline size_t GetHeight() const noexcept{
-    return m_width;
+    return m_height;
   }
 
   // 成功でtrue, 失敗でfalseを返す
@@ -78,7 +77,6 @@ private:
   size_t m_width;
   size_t m_height;
   std::unique_ptr<ColorARGB[]> m_pixels;
-  glm::vec3 m_centerPos;
 };
 
 }// namespace cges
