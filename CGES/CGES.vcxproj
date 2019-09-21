@@ -146,6 +146,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\color.hpp" />
     <ClInclude Include="src\object.hpp" />
     <ClInclude Include="src\render_buffer.hpp" />

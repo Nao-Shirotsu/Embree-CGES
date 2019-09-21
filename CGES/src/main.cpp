@@ -33,7 +33,7 @@ int main() {
   rtcCommitScene(scene);
   // ================= Init Scene  =================
 
-  auto renderTarget = shi::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
+  auto renderTarget = shi::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT, {0, 0, -2});
   
 
   // ================= Ray Casting  =================
