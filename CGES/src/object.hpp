@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <fstream>
 
 #include <glm/vec3.hpp>
 
@@ -10,7 +11,7 @@
 
 namespace shi {
 
-// 描画されるモデルのデータを格納/操作するクラス
+// シーンに配置される任意の3Dモデルのクラス
 class Object {
 public:
   // とりあえず.obj(vとfのみ)からの読み込みだけ実装する
@@ -25,11 +26,7 @@ public:
     rtcReleaseGeometry(geometry);
   }
 
-  // 引数:
-  // 返値:
-  // 説明:
-  inline void LoadObjFile(const char* const objFileName) {
-    // TODO: ちゃんと実装する
+  inline void LoadDefault() {
     vertices = static_cast<float*>(rtcSetNewGeometryBuffer(geometry,
                                                            RTC_BUFFER_TYPE_VERTEX,
                                                            0,
@@ -59,9 +56,69 @@ public:
     rtcCommitGeometry(geometry);
   }
 
-  // 引数:
-  // 返値:
-  // 説明:
+  // ロード成功でtrue, 失敗でfalseを返す
+  inline bool LoadObjFile(const char* const objFileName) {
+    auto ifs = std::ifstream(objFileName);
+    if (!ifs) {
+      return false;
+    }
+    struct PolygonVertices {
+      float x, y, z;
+    };
+
+    struct PolygonIndices {
+      uint32_t v0, v1, v2;
+    };
+
+    unsigned char category;
+    PolygonVertices vertexReceiver;
+    PolygonIndices indexReceiver;
+    std::vector<PolygonVertices> vertices;
+    std::vector<PolygonIndices> indices;
+
+    while (!ifs.eof()) {
+      ifs >> category;
+      switch (category) {
+        case 'v': {
+          ifs >> vertexReceiver.x;
+          ifs >> vertexReceiver.y;
+          ifs >> vertexReceiver.z;
+          vertices.push_back(vertexReceiver);
+        } break;
+
+        case 'f': {
+          ifs >> indexReceiver.v0;
+          ifs >> indexReceiver.v1;
+          ifs >> indexReceiver.v2;
+          indices.push_back(indexReceiver);
+        } break;
+
+        default:
+          break;
+      }
+    }
+
+    auto verBuf = static_cast<float*>(rtcSetNewGeometryBuffer(geometry,
+                                                              RTC_BUFFER_TYPE_VERTEX,
+                                                              0,
+                                                              RTC_FORMAT_FLOAT3,
+                                                              sizeof(PolygonVertices),
+                                                              vertices.size()));
+    auto idxBuf = static_cast<uint32_t*>(rtcSetNewGeometryBuffer(geometry,
+                                                                 RTC_BUFFER_TYPE_INDEX,
+                                                                 0,
+                                                                 RTC_FORMAT_UINT3,
+                                                                 sizeof(PolygonIndices),
+                                                                 indices.size()));
+    if (verBuf && idxBuf) {
+      std::memcpy(verBuf, &vertices[0], sizeof(PolygonVertices) * vertices.size());
+      std::memcpy(idxBuf, &indices[0], sizeof(PolygonIndices) * indices.size());
+      rtcCommitGeometry(geometry);
+      return true;
+    }
+    return false;
+  }
+
   inline uint32_t AttachTo(const RTCScene scene) {
     return rtcAttachGeometry(scene, geometry);
   }
