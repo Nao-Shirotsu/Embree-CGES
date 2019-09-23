@@ -1,29 +1,41 @@
-#include <iostream>
 #include <cstdint>
+#include <iostream>
 #include <numeric>
 
+#include <GLFW/glfw3.h>
 #include <embree3/rtcore.h>
 #include <embree3/rtcore_ray.h>
-#include <GLFW/glfw3.h>
 #include <glm/vec4.hpp>
+
+#include "object.hpp"
+#include "render_buffer.hpp"
 
 void ExecEmbreeRayhit();
 void ExecOpenglProcess();
 
 int main() {
-  ExecEmbreeRayhit();
-  ExecOpenglProcess();
+  //ExecEmbreeRayhit();
+  //ExecOpenglProcess();
+  constexpr int X = 100;
+  constexpr int Y = 100;
+  auto image = shi::RenderBuffer(100, 100);
+  for(int i = 0; i < Y; ++i) {
+    for(int j = 0; j < X; ++j) {
+      image[i][j] = {0, static_cast<uint8_t>(2 * i), static_cast<uint8_t>(2 * j), 0 };
+    }
+  }
+  std::cout << std::boolalpha << image.SaveAsPpm("test.ppm") << std::endl;
 }
 
 constexpr float INF = std::numeric_limits<float>::max();
 
 void ExecOpenglProcess() {
-  if(glfwInit() == GL_FALSE) {
+  if (glfwInit() == GL_FALSE) {
     std::cout << "GLFW init failed" << std::endl;
     return;
   }
   GLFWwindow* window = glfwCreateWindow(500, 500, "Test Window", nullptr, nullptr);
-  if(!window) {
+  if (!window) {
     std::cout << "GL window creation failed" << std::endl;
     glfwTerminate();
     return;
@@ -34,7 +46,7 @@ void ExecOpenglProcess() {
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
-  while(glfwWindowShouldClose(window) == GL_FALSE) {
+  while (glfwWindowShouldClose(window) == GL_FALSE) {
     glm::vec4{ 1, 2, 3, 4 };
     glClearColor(0.25, 0.25, 0.25, 0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -52,37 +64,11 @@ void ExecEmbreeRayhit() {
 
   // ================= Init Scene  =================
   RTCScene scene = rtcNewScene(device);
-  RTCGeometry geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
-  float* vertices = static_cast<float*>(rtcSetNewGeometryBuffer(geometry,
-                                                                RTC_BUFFER_TYPE_VERTEX,
-                                                                0,
-                                                                RTC_FORMAT_FLOAT3,
-                                                                3 * sizeof(float),
-                                                                3));
-  uint32_t* indices = static_cast<unsigned*>(rtcSetNewGeometryBuffer(geometry,
-                                                                     RTC_BUFFER_TYPE_INDEX,
-                                                                     0,
-                                                                     RTC_FORMAT_UINT3,
-                                                                     3 * sizeof(uint32_t),
-                                                                     1));
-
-  if (vertices && indices) {
-    vertices[0] = 0.f;
-    vertices[1] = 0.f;
-    vertices[2] = 0.f;
-    vertices[3] = 1.f;
-    vertices[4] = 0.f;
-    vertices[5] = 0.f;
-    vertices[6] = 0.f;
-    vertices[7] = 1.f;
-    vertices[8] = 0.f;
-    indices[0] = 0;
-    indices[1] = 1;
-    indices[2] = 2;
+  {
+    auto object = shi::Object(device, scene);
+    object.LoadObjFile("hogehoge.obj");
+    object.AttachTo(scene);
   }
-  rtcCommitGeometry(geometry);
-  rtcAttachGeometry(scene, geometry);
-  rtcReleaseGeometry(geometry);
   rtcCommitScene(scene);
   // ================= Init Scene  =================
 
@@ -90,11 +76,11 @@ void ExecEmbreeRayhit() {
   RTCIntersectContext context;
   rtcInitIntersectContext(&context);
   RTCRayHit rayhit;
-  rayhit.ray.org_x = 0;
-  rayhit.ray.org_y = 0;
+  rayhit.ray.org_x = 0.25;
+  rayhit.ray.org_y = 0.25;
   rayhit.ray.org_z = -1;
-  rayhit.ray.dir_x = 0;
-  rayhit.ray.dir_y = 0;
+  rayhit.ray.dir_x = 0.25;
+  rayhit.ray.dir_y = 0.25;
   rayhit.ray.dir_z = 1;
   rayhit.ray.tnear = 0;
   rayhit.ray.tfar = INF;
@@ -108,7 +94,7 @@ void ExecEmbreeRayhit() {
     std::cout << "Intersected at" << rayhit.ray.tfar << std::endl;
   }
   else {
-    std::cout << "Not intersected" << std::endl;
+    std::cout << "No intersection" << std::endl;
   }
   // ================= Ray Casting  =================
 

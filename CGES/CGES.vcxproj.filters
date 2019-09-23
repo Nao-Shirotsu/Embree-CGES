@@ -14,4 +14,15 @@
     <None Include=".clang-format" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\object.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render_buffer.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\color.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
