@@ -24,5 +24,14 @@
     <ClInclude Include="src\color.hpp">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\renderer.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\camera.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util_objfile.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

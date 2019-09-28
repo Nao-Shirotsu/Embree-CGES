@@ -1,13 +1,15 @@
 #pragma once
 
+#include "color.hpp"
+
 #include <cstdint>
 #include <memory>
 #include <fstream>
-#include <iostream>
+#include <array>
 
-#include "color.hpp"
+#include <glm/vec3.hpp>
 
-namespace shi {
+namespace cges {
 
 // 描画ターゲットになるスクリーンバッファクラス
 class RenderBuffer {
@@ -15,7 +17,7 @@ public:
   inline RenderBuffer(const size_t width, const size_t height)
       : m_width{ width }
       , m_height{ height }
-      , m_pixels{ std::make_unique<ColorARGB[]>(width * height) } {
+      , m_pixels{ std::make_unique<ColorARGB[]>(width * height) }{
   }
 
   inline RenderBuffer(RenderBuffer&& other) noexcept
@@ -43,7 +45,7 @@ public:
   }
 
   inline size_t GetHeight() const noexcept{
-    return m_width;
+    return m_height;
   }
 
   // 成功でtrue, 失敗でfalseを返す
@@ -66,6 +68,7 @@ public:
     }
 
     ofs.close();
+    return true;
   }
 
 private:
@@ -77,4 +80,4 @@ private:
   std::unique_ptr<ColorARGB[]> m_pixels;
 };
 
-}// namespace shi
+}// namespace cges
