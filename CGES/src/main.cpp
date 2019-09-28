@@ -1,7 +1,6 @@
 #include <cstdint>
 #include <iostream>
-
-#include <glm/vec3.hpp>
+#include <fstream>
 
 #include "render_buffer.hpp"
 #include "renderer.hpp"
@@ -21,3 +20,6 @@ int main() {
   renderer.Update();
   renderer.Draw();
 }
+
+// TODO:
+// - Object::LoadObjFile‚Ìpush_back‚ª‘½•ª’x‚¢‚Ì‚ÅAæ‚És”‚ğ”‚¦‚é‚æ‚¤‚É•ÏX‚·‚é

@@ -151,6 +151,7 @@
     <ClInclude Include="src\object.hpp" />
     <ClInclude Include="src\renderer.hpp" />
     <ClInclude Include="src\render_buffer.hpp" />
+    <ClInclude Include="src\util_objfile.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

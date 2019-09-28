@@ -4,6 +4,8 @@
 #include "render_buffer.hpp"
 #include "object.hpp"
 
+#include <iostream>
+
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
 
@@ -33,7 +35,7 @@ public:
     RTCScene scene = rtcNewScene(device);
     {
       auto object = cges::Object(device, scene);
-      object.LoadObjFile("tetra.obj");
+      object.LoadObjFile("bunny.obj");
       object.AttachTo(scene);
     }
     rtcCommitScene(scene);
@@ -55,6 +57,7 @@ public:
 
     for (int y = 0; y < height; ++y) {
       const float yRate = y / static_cast<float>(height);
+      std::cout << "rendering... (" << static_cast<int>(yRate * 100) << "%)" << std::endl;
       for (int x = 0; x < width; ++x) {
         const float xRate = x / static_cast<float>(width);
         const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);

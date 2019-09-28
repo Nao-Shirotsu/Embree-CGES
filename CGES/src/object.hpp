@@ -1,13 +1,16 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 #include <fstream>
+#include <vector>
+#include <string>
 
 #include <glm/vec3.hpp>
 
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
+
+#include "util_objfile.hpp"
 
 namespace cges {
 
@@ -26,17 +29,17 @@ public:
 
   inline void LoadDefault() {
     auto vertices = static_cast<float*>(rtcSetNewGeometryBuffer(m_geometry,
-                                                           RTC_BUFFER_TYPE_VERTEX,
-                                                           0,
-                                                           RTC_FORMAT_FLOAT3,
-                                                           3 * sizeof(float),
-                                                           3));
+                                                                RTC_BUFFER_TYPE_VERTEX,
+                                                                0,
+                                                                RTC_FORMAT_FLOAT3,
+                                                                3 * sizeof(float),
+                                                                3));
     auto indices = static_cast<uint32_t*>(rtcSetNewGeometryBuffer(m_geometry,
-                                                             RTC_BUFFER_TYPE_INDEX,
-                                                             0,
-                                                             RTC_FORMAT_UINT3,
-                                                             3 * sizeof(uint32_t),
-                                                             1));
+                                                                  RTC_BUFFER_TYPE_INDEX,
+                                                                  0,
+                                                                  RTC_FORMAT_UINT3,
+                                                                  3 * sizeof(uint32_t),
+                                                                  1));
     if (vertices && indices) {
       vertices[0] = 0.f;
       vertices[1] = 0.f;
@@ -68,31 +71,36 @@ public:
       uint32_t v0, v1, v2;
     };
 
-    unsigned char category;
+    std::string marker;
     PolygonVertices vertexReceiver;
     PolygonIndices indexReceiver;
     std::vector<PolygonVertices> vertices;
     std::vector<PolygonIndices> indices;
 
     while (!ifs.eof()) {
-      ifs >> category;
-      switch (category) {
-        case 'v': {
+      if (ifs.peek() == '#') {
+        while (ifs.get() != '\n') {}
+        continue;
+      }
+      ifs >> marker;
+      switch (obj::ToMarker(marker)) {
+        case obj::Marker::V: {
           ifs >> vertexReceiver.x;
           ifs >> vertexReceiver.y;
           ifs >> vertexReceiver.z;
           vertices.push_back(vertexReceiver);
         } break;
 
-        case 'f': {
+        case obj::Marker::F: {
           ifs >> indexReceiver.v0;
           ifs >> indexReceiver.v1;
           ifs >> indexReceiver.v2;
           indices.push_back(indexReceiver);
         } break;
 
-        default:
+        default: {
           break;
+        }
       }
     }
 
@@ -116,6 +124,7 @@ public:
     }
     return false;
   }
+
 
   inline uint32_t AttachTo(const RTCScene scene) {
     return rtcAttachGeometry(scene, m_geometry);
