@@ -1,7 +1,3 @@
-#include <cstdint>
-#include <fstream>
-#include <iostream>
-
 #include "camera.hpp"
 #include "render_buffer.hpp"
 #include "renderer.hpp"
@@ -22,6 +18,4 @@ int main() {
 }
 
 // TODO:
-// - GameObject::LoadObjFileのpush_backが多分遅いので、先に行数を数えるように変更する
 // - GameObject::LoadObjFileで、マーカー"v"と"f"以外も対応するように実装する
-// - obj::ToMarkerが遅いかも

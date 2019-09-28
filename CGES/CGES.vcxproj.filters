@@ -9,6 +9,16 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\util_objfile.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game_object.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render_buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -31,6 +41,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\game_object.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\constants.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
