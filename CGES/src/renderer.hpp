@@ -12,7 +12,9 @@
 #include <embree3/rtcore.h>
 
 namespace {
-constexpr float SCREEN_WIDTH = 4.0; // ワールド空間でのスクリーンの横幅
+
+constexpr float SCREEN_WIDTH = 0.125f; // ワールド空間でのスクリーンの横幅
+
 }
 
 namespace cges {
@@ -35,7 +37,7 @@ public:
     RTCScene scene = rtcNewScene(device);
     {
       auto object = cges::Object(device, scene);
-      object.LoadObjFile("bunny.obj");
+      object.LoadObjFile("tetra.obj");
       object.AttachTo(scene);
     }
     rtcCommitScene(scene);
@@ -46,12 +48,13 @@ public:
     const int32_t height = static_cast<int32_t>(m_renderTarget.GetHeight());
     const float aspectRatio = height / static_cast<float>(width);
     const glm::vec3 cameraFront = glm::normalize(m_lookingPos - m_camera.pos);
-    const glm::vec3 screenHorizontalVec = glm::normalize(glm::cross(cameraFront, m_camera.upward)) * SCREEN_WIDTH;
+    const glm::vec3 screenHorizontalVec = glm::normalize(glm::cross(m_camera.upward, cameraFront)) * SCREEN_WIDTH;
     const glm::vec3 screenVerticalVec = glm::normalize(glm::cross(screenHorizontalVec, cameraFront)) * SCREEN_WIDTH * aspectRatio;
     const glm::vec3 screenCenterPos = m_camera.pos + cameraFront;
 
     // スクリーン左上(pixel[0][0])のワールド座標
-    const glm::vec3 initialPos = screenCenterPos - screenVerticalVec - screenHorizontalVec;
+    const glm::vec3 initialPos = screenCenterPos - (glm::vec3 {0.5, 0.5, 0.5} * screenVerticalVec) - (glm::vec3 {0.5, 0.5, 0.5} * screenHorizontalVec);
+
     RTCIntersectContext context;
     rtcInitIntersectContext(&context);
 

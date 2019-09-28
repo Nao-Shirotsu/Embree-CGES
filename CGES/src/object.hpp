@@ -79,7 +79,7 @@ public:
 
     while (!ifs.eof()) {
       if (ifs.peek() == '#') {
-        while (ifs.get() != '\n') {}
+        while (ifs.get() != '\n') {} // 1s”ò‚Î‚·
         continue;
       }
       ifs >> marker;
@@ -99,6 +99,7 @@ public:
         } break;
 
         default: {
+          while (ifs.get() != '\n') {} // 1s”ò‚Î‚·
           break;
         }
       }
@@ -122,6 +123,7 @@ public:
       rtcCommitGeometry(m_geometry);
       return true;
     }
+
     return false;
   }
 
