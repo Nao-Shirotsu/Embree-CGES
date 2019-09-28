@@ -2,9 +2,11 @@
 
 #include "camera.hpp"
 #include "render_buffer.hpp"
-#include "object.hpp"
+#include "game_object.hpp"
 
-#include <iostream>
+#ifdef _DEBUG
+#include <iosfwd>
+#endif
 
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
@@ -13,7 +15,7 @@
 
 namespace {
 
-constexpr float SCREEN_WIDTH = 0.125f; // ワールド空間でのスクリーンの横幅
+constexpr float SCREEN_WIDTH = 0.25f; // ワールド空間でのスクリーンの横幅
 
 }
 
@@ -22,27 +24,25 @@ namespace cges {
 class Renderer {
 public:
   inline Renderer(const Camera& camera, const glm::vec3& lookingPos, RenderBuffer& renderTarget)
-      : m_camera{ camera }
+      : m_rtcDevice{ rtcNewDevice(nullptr) }
+      , m_rtcScene{ rtcNewScene(m_rtcDevice) }
+      , m_camera{ camera }
       , m_renderTarget{ renderTarget }
       , m_lookingPos{lookingPos} {
+    auto object = cges::GameObject(m_rtcDevice);
+    assert(object.LoadObjFile("bunny.obj"));
+    object.AttachTo(m_rtcScene);
+    rtcCommitScene(m_rtcScene);
+  }
+
+  inline ~Renderer() {
+    rtcReleaseScene(m_rtcScene);
+    rtcReleaseDevice(m_rtcDevice);
   }
 
   inline void Update() {
-    RTCDevice device = rtcNewDevice(nullptr);
-    if (!device) {
-      return;
-    }
-
-    // ================= Init Scene  =================
-    RTCScene scene = rtcNewScene(device);
-    {
-      auto object = cges::Object(device, scene);
-      object.LoadObjFile("tetra.obj");
-      object.AttachTo(scene);
-    }
-    rtcCommitScene(scene);
-    // ===============================================
-
+    RTCIntersectContext context;
+    rtcInitIntersectContext(&context);
 
     const int32_t width = static_cast<int32_t>(m_renderTarget.GetWidth());
     const int32_t height = static_cast<int32_t>(m_renderTarget.GetHeight());
@@ -55,12 +55,11 @@ public:
     // スクリーン左上(pixel[0][0])のワールド座標
     const glm::vec3 initialPos = screenCenterPos - (glm::vec3 {0.5, 0.5, 0.5} * screenVerticalVec) - (glm::vec3 {0.5, 0.5, 0.5} * screenHorizontalVec);
 
-    RTCIntersectContext context;
-    rtcInitIntersectContext(&context);
-
     for (int y = 0; y < height; ++y) {
       const float yRate = y / static_cast<float>(height);
+#ifdef _DEBUG
       std::cout << "rendering... (" << static_cast<int>(yRate * 100) << "%)" << std::endl;
+#endif
       for (int x = 0; x < width; ++x) {
         const float xRate = x / static_cast<float>(width);
         const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
@@ -76,17 +75,15 @@ public:
         rayhit.ray.tfar = 100000000; // 適当
         rayhit.ray.mask = 0;
         rayhit.ray.flags = 0;
-        rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
         rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
-        rtcIntersect1(scene, &context, &rayhit);
+        rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+        rtcIntersect1(m_rtcScene, &context, &rayhit);
         if(rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
           m_renderTarget[y][x].r = 255;
           m_renderTarget[y][x].b = 255;
         }
       }
     }
-    rtcReleaseScene(scene);
-    rtcReleaseDevice(device);
   }
 
   inline void Draw() const{
@@ -94,6 +91,8 @@ public:
   }
 
 private:
+  RTCDevice m_rtcDevice;
+  RTCScene m_rtcScene;
   const Camera& m_camera;
   const RenderBuffer& m_renderTarget;
   glm::vec3 m_lookingPos;

@@ -5,9 +5,6 @@
 #include <cstdint>
 #include <memory>
 #include <fstream>
-#include <array>
-
-#include <glm/vec3.hpp>
 
 namespace cges {
 

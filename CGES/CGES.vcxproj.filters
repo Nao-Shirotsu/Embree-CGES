@@ -15,9 +15,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\object.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\render_buffer.hpp">
       <Filter>src</Filter>
     </ClInclude>
@@ -31,6 +28,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\util_objfile.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game_object.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
