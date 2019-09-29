@@ -22,8 +22,9 @@ private:
   RTCDevice m_rtcDevice;
   RTCScene m_rtcScene;
   const Camera& m_camera;
-  const RenderBuffer& m_renderTarget;
+  RenderBuffer& m_renderTarget;
   glm::vec3 m_lookingPos;
+  const uint32_t m_maxThreads;
 };
 
 } // namespace cges
