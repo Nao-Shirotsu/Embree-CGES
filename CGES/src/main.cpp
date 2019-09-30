@@ -1,10 +1,6 @@
-#include <cstdint>
-#include <iostream>
-#include <fstream>
-
+#include "camera.hpp"
 #include "render_buffer.hpp"
 #include "renderer.hpp"
-#include "camera.hpp"
 
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 450;
@@ -19,9 +15,7 @@ int main() {
   auto renderer = cges::Renderer(camera, lookingPos, renderTarget);
   renderer.Update();
   renderer.Draw();
-  return 0;
 }
 
 // TODO:
-// - Object::LoadObjFileのpush_backが多分遅いので、先に行数を数えるように変更する
-// - Object::LoadObjFileで、マーカー"v"と"f"以外も対応するように実装する
+// - GameObject::LoadObjFileで、マーカー"v"と"f"以外も対応するように実装する
