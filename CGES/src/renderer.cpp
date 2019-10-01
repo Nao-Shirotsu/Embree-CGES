@@ -86,8 +86,10 @@ void cges::Renderer::Draw() const {
 
 void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec3& initialPos, const glm::vec3& screenVerticalVec, const glm::vec3& screenHorizontalVec, RTCIntersectContext* context) {
   for (int y = loopMin; y < loopMax; ++y) {
-    const float yRate = y / static_cast<float>(m_renderTarget.GetHeight());
+    const int height = m_renderTarget.GetHeight();
+    const float yRate = y / static_cast<float>(height);
     const int width = m_renderTarget.GetWidth();
+    const int yIdx = height - y;
     for (int x = 0; x < width; ++x) {
       const float xRate = x / static_cast<float>(width);
       const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
@@ -107,8 +109,8 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
       rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
       rtcIntersect1(m_rtcScene, context, &rayhit);
       if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
-        m_renderTarget[y][x].r = 255;
-        m_renderTarget[y][x].b = 255;
+        m_renderTarget[yIdx][x].r = 255;
+        m_renderTarget[yIdx][x].b = 255;
       }
     }
   }

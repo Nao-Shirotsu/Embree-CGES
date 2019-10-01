@@ -14,8 +14,8 @@ Engine::Engine(const size_t windowWidth, const size_t windowHeight, const char* 
   if (!m_window) {
     return;
   }
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
   glfwMakeContextCurrent(m_window);
   glfwSwapInterval(1);
@@ -27,7 +27,10 @@ Engine::~Engine() {
   glfwTerminate();
 }
 
-void Engine::Draw(const RenderBuffer& renderTarget) const{
+void Engine::Update(Camera& camera) {
+}
+
+void Engine::Draw(const RenderBuffer& renderTarget) const {
   glClear(GL_COLOR_BUFFER_BIT);
   glDrawPixels(renderTarget.GetWidth(), renderTarget.GetHeight(), GL_RGBA, GL_UNSIGNED_BYTE, renderTarget[0]);
   glFlush();
