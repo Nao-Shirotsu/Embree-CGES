@@ -19,11 +19,20 @@ public:
   void Draw() const;
 
 private:
+  // [loopMin, loopMax) ÇÃîÕàÕÇÃçsÇï`âÊÇ∑ÇÈ
+  void ParallelDraw(const int loopMin,
+                    const int loopMax,
+                    const glm::vec3& initialPos,
+                    const glm::vec3& screenVerticalVec,
+                    const glm::vec3& screenHorizontalVec,
+                    RTCIntersectContext* context);
+
   RTCDevice m_rtcDevice;
   RTCScene m_rtcScene;
   const Camera& m_camera;
-  const RenderBuffer& m_renderTarget;
+  RenderBuffer& m_renderTarget;
   glm::vec3 m_lookingPos;
+  const uint32_t m_maxThreads;
 };
 
 } // namespace cges
