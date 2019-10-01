@@ -1,5 +1,7 @@
 #pragma once
 
+#include "render_buffer.hpp"
+
 #include <memory>
 #include <GLFW/glfw3.h>
 
@@ -12,7 +14,7 @@ public:
   Engine(const size_t windowWidth, const size_t windowHeight, const char* const windowTitle);
   ~Engine();
 
-  void Draw() const;
+  void Draw(const RenderBuffer& renderTarget) const;
   bool ShouldTerminate() const noexcept;
 
 private:

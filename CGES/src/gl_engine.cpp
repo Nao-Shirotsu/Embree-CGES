@@ -1,5 +1,7 @@
 #include "gl_engine.hpp"
 
+#include "render_buffer.hpp"
+
 #include <cassert>
 
 namespace cges::gl {
@@ -25,9 +27,10 @@ Engine::~Engine() {
   glfwTerminate();
 }
 
-void Engine::Draw() const{
-  glClearColor(0.25, 0.25, 0.25, 0);
+void Engine::Draw(const RenderBuffer& renderTarget) const{
   glClear(GL_COLOR_BUFFER_BIT);
+  glDrawPixels(renderTarget.GetWidth(), renderTarget.GetHeight(), GL_RGBA, GL_UNSIGNED_BYTE, renderTarget[0]);
+  glFlush();
   glfwSwapBuffers(m_window);
   glfwPollEvents();
 }
