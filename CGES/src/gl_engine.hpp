@@ -8,7 +8,7 @@
 
 namespace cges::gl {
 
-// Graphics APIのラッパークラス
+// Graphics APIのラッパークラス 
 // 複数ウィンドウは非対応
 class Engine {
 public:
