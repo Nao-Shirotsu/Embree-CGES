@@ -3,6 +3,7 @@
 #include <thread>
 #include <vector>
 #include <numeric> // float infinity
+#include <cmath>
 
 #include <glm/glm.hpp>
 
@@ -21,7 +22,7 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
   auto object = cges::GameObject(m_rtcDevice);
-  assert(object.LoadObjFile("bunny.obj"));
+  assert(object.LoadObjFile("tetra.obj"));
   object.AttachTo(m_rtcScene);
   rtcCommitScene(m_rtcScene);
 
@@ -86,6 +87,7 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
   for (int y = loopMin; y < loopMax; ++y) {
     const int height = m_renderTarget.GetHeight();
     const float yRate = y / static_cast<float>(height);
+    const float bgColorIntensity = 255 * yRate;
     const int width = m_renderTarget.GetWidth();
     const int yIdx = height - y - 1;
     for (int x = 0; x < width; ++x) {
@@ -106,13 +108,21 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
       rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
       rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
       rtcIntersect1(m_rtcScene, context, &rayhit);
+
       if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
-        m_renderTarget[yIdx][x].r = 255;
-        m_renderTarget[yIdx][x].b = 255;
+        const auto geomNormal = glm::normalize(glm::vec3{ rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z });
+        float shadingFactor = glm::dot(geomNormal, glm::normalize(rayDir));
+        if(shadingFactor < 0.0) {
+          shadingFactor *= -1.0;
+        }
+        m_renderTarget[yIdx][x].r = 255 * shadingFactor;
+        m_renderTarget[yIdx][x].g = 255 * shadingFactor;
+        m_renderTarget[yIdx][x].b = 128 * shadingFactor;
       }
       else {
-        m_renderTarget[yIdx][x].r = 0;
-        m_renderTarget[yIdx][x].b = 0;
+        m_renderTarget[yIdx][x].r = bgColorIntensity / 1.5;
+        m_renderTarget[yIdx][x].g = bgColorIntensity / 1.5;
+        m_renderTarget[yIdx][x].b = bgColorIntensity;
       }
     }
   }
