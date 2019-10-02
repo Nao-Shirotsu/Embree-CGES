@@ -18,7 +18,12 @@
     <ClCompile Include="src\renderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\render_buffer.cpp" />
+    <ClCompile Include="src\render_buffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gl_engine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -44,6 +49,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\constants.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gl_engine.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

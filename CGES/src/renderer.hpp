@@ -12,7 +12,7 @@ namespace cges {
 
 class Renderer {
 public:
-  Renderer(const Camera& camera, const glm::vec3& lookingPos, RenderBuffer& renderTarget);
+  Renderer(const Camera& camera, RenderBuffer& renderTarget);
   ~Renderer();
 
   void Update();
@@ -25,13 +25,12 @@ private:
                     const glm::vec3& initialPos,
                     const glm::vec3& screenVerticalVec,
                     const glm::vec3& screenHorizontalVec,
-                    RTCIntersectContext* context);
+                    RTCIntersectContext* context) const;
 
   RTCDevice m_rtcDevice;
   RTCScene m_rtcScene;
   const Camera& m_camera;
   RenderBuffer& m_renderTarget;
-  glm::vec3 m_lookingPos;
   const uint32_t m_maxThreads;
 };
 

@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\game_object.cpp" />
+    <ClCompile Include="src\gl_engine.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\render_buffer.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="src\color.hpp" />
     <ClInclude Include="src\constants.hpp" />
     <ClInclude Include="src\game_object.hpp" />
+    <ClInclude Include="src\gl_engine.hpp" />
     <ClInclude Include="src\renderer.hpp" />
     <ClInclude Include="src\render_buffer.hpp" />
     <ClInclude Include="src\util_objfile.hpp" />
