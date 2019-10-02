@@ -15,6 +15,7 @@ enum class Marker {
   G,
   MTLLIB,
   USEMTL,
+  SKIP, // コメント及び不明なマーカ
 };
 
 // ↑の6要素が1つのobjに何個含まれるか保存する構造体
@@ -24,7 +25,7 @@ public:
   size_t& operator[](const Marker idx);
 
 private:
-  std::array<size_t, 6> m_count;
+  std::array<size_t, 7> m_count;
 };
 
 [[nodiscard]] Marker ToMarker(const std::string& marker);

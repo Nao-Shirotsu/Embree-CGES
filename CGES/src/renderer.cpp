@@ -22,10 +22,10 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
   auto object = cges::GameObject(m_rtcDevice);
-  assert(object.LoadObjFile("tetra.obj"));
+  const bool success = object.LoadObjFile("bin/cat.obj");
+  assert(success);
   object.AttachTo(m_rtcScene);
   rtcCommitScene(m_rtcScene);
-
 }
 
 Renderer::~Renderer() {

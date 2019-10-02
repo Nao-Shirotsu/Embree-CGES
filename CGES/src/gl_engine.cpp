@@ -6,7 +6,8 @@
 
 namespace {
 
-constexpr float DELTA_MOVE_AMOUNT = 0.0625;
+constexpr float DELTA_MOVE_AMOUNT = 0.125;
+//constexpr float DELTA_MOVE_AMOUNT = 0.0625;
 
 }
 

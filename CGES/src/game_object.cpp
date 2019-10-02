@@ -56,7 +56,8 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
   std::string marker;
   char dummy[INPUT_BUFFER_SIZE];
 
-  for (int verBufIndex = 0, idxBufIndex = 0; !ifs.eof();) {
+  int verBufIndex = 0, idxBufIndex = 0;
+  do {
     if (ifs.peek() == '#') {
       ifs.getline(dummy, INPUT_BUFFER_SIZE); // 1行飛ばす
       continue;
@@ -64,24 +65,52 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
     ifs >> marker;
     switch (obj::ToMarker(marker)) {
       case obj::Marker::V: {
-        ifs >> verBuf[verBufIndex].x;
-        ifs >> verBuf[verBufIndex].y;
-        ifs >> verBuf[verBufIndex].z;
+        std::string recv;
+        ifs >> recv;
+        verBuf[verBufIndex].x = std::stof(recv);
+        ifs >> recv;
+        verBuf[verBufIndex].y = std::stof(recv);
+        ifs >> recv;
+        verBuf[verBufIndex].z = std::stof(recv);
         ++verBufIndex;
       } break;
 
       case obj::Marker::F: {
-        ifs >> idxBuf[idxBufIndex].v0;
-        ifs >> idxBuf[idxBufIndex].v1;
-        ifs >> idxBuf[idxBufIndex].v2;
+        std::string recv;
+        ifs >> recv;
+        idxBuf[idxBufIndex].v0 = std::stoi(recv);
+        ifs >> recv;
+        idxBuf[idxBufIndex].v1 = std::stoi(recv);
+        ifs >> recv;
+        idxBuf[idxBufIndex].v2 = std::stoi(recv);
         ++idxBufIndex;
+      } break;
+
+      case obj::Marker::MTLLIB: {
+        ifs.getline(dummy, INPUT_BUFFER_SIZE); // 1行飛ばす
+      } break;
+
+      case obj::Marker::USEMTL: {
+        ifs.getline(dummy, INPUT_BUFFER_SIZE); // 1行飛ばす
+      } break;
+
+      case obj::Marker::G: {
+        ifs.getline(dummy, INPUT_BUFFER_SIZE); // 1行飛ばす
+      } break;
+
+      case obj::Marker::VN: {
+        ifs.getline(dummy, INPUT_BUFFER_SIZE); // 1行飛ばす
+      } break;
+
+      case obj::Marker::VT: {
+        ifs.getline(dummy, INPUT_BUFFER_SIZE); // 1行飛ばす
       } break;
 
       default: {
         ifs.getline(dummy, INPUT_BUFFER_SIZE); // 1行飛ばす
       } break;
     }
-  }
+  } while (!ifs.eof());
 
   rtcCommitGeometry(m_geometry);
   return true;

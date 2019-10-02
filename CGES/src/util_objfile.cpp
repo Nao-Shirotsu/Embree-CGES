@@ -2,8 +2,6 @@
 
 #include "constants.hpp"
 
-#include <cstdlib>
-
 namespace cges::obj {
 
 NumElements::NumElements()
@@ -35,7 +33,7 @@ Marker ToMarker(const std::string& marker) {
   if (marker == "usemtl") {
     return Marker::USEMTL;
   }
-  std::exit(1);
+  return Marker::SKIP;
 }
 
 bool CountCategories(std::ifstream& ifs, obj::NumElements& count) {
@@ -47,11 +45,15 @@ bool CountCategories(std::ifstream& ifs, obj::NumElements& count) {
       continue;
     }
     ifs >> markerStr;
+    const auto marker = obj::ToMarker(markerStr);
     ifs.getline(dummy, INPUT_BUFFER_SIZE);
-    ++count[obj::ToMarker(markerStr)];
+    if(marker == Marker::SKIP) {
+      continue;
+    }
+    ++count[marker];
   }
   ifs.clear();
-  ifs.seekg(std::ios::beg);
+  ifs.seekg(0, std::ios::beg);
   return bool(ifs);
 }
 
