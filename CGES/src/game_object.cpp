@@ -6,10 +6,20 @@
 #include <cstdio>
 #include <fstream>
 #include <string>
-
-#include <glm/vec3.hpp>
+#include <array>
 
 namespace cges {
+
+// .objÇÃ f êﬂÇÃílÇì«Ç›éÊÇÈ   "1/2/3"Ç»ÇÁìnÇµÇΩà¯êîÇ…1, 2, 3ÇèëÇ´çûÇﬁ"
+void ReadFTriple(const std::string& fStatement, size_t& vertex, size_t& tex, size_t& normal) noexcept{
+  vertex = std::stoi(fStatement);
+  const auto firstSlashPos = fStatement.find_first_of("/");
+  const auto secondSlashPos = fStatement.find_last_of("/");
+  tex = std::stoi(fStatement.substr(firstSlashPos + 1, secondSlashPos - firstSlashPos - 1));
+  normal = std::stoi(fStatement.substr(secondSlashPos + 1, fStatement.length() - secondSlashPos - 1));
+    // str: 100/200/300
+    // idx: 0123456789
+}
 
 GameObject::GameObject(const RTCDevice device)
     : m_device{ device }
@@ -70,12 +80,14 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
     return false;
   }
   obj::NumElements count;
-  if (!obj::CountCategories(ifs, count)) {
+  bool fTriple = false;
+  if (!obj::LoadFileProperties(ifs, count, fTriple)) {
     return false;
   }
 
   m_verBuf.resize(count[obj::Marker::V]);
   m_idxBuf.resize(count[obj::Marker::F]);
+  std::vector<glm::vec3> vnBuf{ count[obj::Marker::VN] };
 
   if (!m_verBuf.size() || !m_idxBuf.size()) {
     return false;
@@ -83,7 +95,7 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
 
   std::string marker;
   char dummy[INPUT_BUFFER_SIZE];
-  int verBufIndex = 0, idxBufIndex = 0;
+  int verBufIndex = 0, idxBufIndex = 0, vnBufIndex = 0;
   do {
     if (ifs.peek() == '#') {
       ifs.getline(dummy, INPUT_BUFFER_SIZE); // 1çsîÚÇŒÇ∑
@@ -92,24 +104,43 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
     ifs >> marker;
     switch (obj::ToMarker(marker)) {
       case obj::Marker::V: {
-        std::string recv;
-        ifs >> recv;
-        m_verBuf[verBufIndex].x = std::stof(recv);
-        ifs >> recv;
-        m_verBuf[verBufIndex].y = std::stof(recv);
-        ifs >> recv;
-        m_verBuf[verBufIndex].z = std::stof(recv);
+        ifs >> m_verBuf[verBufIndex].pos.x;
+        ifs >> m_verBuf[verBufIndex].pos.y;
+        ifs >> m_verBuf[verBufIndex].pos.z;
         ++verBufIndex;
       } break;
 
       case obj::Marker::F: {
+        if (idxBufIndex == m_idxBuf.size()) {
+          int a = 4;
+        }
         std::string recv;
-        ifs >> recv;
-        m_idxBuf[idxBufIndex].v0 = std::stoi(recv) - 1;
-        ifs >> recv;
-        m_idxBuf[idxBufIndex].v1 = std::stoi(recv) - 1;
-        ifs >> recv;
-        m_idxBuf[idxBufIndex].v2 = std::stoi(recv) - 1;
+        if (!fTriple) {
+          std::string recv;
+          ifs >> recv;
+          m_idxBuf[idxBufIndex].v0 = std::stoi(recv) - 1;
+          ifs >> recv;
+          m_idxBuf[idxBufIndex].v1 = std::stoi(recv) - 1;
+          ifs >> recv;
+          m_idxBuf[idxBufIndex].v2 = std::stoi(recv) - 1;
+        }
+        else {
+          size_t verIdx, texIdx, normIdx;
+          ifs >> recv;
+          ReadFTriple(recv, verIdx, texIdx, normIdx);
+          m_idxBuf[idxBufIndex].v0 = verIdx - 1;
+          m_verBuf[verIdx - 1].normal = vnBuf[normIdx - 1];
+
+          ifs >> recv;
+          ReadFTriple(recv, verIdx, texIdx, normIdx);
+          m_idxBuf[idxBufIndex].v1 = verIdx - 1;
+          m_verBuf[verIdx - 1].normal = vnBuf[normIdx - 1];
+
+          ifs >> recv;
+          ReadFTriple(recv, verIdx, texIdx, normIdx);
+          m_idxBuf[idxBufIndex].v2 = verIdx - 1;
+          m_verBuf[verIdx - 1].normal = vnBuf[normIdx - 1];
+        }
         ++idxBufIndex;
       } break;
 
@@ -126,7 +157,10 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
       } break;
 
       case obj::Marker::VN: {
-        ifs.getline(dummy, INPUT_BUFFER_SIZE); // 1çsîÚÇŒÇ∑
+        ifs >> vnBuf[vnBufIndex].x;
+        ifs >> vnBuf[vnBufIndex].y;
+        ifs >> vnBuf[vnBufIndex].z;
+        ++vnBufIndex;
       } break;
 
       case obj::Marker::VT: {
@@ -143,11 +177,11 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
       m_geometry,
       RTC_BUFFER_TYPE_VERTEX,
       0,
-      RTC_FORMAT_FLOAT3,
+      RTC_FORMAT_FLOAT6,
       &m_verBuf[0],
       0,
       sizeof(Vertex3f),
-      count[obj::Marker::V]);
+      m_verBuf.size());
 
 
   rtcSetSharedGeometryBuffer(
@@ -158,7 +192,7 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
       &m_idxBuf[0],
       0,
       sizeof(PolygonIndices),
-      count[obj::Marker::F]);
+      m_idxBuf.size());
 
   rtcCommitGeometry(m_geometry);
   return true;

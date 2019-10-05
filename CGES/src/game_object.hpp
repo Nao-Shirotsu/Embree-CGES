@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <glm/vec3.hpp>
 
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
@@ -9,7 +10,8 @@
 namespace cges {
 
 struct Vertex3f {
-  float x, y, z;
+  glm::vec3 pos;
+  glm::vec3 normal;
 };
 
 struct PolygonIndices {
