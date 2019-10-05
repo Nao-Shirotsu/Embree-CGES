@@ -24,6 +24,7 @@
     <ClCompile Include="src\gl_engine.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -52,6 +53,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\gl_engine.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\light_source.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

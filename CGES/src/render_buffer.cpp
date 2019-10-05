@@ -7,7 +7,7 @@ namespace cges {
 cges::RenderBuffer::RenderBuffer(const size_t width, const size_t height)
     : m_width{ width }
     , m_height{ height }
-    , m_pixels{ std::make_unique<ColorARGB[]>(width * height) } {}
+    , m_pixels{ std::make_unique<ColorRGBA[]>(width * height) } {}
 
 RenderBuffer::RenderBuffer(RenderBuffer&& other) noexcept
     : m_width{ other.m_width }
@@ -25,7 +25,7 @@ RenderBuffer& RenderBuffer::operator=(RenderBuffer&& other) noexcept {
   return *this;
 }
 
-ColorARGB* RenderBuffer::operator[](const size_t rowIdx) const noexcept(false) {
+ColorRGBA* RenderBuffer::operator[](const size_t rowIdx) const noexcept(false) {
   return m_pixels.get() + m_width * rowIdx;
 }
 
@@ -46,8 +46,8 @@ bool RenderBuffer::SaveAsPpm(const char* const fileName) const noexcept {
 
   ofs << "P3\n"
       << m_width << " " << m_height << "\n255\n";
-  for (int i = 0; i < m_height; ++i) {
-    for (int j = 0; j < m_width; ++j) {
+  for (size_t i = 0; i < m_height; ++i) {
+    for (size_t j = 0; j < m_width; ++j) {
       const auto idx = i * m_width + j;
       ofs << static_cast<int>(m_pixels[idx].r) << " "
           << static_cast<int>(m_pixels[idx].g) << " "

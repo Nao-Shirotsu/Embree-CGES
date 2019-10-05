@@ -3,6 +3,7 @@
 #include "camera.hpp"
 #include "render_buffer.hpp"
 #include "game_object.hpp"
+#include "scene.hpp"
 
 #include <glm/vec3.hpp>
 
@@ -28,7 +29,7 @@ private:
                     RTCIntersectContext* context) const;
 
   RTCDevice m_rtcDevice;
-  RTCScene m_rtcScene;
+  Scene m_scene;
   const Camera& m_camera;
   RenderBuffer& m_renderTarget;
   const uint32_t m_maxThreads;

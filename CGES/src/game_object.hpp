@@ -19,16 +19,24 @@ struct PolygonIndices {
 // シーンに配置される任意の3Dモデルのクラス
 class GameObject {
 public:
-  // とりあえず.obj(vとfのみ)からの読み込みだけ実装する
-  GameObject(const RTCDevice device);
-  ~GameObject();
+  GameObject(const RTCDevice device); // 空のオブジェクト
+  GameObject(const RTCDevice device, const char* const filePath); // 3Dモデル読込
+  GameObject(const GameObject& other);
+
+  GameObject(GameObject&& other) noexcept;
+
+  ~GameObject() noexcept;
+
+  GameObject& operator=(GameObject&& other) noexcept;
+  GameObject& operator=(const GameObject& other);
 
   // ロード成功でtrue, 失敗でfalseを返す
   bool LoadObjFile(const char* const objFileName);
   uint32_t AttachTo(const RTCScene scene);
 
 private:
-  //glm::vec3 origin; // モデル座標系原点
+  //glm::vec3 origin; // モデル座標系原点のワールド位置
+  const RTCDevice m_device;
   RTCGeometry m_geometry;
   std::vector<Vertex3f> m_verBuf;
   std::vector<PolygonIndices> m_idxBuf;

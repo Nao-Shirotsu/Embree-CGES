@@ -12,16 +12,57 @@
 namespace cges {
 
 GameObject::GameObject(const RTCDevice device)
-    : m_geometry{ nullptr }
+    : m_device{ device }
+    , m_geometry{ rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE) }
     , m_verBuf{ 0 }
     , m_idxBuf{ 0 } {
-  m_geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
 }
+
+GameObject::GameObject(const RTCDevice device, const char* const filePath)
+    : GameObject(device) {
+  bool success = LoadObjFile(filePath);
+  assert(success);
+}
+
+GameObject::GameObject(const GameObject& other)
+    : m_device{ other.m_device }
+    , m_geometry{ rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE) }
+    , m_verBuf{ other.m_verBuf }
+    , m_idxBuf{ other.m_idxBuf } {
+}
+
+GameObject::GameObject(GameObject&& other) noexcept
+    : m_device{ other.m_device }
+    , m_geometry{ other.m_geometry }
+    , m_verBuf{ std::move(other.m_verBuf) }
+    , m_idxBuf{ std::move(other.m_idxBuf) } {
+  other.m_geometry = nullptr;
+}
+
 
 GameObject::~GameObject() {
   rtcReleaseGeometry(m_geometry);
 }
 
+GameObject& GameObject::operator=(GameObject&& other) noexcept {
+  if (this == &other) {
+    return *this;
+  }
+  m_geometry = other.m_geometry;
+  other.m_geometry = nullptr;
+  m_verBuf = std::move(other.m_verBuf);
+  m_idxBuf = std::move(other.m_idxBuf);
+  return *this;
+}
+
+GameObject& GameObject::operator=(const GameObject& other) {
+  if (this == &other) {
+    return *this;
+  }
+  m_verBuf = other.m_verBuf;
+  m_idxBuf = other.m_idxBuf;
+  return *this;
+}
 
 bool GameObject::LoadObjFile(const char* const objFileName) {
   auto ifs = std::ifstream(objFileName);

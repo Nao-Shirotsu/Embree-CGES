@@ -144,6 +144,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\render_buffer.cpp" />
+    <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\util_objfile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,8 +157,10 @@
     <ClInclude Include="src\constants.hpp" />
     <ClInclude Include="src\game_object.hpp" />
     <ClInclude Include="src\gl_engine.hpp" />
+    <ClInclude Include="src\light_source.hpp" />
     <ClInclude Include="src\renderer.hpp" />
     <ClInclude Include="src\render_buffer.hpp" />
+    <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\util_objfile.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
