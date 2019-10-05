@@ -16,7 +16,8 @@ public:
   ~Scene() noexcept;
 
   void Update();
-  void Add(GameObject&& object); // GameObjectのコピー禁止なので const& ではなく &&
+  void Add(GameObject&& object);
+  void Emplace(const RTCDevice device, const char* const filePath); // 直接構築
   const RTCScene GetScenePtr() const;
 
 private:

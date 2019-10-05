@@ -27,8 +27,14 @@ void Scene::Update() {
 }
 
 void Scene::Add(GameObject&& object) {
-  object.AttachTo(m_rtcScene);
-  m_objects.emplace_back(std::move(object));
+  m_objects.push_back(std::move(object));
+  (m_objects.end() - 1)->AttachTo(m_rtcScene);
+  sceneChanged = true;
+}
+
+void Scene::Emplace(const RTCDevice device, const char* const filePath) {
+  m_objects.emplace_back(device, filePath);
+  (m_objects.end() - 1)->AttachTo(m_rtcScene);
   sceneChanged = true;
 }
 

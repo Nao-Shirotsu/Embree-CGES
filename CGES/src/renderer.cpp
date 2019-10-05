@@ -21,7 +21,7 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_camera{ camera }
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
-  m_scene.Add(cges::GameObject(m_rtcDevice, "bin/cat.obj"));
+  m_scene.Emplace(m_rtcDevice, "bin/cat.obj");
 }
 
 Renderer::~Renderer() {
