@@ -1,13 +1,14 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
 
 namespace cges {
 
-struct PolygonVertices {
+struct Vertex3f {
   float x, y, z;
 };
 
@@ -29,6 +30,8 @@ public:
 private:
   //glm::vec3 origin; // ÉÇÉfÉãç¿ïWånå¥ì_
   RTCGeometry m_geometry;
+  std::vector<Vertex3f> m_verBuf;
+  std::vector<PolygonIndices> m_idxBuf;
 };
 
 } // namespace cges

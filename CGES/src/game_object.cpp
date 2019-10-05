@@ -1,18 +1,20 @@
 #include "game_object.hpp"
 
-#include "util_objfile.hpp"
 #include "constants.hpp"
+#include "util_objfile.hpp"
 
+#include <cstdio>
 #include <fstream>
 #include <string>
-#include <cstdio>
 
 #include <glm/vec3.hpp>
 
 namespace cges {
 
 GameObject::GameObject(const RTCDevice device)
-    : m_geometry{ nullptr } {
+    : m_geometry{ nullptr }
+    , m_verBuf{ 0 }
+    , m_idxBuf{ 0 } {
   m_geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
 }
 
@@ -31,31 +33,15 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
     return false;
   }
 
-  auto verBuf = reinterpret_cast<PolygonVertices*>(
-      rtcSetNewGeometryBuffer(
-          m_geometry,
-          RTC_BUFFER_TYPE_VERTEX,
-          0,
-          RTC_FORMAT_FLOAT3,
-          sizeof(PolygonVertices),
-          count[obj::Marker::V]));
+  m_verBuf.resize(count[obj::Marker::V]);
+  m_idxBuf.resize(count[obj::Marker::F]);
 
-  auto idxBuf = reinterpret_cast<PolygonIndices*>(
-      rtcSetNewGeometryBuffer(
-          m_geometry,
-          RTC_BUFFER_TYPE_INDEX,
-          0,
-          RTC_FORMAT_UINT3,
-          sizeof(PolygonIndices),
-          count[obj::Marker::F]));
-
-  if (!verBuf || !idxBuf) {
+  if (!m_verBuf.size() || !m_idxBuf.size()) {
     return false;
   }
 
   std::string marker;
   char dummy[INPUT_BUFFER_SIZE];
-
   int verBufIndex = 0, idxBufIndex = 0;
   do {
     if (ifs.peek() == '#') {
@@ -67,22 +53,22 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
       case obj::Marker::V: {
         std::string recv;
         ifs >> recv;
-        verBuf[verBufIndex].x = std::stof(recv);
+        m_verBuf[verBufIndex].x = std::stof(recv);
         ifs >> recv;
-        verBuf[verBufIndex].y = std::stof(recv);
+        m_verBuf[verBufIndex].y = std::stof(recv);
         ifs >> recv;
-        verBuf[verBufIndex].z = std::stof(recv);
+        m_verBuf[verBufIndex].z = std::stof(recv);
         ++verBufIndex;
       } break;
 
       case obj::Marker::F: {
         std::string recv;
         ifs >> recv;
-        idxBuf[idxBufIndex].v0 = std::stoi(recv);
+        m_idxBuf[idxBufIndex].v0 = std::stoi(recv);
         ifs >> recv;
-        idxBuf[idxBufIndex].v1 = std::stoi(recv);
+        m_idxBuf[idxBufIndex].v1 = std::stoi(recv);
         ifs >> recv;
-        idxBuf[idxBufIndex].v2 = std::stoi(recv);
+        m_idxBuf[idxBufIndex].v2 = std::stoi(recv);
         ++idxBufIndex;
       } break;
 
@@ -111,6 +97,27 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
       } break;
     }
   } while (!ifs.eof());
+
+  rtcSetSharedGeometryBuffer(
+      m_geometry,
+      RTC_BUFFER_TYPE_VERTEX,
+      0,
+      RTC_FORMAT_FLOAT3,
+      &m_verBuf[0],
+      0,
+      sizeof(Vertex3f),
+      count[obj::Marker::V]);
+
+
+  rtcSetSharedGeometryBuffer(
+      m_geometry,
+      RTC_BUFFER_TYPE_INDEX,
+      0,
+      RTC_FORMAT_UINT3,
+      &m_idxBuf[0],
+      0,
+      sizeof(PolygonIndices),
+      count[obj::Marker::F]);
 
   rtcCommitGeometry(m_geometry);
   return true;
