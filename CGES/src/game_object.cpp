@@ -64,11 +64,11 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
       case obj::Marker::F: {
         std::string recv;
         ifs >> recv;
-        m_idxBuf[idxBufIndex].v0 = std::stoi(recv);
+        m_idxBuf[idxBufIndex].v0 = std::stoi(recv) - 1;
         ifs >> recv;
-        m_idxBuf[idxBufIndex].v1 = std::stoi(recv);
+        m_idxBuf[idxBufIndex].v1 = std::stoi(recv) - 1;
         ifs >> recv;
-        m_idxBuf[idxBufIndex].v2 = std::stoi(recv);
+        m_idxBuf[idxBufIndex].v2 = std::stoi(recv) - 1;
         ++idxBufIndex;
       } break;
 
