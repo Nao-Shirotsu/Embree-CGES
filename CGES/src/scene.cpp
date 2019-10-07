@@ -9,7 +9,7 @@ Scene::Scene(const RTCDevice rtcDevice)
     , m_objects{ 0 }
     , m_lightSrcs{ 0 }
     , sceneChanged{false} {
-  const float divRoot3 = 1.0f / std::sqrtf(3.0f);
+  const float divRoot3 = 1.0f / std::sqrt(3.0f);
   m_dirLight.dir = { -divRoot3, -divRoot3, -divRoot3 };
   m_dirLight.emitColor = { 128, 128, 128, 255 };
 }
