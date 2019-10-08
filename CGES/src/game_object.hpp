@@ -11,11 +11,16 @@ namespace cges {
 
 struct Vertex3f {
   glm::vec3 pos;
+  float padding1;
   glm::vec3 normal;
+  float padding2;
+  //uint8_t padding[16 - (sizeof(pos) + sizeof(normal)) % 16];
 };
 
 struct PolygonIndices {
   unsigned int v0, v1, v2;
+  unsigned int padding[1];
+  //uint8_t padding[16 - (sizeof(v0) * 3 % 16)];
 };
 
 // シーンに配置される任意の3Dモデルのクラス

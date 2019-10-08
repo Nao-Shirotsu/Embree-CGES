@@ -8,6 +8,10 @@
 #include <string>
 #include <array>
 
+#ifdef _DEBUG
+#include <iostream>
+#endif
+
 namespace cges {
 
 // .obj‚Ì f ß‚Ì’l‚ğ“Ç‚İæ‚é   "1/2/3"‚È‚ç“n‚µ‚½ˆø”‚É1, 2, 3‚ğ‘‚«‚Ş"
@@ -177,24 +181,29 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
       m_geometry,
       RTC_BUFFER_TYPE_VERTEX,
       0,
-      RTC_FORMAT_FLOAT6,
+      RTC_FORMAT_FLOAT8,
       &m_verBuf[0],
       0,
       sizeof(Vertex3f),
       m_verBuf.size());
 
-
   rtcSetSharedGeometryBuffer(
       m_geometry,
       RTC_BUFFER_TYPE_INDEX,
       0,
-      RTC_FORMAT_UINT3,
+      RTC_FORMAT_UINT4,
       &m_idxBuf[0],
       0,
       sizeof(PolygonIndices),
       m_idxBuf.size());
 
+  #ifdef _DEBUG
+  std::cout << "Vertex Buffer : stride=" << sizeof(Vertex3f) << "   start=" << std::hex << &m_verBuf[0] << std::dec << std::endl;
+  std::cout << "Index Buffer : stride=" << sizeof(PolygonIndices) << "   start=" << std::hex << &m_idxBuf[0] << std::dec << std::endl;
+  #endif
+
   rtcCommitGeometry(m_geometry);
+
   return true;
 }
 

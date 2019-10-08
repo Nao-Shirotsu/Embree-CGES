@@ -33,8 +33,11 @@ void Scene::Add(GameObject&& object) {
 }
 
 void Scene::Emplace(const RTCDevice device, const char* const filePath) {
+  auto err = rtcGetDeviceError(device);
   m_objects.emplace_back(device, filePath);
+  err = rtcGetDeviceError(device);
   (m_objects.end() - 1)->AttachTo(m_rtcScene);
+  err = rtcGetDeviceError(device);
   sceneChanged = true;
 }
 
