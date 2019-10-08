@@ -56,3 +56,36 @@ for (int i = 0; i < 30; ++i) {
   }
 ```
 
+
+
+### `rtcNewGeometry`に渡すenum値に気をつける
+
+Embree3ではジオメトリプリミティブが何種類か用意されていて、オブジェクトのインスタンスを初期状態で生成する`rtcNewGeometry`を呼び出すときに引数にenum値(`RTC_GEOMETRY_TYPE_TRIANGLE`など)を渡してインスタンス化する。   
+その後VertexBufferなどの動的確保領域のアドレスとサイズを`rtcSetSharedGeometryBuffer`でEmbreeRTKernel側に伝えるが、その時前に渡したenum値によってはリジェクトされてエラーになることがある。   
+
+```C++
+auto geometry = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
+rtcSetSharedGeometryBuffer(
+      m_geometry,
+      RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
+      0,
+      RTC_FORMAT_FLOAT8,
+      m_verBuf.data(),
+      0,
+      sizeof(Vertex3f),
+      m_verBuf.size());
+
+  rtcSetSharedGeometryBuffer(
+      m_geometry,
+      RTC_BUFFER_TYPE_INDEX,
+      0,
+      RTC_FORMAT_UINT4,
+      m_idxBuf.data(),
+      0,
+      sizeof(PolygonIndices),
+      m_idxBuf.size());
+```
+
+こんな感じにしたとき、`RTC_GEOMETRY_TYPE_TRIANGLE`だと`rtcSetSharedGeometryBuffer`はStrideが`float`3つのVertexBuffer, `uint32_t`3つのIndexBuffer以外は登録してくれない。   
+結果`rtcSetSharedGeometryBuffer`がデバイスエラーを登録してくれちゃって書いてる側の胃が死ぬ。
+

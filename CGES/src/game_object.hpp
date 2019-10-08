@@ -38,7 +38,7 @@ public:
   GameObject& operator=(const GameObject& other);
 
   // ƒ[ƒh¬Œ÷‚Åtrue, ¸”s‚Åfalse‚ğ•Ô‚·
-  bool LoadObjFile(const char* const objFileName);
+  bool LoadObjFile(const char* const objFileName, const RTCDevice device);
   uint32_t AttachTo(const RTCScene scene);
 
 private:

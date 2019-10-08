@@ -34,7 +34,7 @@ GameObject::GameObject(const RTCDevice device)
 
 GameObject::GameObject(const RTCDevice device, const char* const filePath)
     : GameObject(device) {
-  bool success = LoadObjFile(filePath);
+  bool success = LoadObjFile(filePath, device);
   assert(success);
 }
 
@@ -78,7 +78,7 @@ GameObject& GameObject::operator=(const GameObject& other) {
   return *this;
 }
 
-bool GameObject::LoadObjFile(const char* const objFileName) {
+bool GameObject::LoadObjFile(const char* const objFileName, const RTCDevice device) {
   auto ifs = std::ifstream(objFileName);
   if (!ifs) {
     return false;
@@ -177,25 +177,31 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
     }
   } while (!ifs.eof());
 
+  auto err = rtcGetDeviceError(device);
+
   rtcSetSharedGeometryBuffer(
       m_geometry,
-      RTC_BUFFER_TYPE_VERTEX,
+      RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
       0,
       RTC_FORMAT_FLOAT8,
-      &m_verBuf[0],
+      m_verBuf.data(),
       0,
       sizeof(Vertex3f),
       m_verBuf.size());
+
+  err = rtcGetDeviceError(device);
 
   rtcSetSharedGeometryBuffer(
       m_geometry,
       RTC_BUFFER_TYPE_INDEX,
       0,
       RTC_FORMAT_UINT4,
-      &m_idxBuf[0],
+      m_idxBuf.data(),
       0,
       sizeof(PolygonIndices),
       m_idxBuf.size());
+
+  err = rtcGetDeviceError(device);
 
   #ifdef _DEBUG
   std::cout << "Vertex Buffer : stride=" << sizeof(Vertex3f) << "   start=" << std::hex << &m_verBuf[0] << std::dec << std::endl;
