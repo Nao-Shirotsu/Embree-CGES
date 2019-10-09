@@ -12,12 +12,12 @@ int main() {
   auto renderer = cges::Renderer(camera, renderTarget);
 
   auto engine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Test Window");
-  //while(!engine.ShouldTerminate()) {
+  while(!engine.ShouldTerminate()) {
     engine.Update(camera);
     renderer.Update();
     renderer.Draw();
     engine.Draw(renderTarget);
-  //}
+  }
 }
 
 // TODO:

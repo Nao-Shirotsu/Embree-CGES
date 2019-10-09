@@ -98,22 +98,34 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
       rayhit.ray.dir_y = rayDir.y;
       rayhit.ray.dir_z = rayDir.z;
       rayhit.ray.tnear = 0;
-      rayhit.ray.tfar = std::numeric_limits<float>::max(); // “K“–
+      rayhit.ray.tfar = std::numeric_limits<float>::max();
       rayhit.ray.mask = 0;
       rayhit.ray.flags = 0;
       rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
       rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-      rtcIntersect1(m_scene.GetScenePtr(), context, &rayhit);
+      rtcIntersect1(m_scene.GetRTCScene(), context, &rayhit);
 
       if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
-        const auto geomNormal = glm::normalize(glm::vec3{ rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z });
-        float shadingFactor = glm::dot(geomNormal, glm::normalize(rayDir));
+        //const auto geomNormal = glm::normalize(glm::vec3{ rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z });
+        glm::vec3 color = { 0, 0, 0 };
+        rtcInterpolate0(rtcGetGeometry(m_scene.GetRTCScene(), rayhit.hit.geomID),
+                        rayhit.hit.primID,
+                        rayhit.hit.u,
+                        rayhit.hit.v,
+                        RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
+                        0,
+                        &color.x,
+                        3);
+        /*float shadingFactor = glm::dot(geomNormal, glm::normalize(rayDir));
         if(shadingFactor < 0.0) {
           shadingFactor *= -1.0;
         }
         m_renderTarget[yIdx][x].r = static_cast<uint8_t>(255 * shadingFactor);
         m_renderTarget[yIdx][x].g = static_cast<uint8_t>(255 * shadingFactor);
-        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(128 * shadingFactor);
+        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(128 * shadingFactor);*/
+        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(255 * color.r);
+        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(255 * color.g);
+        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(128 * color.b);
       }
       else {
         m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);

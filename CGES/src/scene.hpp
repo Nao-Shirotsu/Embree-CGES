@@ -18,7 +18,7 @@ public:
   void Update();
   void Add(GameObject&& object);
   void Emplace(const RTCDevice device, const char* const filePath); // íºê⁄ç\íz
-  const RTCScene GetScenePtr() const;
+  const RTCScene GetRTCScene() const;
 
 private:
   Scene(const Scene& other) = delete;

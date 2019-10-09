@@ -41,7 +41,7 @@ void Scene::Emplace(const RTCDevice device, const char* const filePath) {
   sceneChanged = true;
 }
 
-const RTCScene Scene::GetScenePtr() const {
+const RTCScene Scene::GetRTCScene() const {
   return m_rtcScene;
 }
 
