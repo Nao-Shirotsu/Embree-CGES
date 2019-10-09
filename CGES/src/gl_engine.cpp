@@ -3,10 +3,12 @@
 #include "render_buffer.hpp"
 
 #include <cassert>
+#include <glm/glm.hpp>
 
 namespace {
 
-constexpr float DELTA_MOVE_AMOUNT = 0.25;
+constexpr float PI = 3.14159265358979323846;
+constexpr float DELTA_SPIN_RADIAN = PI / 15.0f;
 
 }
 
@@ -35,21 +37,30 @@ Engine::~Engine() {
 
 void Engine::Update(Camera& camera) {
   if (glfwGetKey(m_window, GLFW_KEY_UP)) {
-    camera.pos.y += DELTA_MOVE_AMOUNT;
-    camera.lookingPos.y += DELTA_MOVE_AMOUNT;
+    camera.radYZ -= DELTA_SPIN_RADIAN;
+    if (camera.radYZ < 0.0f) {
+      camera.radYZ = 2.0f * PI;
+    }
   }
   if (glfwGetKey(m_window, GLFW_KEY_RIGHT)) {
-    camera.pos.x += DELTA_MOVE_AMOUNT;
-    camera.lookingPos.x += DELTA_MOVE_AMOUNT;
+    camera.radXZ += DELTA_SPIN_RADIAN;
+    if (camera.radXZ > 2.0f * PI) {
+      camera.radXZ = 0.0f;
+    }
   }
   if (glfwGetKey(m_window, GLFW_KEY_DOWN)) {
-    camera.pos.y -= DELTA_MOVE_AMOUNT;
-    camera.lookingPos.y -= DELTA_MOVE_AMOUNT;
+    camera.radYZ += DELTA_SPIN_RADIAN;
+    if (camera.radYZ > 2.0f * PI) {
+      camera.radYZ = 0.0f;
+    }
   }
   if (glfwGetKey(m_window, GLFW_KEY_LEFT)) {
-    camera.pos.x -= DELTA_MOVE_AMOUNT;
-    camera.lookingPos.x -= DELTA_MOVE_AMOUNT;
+    camera.radXZ -= DELTA_SPIN_RADIAN;
+    if (camera.radXZ < 0.0f) {
+      camera.radXZ = 2.0f * PI;
+    }
   }
+  camera.UpdatePosLocal();
 }
 
 void Engine::Draw(const RenderBuffer& renderTarget) const {

@@ -21,7 +21,7 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_camera{ camera }
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
-  m_scene.Emplace(m_rtcDevice, "bin/cat.obj");
+  m_scene.Emplace(m_rtcDevice, "bin/tetra.obj");
 }
 
 Renderer::~Renderer() {
@@ -39,10 +39,10 @@ void cges::Renderer::Draw() const {
   const int32_t width = static_cast<int32_t>(m_renderTarget.GetWidth());
   const int32_t height = static_cast<int32_t>(m_renderTarget.GetHeight());
   const float aspectRatio = height / static_cast<float>(width);
-  const glm::vec3 cameraFront = glm::normalize(m_camera.lookingPos - m_camera.pos);
-  const glm::vec3 screenHorizontalVec = glm::normalize(glm::cross(m_camera.upward, cameraFront)) * SCREEN_WIDTH;
+  const glm::vec3 cameraFront = glm::normalize(glm::vec3{0, 0, 0} - m_camera.GetPosLocal());
+  const glm::vec3 screenHorizontalVec = glm::normalize(glm::cross(m_camera.upwardWorld, cameraFront)) * SCREEN_WIDTH;
   const glm::vec3 screenVerticalVec = glm::normalize(glm::cross(screenHorizontalVec, cameraFront)) * SCREEN_WIDTH * aspectRatio;
-  const glm::vec3 screenCenterPos = m_camera.pos + cameraFront;
+  const glm::vec3 screenCenterPos = m_camera.posWorld + m_camera.GetPosLocal() + cameraFront;
 
   // スクリーン左上(pixel[0][0])のワールド座標
   const glm::vec3 initialPos = screenCenterPos - (glm::vec3{ 0.5, 0.5, 0.5 } * screenVerticalVec) - (glm::vec3{ 0.5, 0.5, 0.5 } * screenHorizontalVec);
@@ -80,6 +80,7 @@ void cges::Renderer::Draw() const {
 }
 
 void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec3& initialPos, const glm::vec3& screenVerticalVec, const glm::vec3& screenHorizontalVec, RTCIntersectContext* context) const{
+  const auto cameraPos = m_camera.posWorld + m_camera.GetPosLocal();
   for (size_t y = loopMin; y < loopMax; ++y) {
     const size_t height = m_renderTarget.GetHeight();
     const float yRate = y / static_cast<float>(height);
@@ -89,11 +90,11 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
     for (size_t x = 0; x < width; ++x) {
       const float xRate = x / static_cast<float>(width);
       const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
-      const glm::vec3 rayDir = pixelPos - m_camera.pos;
+      const glm::vec3 rayDir = pixelPos - cameraPos;
       RTCRayHit rayhit;
-      rayhit.ray.org_x = m_camera.pos.x;
-      rayhit.ray.org_y = m_camera.pos.y;
-      rayhit.ray.org_z = m_camera.pos.z;
+      rayhit.ray.org_x = cameraPos.x;
+      rayhit.ray.org_y = cameraPos.y;
+      rayhit.ray.org_z = cameraPos.z;
       rayhit.ray.dir_x = rayDir.x;
       rayhit.ray.dir_y = rayDir.y;
       rayhit.ray.dir_z = rayDir.z;
