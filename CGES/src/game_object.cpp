@@ -94,7 +94,11 @@ bool GameObject::LoadObjFile(const char* const objFileName) {
   m_idxBuf.resize(count[obj::Marker::F]);
   m_verNormalBuf.resize(count[obj::Marker::V]);
 
-  std::vector<VertexNormal3f> vnBuf{ count[obj::Marker::VN] };
+  std::vector<VertexNormal3f> vnBuf{ 0 };
+  
+  if (fTriple) {
+    vnBuf.resize(count[obj::Marker::VN]);
+  }
 
   if (!m_verBuf.size() || !m_idxBuf.size()) {
     return false;

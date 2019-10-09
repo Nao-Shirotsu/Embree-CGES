@@ -45,5 +45,9 @@ const RTCScene Scene::GetRTCScene() const {
   return m_rtcScene;
 }
 
+const glm::vec3& Scene::GetDirLightFront() const {
+  return m_dirLight.dir;
+}
+
 
 } //namespace cges

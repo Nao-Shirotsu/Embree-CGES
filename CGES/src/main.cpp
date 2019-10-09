@@ -11,7 +11,7 @@ int main() {
   auto camera = cges::Camera{ { -40, 370, -100 }, { 0, 1, 0 }, {-20, 370, 100} };
   auto renderer = cges::Renderer(camera, renderTarget);
 
-  auto engine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Test Window");
+  auto engine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
   while(!engine.ShouldTerminate()) {
     engine.Update(camera);
     renderer.Update();

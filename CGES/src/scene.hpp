@@ -19,6 +19,7 @@ public:
   void Add(GameObject&& object);
   void Emplace(const RTCDevice device, const char* const filePath); // íºê⁄ç\íz
   const RTCScene GetRTCScene() const;
+  const glm::vec3& GetDirLightFront() const;
 
 private:
   Scene(const Scene& other) = delete;

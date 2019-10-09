@@ -107,25 +107,22 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
 
       if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
         //const auto geomNormal = glm::normalize(glm::vec3{ rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z });
-        glm::vec3 color = { 0, 0, 0 };
+        glm::vec3 faceNormal = { 0, 0, 0 };
         rtcInterpolate0(rtcGetGeometry(m_scene.GetRTCScene(), rayhit.hit.geomID),
                         rayhit.hit.primID,
                         rayhit.hit.u,
                         rayhit.hit.v,
                         RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
                         0,
-                        &color.x,
+                        reinterpret_cast<float*>(&faceNormal),
                         3);
-        /*float shadingFactor = glm::dot(geomNormal, glm::normalize(rayDir));
+        float shadingFactor = glm::dot(m_scene.GetDirLightFront(), faceNormal);
         if(shadingFactor < 0.0) {
           shadingFactor *= -1.0;
         }
-        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(255 * shadingFactor);
-        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(255 * shadingFactor);
-        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(128 * shadingFactor);*/
-        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(255 * color.r);
-        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(255 * color.g);
-        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(128 * color.b);
+        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(223 * shadingFactor + 32);
+        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(223 * shadingFactor + 32);
+        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(128 * shadingFactor + 32);
       }
       else {
         m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);

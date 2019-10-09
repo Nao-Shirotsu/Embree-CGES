@@ -29,6 +29,6 @@ private:
 };
 
 [[nodiscard]] Marker ToMarker(const std::string& marker);
-bool LoadFileProperties(std::ifstream& ifs, obj::NumElements& count, bool fTriple);
+bool LoadFileProperties(std::ifstream& ifs, obj::NumElements& count, bool& fTriple);
 
 } // namespace cges::obj

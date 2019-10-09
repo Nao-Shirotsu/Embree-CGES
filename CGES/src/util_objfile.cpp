@@ -36,7 +36,7 @@ Marker ToMarker(const std::string& marker) {
   return Marker::SKIP;
 }
 
-bool LoadFileProperties(std::ifstream& ifs, obj::NumElements& count, bool fTriple) {
+bool LoadFileProperties(std::ifstream& ifs, obj::NumElements& count, bool& fTriple) {
   char dummy[INPUT_BUFFER_SIZE];
   bool fTripleWritten = false;
   std::string markerStr;
