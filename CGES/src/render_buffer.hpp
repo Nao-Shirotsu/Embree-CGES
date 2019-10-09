@@ -14,7 +14,7 @@ public:
   RenderBuffer(RenderBuffer&& other) noexcept;
 
   RenderBuffer& operator=(RenderBuffer&& other) noexcept;
-  ColorARGB* operator[](const size_t rowIdx) const noexcept(false);
+  ColorRGBA* operator[](const size_t rowIdx) const noexcept(false);
 
   size_t GetWidth() const noexcept;
   size_t GetHeight() const noexcept;
@@ -28,7 +28,7 @@ private:
 
   size_t m_width;
   size_t m_height;
-  std::unique_ptr<ColorARGB[]> m_pixels;
+  std::unique_ptr<ColorRGBA[]> m_pixels;
 };
 
 } // namespace cges

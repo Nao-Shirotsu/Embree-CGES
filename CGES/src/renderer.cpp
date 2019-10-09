@@ -3,6 +3,7 @@
 #include <thread>
 #include <vector>
 #include <numeric> // float infinity
+#include <cmath>
 
 #include <glm/glm.hpp>
 
@@ -16,23 +17,19 @@ namespace cges {
 
 Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     : m_rtcDevice{ rtcNewDevice(nullptr) }
-    , m_rtcScene{ rtcNewScene(m_rtcDevice) }
+    , m_scene{ m_rtcDevice }
     , m_camera{ camera }
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
-  auto object = cges::GameObject(m_rtcDevice);
-  assert(object.LoadObjFile("bunny.obj"));
-  object.AttachTo(m_rtcScene);
-  rtcCommitScene(m_rtcScene);
-
+  m_scene.Emplace(m_rtcDevice, "bin/cat.obj");
 }
 
 Renderer::~Renderer() {
-  rtcReleaseScene(m_rtcScene);
   rtcReleaseDevice(m_rtcDevice);
 }
 
 void Renderer::Update() {
+  m_scene.Update();
 }
 
 void cges::Renderer::Draw() const {
@@ -62,9 +59,9 @@ void cges::Renderer::Draw() const {
   auto threads = std::vector<std::thread>(m_maxThreads);
   const auto numLoop = height / m_maxThreads;
 
-  for (int y = 0; y < m_maxThreads; ++y) {
-    int loopBegIdx = numLoop * y;
-    int loopEndIdx = loopBegIdx + numLoop;
+  for (size_t y = 0; y < m_maxThreads; ++y) {
+    size_t loopBegIdx = numLoop * y;
+    size_t loopEndIdx = loopBegIdx + numLoop;
     if (y == m_maxThreads - 1) {
       loopEndIdx += (height % m_maxThreads);
     }
@@ -83,12 +80,13 @@ void cges::Renderer::Draw() const {
 }
 
 void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec3& initialPos, const glm::vec3& screenVerticalVec, const glm::vec3& screenHorizontalVec, RTCIntersectContext* context) const{
-  for (int y = loopMin; y < loopMax; ++y) {
-    const int height = m_renderTarget.GetHeight();
+  for (size_t y = loopMin; y < loopMax; ++y) {
+    const size_t height = m_renderTarget.GetHeight();
     const float yRate = y / static_cast<float>(height);
-    const int width = m_renderTarget.GetWidth();
-    const int yIdx = height - y - 1;
-    for (int x = 0; x < width; ++x) {
+    const float bgColorIntensity = 255 * yRate;
+    const size_t width = m_renderTarget.GetWidth();
+    const size_t yIdx = height - y - 1;
+    for (size_t x = 0; x < width; ++x) {
       const float xRate = x / static_cast<float>(width);
       const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
       const glm::vec3 rayDir = pixelPos - m_camera.pos;
@@ -100,19 +98,36 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
       rayhit.ray.dir_y = rayDir.y;
       rayhit.ray.dir_z = rayDir.z;
       rayhit.ray.tnear = 0;
-      rayhit.ray.tfar = std::numeric_limits<float>::max(); // “K“–
+      rayhit.ray.tfar = std::numeric_limits<float>::max();
       rayhit.ray.mask = 0;
       rayhit.ray.flags = 0;
       rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
       rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-      rtcIntersect1(m_rtcScene, context, &rayhit);
+      rtcIntersect1(m_scene.GetRTCScene(), context, &rayhit);
+
       if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
-        m_renderTarget[yIdx][x].r = 255;
-        m_renderTarget[yIdx][x].b = 255;
+        //const auto geomNormal = glm::normalize(glm::vec3{ rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z });
+        glm::vec3 faceNormal = { 0, 0, 0 };
+        rtcInterpolate0(rtcGetGeometry(m_scene.GetRTCScene(), rayhit.hit.geomID),
+                        rayhit.hit.primID,
+                        rayhit.hit.u,
+                        rayhit.hit.v,
+                        RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
+                        0,
+                        reinterpret_cast<float*>(&faceNormal),
+                        3);
+        float shadingFactor = glm::dot(m_scene.GetDirLightFront(), faceNormal);
+        if(shadingFactor < 0.0) {
+          shadingFactor *= -1.0;
+        }
+        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(223 * shadingFactor + 32);
+        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(223 * shadingFactor + 32);
+        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(128 * shadingFactor + 32);
       }
       else {
-        m_renderTarget[yIdx][x].r = 0;
-        m_renderTarget[yIdx][x].b = 0;
+        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);
+        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(bgColorIntensity / 1.5f);
+        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(bgColorIntensity);
       }
     }
   }

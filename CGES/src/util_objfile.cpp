@@ -2,8 +2,6 @@
 
 #include "constants.hpp"
 
-#include <cstdlib>
-
 namespace cges::obj {
 
 NumElements::NumElements()
@@ -35,11 +33,12 @@ Marker ToMarker(const std::string& marker) {
   if (marker == "usemtl") {
     return Marker::USEMTL;
   }
-  std::exit(1);
+  return Marker::SKIP;
 }
 
-bool CountCategories(std::ifstream& ifs, obj::NumElements& count) {
+bool LoadFileProperties(std::ifstream& ifs, obj::NumElements& count, bool& fTriple) {
   char dummy[INPUT_BUFFER_SIZE];
+  bool fTripleWritten = false;
   std::string markerStr;
   while (!ifs.eof()) {
     if (ifs.peek() == '#') {
@@ -47,11 +46,21 @@ bool CountCategories(std::ifstream& ifs, obj::NumElements& count) {
       continue;
     }
     ifs >> markerStr;
+    const auto marker = obj::ToMarker(markerStr);
+    if (marker == Marker::F && !fTripleWritten) {
+      ifs >> markerStr;
+      const auto pos = markerStr.find_first_of("/");
+      fTriple = (pos == std::string::npos ? false : true);
+      fTripleWritten = true;
+    }
     ifs.getline(dummy, INPUT_BUFFER_SIZE);
-    ++count[obj::ToMarker(markerStr)];
+    if(marker == Marker::SKIP) {
+      continue;
+    }
+    ++count[marker];
   }
   ifs.clear();
-  ifs.seekg(std::ios::beg);
+  ifs.seekg(0, std::ios::beg);
   return bool(ifs);
 }
 
