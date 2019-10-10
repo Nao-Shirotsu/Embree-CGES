@@ -22,7 +22,7 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_camera{ camera }
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
-  m_scene.Emplace(m_rtcDevice, "bin/cat.obj");
+  m_scene.Emplace(m_rtcDevice, "bin/goat.obj");
 }
 
 Renderer::~Renderer() {
@@ -178,7 +178,7 @@ ColorRGBA Renderer::GetPhongDiffusePixel(const glm::vec3& faceNormal) const{
   const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
   const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
   return ColorRGBA{
-    static_cast<uint8_t>(std::clamp(255 * diffuseFactor, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(200 * diffuseFactor, 0.0f, 255.0f)),
     static_cast<uint8_t>(std::clamp(64 * diffuseFactor, 0.0f, 255.0f)),
     static_cast<uint8_t>(std::clamp(64 * diffuseFactor, 0.0f, 255.0f)),
     0
@@ -189,9 +189,9 @@ ColorRGBA Renderer::GetPhongSpecularPixel(const glm::vec3& faceNormal, const glm
   const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
   const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
   return ColorRGBA{
-    static_cast<uint8_t>(std::clamp(128 * specularFactor, 0.0f, 255.0f)),
-    static_cast<uint8_t>(std::clamp(128 * specularFactor, 0.0f, 255.0f)),
-    static_cast<uint8_t>(std::clamp(128 * specularFactor, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(96 * specularFactor, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(96 * specularFactor, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(96 * specularFactor, 0.0f, 255.0f)),
     0
   };
 }
@@ -201,9 +201,9 @@ ColorRGBA Renderer::GetPhongShadingPixel(const glm::vec3& faceNormal, const glm:
   const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
   const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
   return ColorRGBA{
-    static_cast<uint8_t>(std::clamp(255 * diffuseFactor + 128 * specularFactor + 32, 0.0f, 255.0f)),
-    static_cast<uint8_t>(std::clamp(64 * diffuseFactor + 128 * specularFactor + 16, 0.0f, 255.0f)),
-    static_cast<uint8_t>(std::clamp(64 * diffuseFactor + 128 * specularFactor + 16, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(200 * diffuseFactor + 96 * specularFactor + 32, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(64 * diffuseFactor + 96 * specularFactor + 16, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(64 * diffuseFactor + 96 * specularFactor + 16, 0.0f, 255.0f)),
     0
   };
 }

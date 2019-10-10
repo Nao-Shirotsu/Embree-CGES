@@ -9,7 +9,7 @@
 namespace {
 
 constexpr float PI = 3.14159265358979323846;
-constexpr float DELTA_SPIN_RADIAN = PI / 15.0f;
+constexpr float DELTA_SPIN_RADIAN = PI / 60.0f;
 
 }
 
