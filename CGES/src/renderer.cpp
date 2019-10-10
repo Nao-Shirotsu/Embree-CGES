@@ -4,6 +4,7 @@
 #include <vector>
 #include <numeric> // float infinity
 #include <cmath>
+#include <algorithm> // clamp
 
 #include <glm/glm.hpp>
 
@@ -84,7 +85,7 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
   for (size_t y = loopMin; y < loopMax; ++y) {
     const size_t height = m_renderTarget.GetHeight();
     const float yRate = y / static_cast<float>(height);
-    const float bgColorIntensity = 255 * yRate;
+    const float bgColorIntensity = 255 * (1.0f - yRate);
     const size_t width = m_renderTarget.GetWidth();
     const size_t yIdx = height - y - 1;
     for (size_t x = 0; x < width; ++x) {
@@ -117,13 +118,12 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
                         0,
                         reinterpret_cast<float*>(&faceNormal),
                         3);
-        float shadingFactor = glm::dot(m_scene.GetDirLightFront(), faceNormal);
-        if(shadingFactor < 0.0) {
-          shadingFactor *= -1.0;
-        }
-        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(223 * shadingFactor + 32);
-        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(223 * shadingFactor + 32);
-        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(128 * shadingFactor + 32);
+        const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
+        const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
+        const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
+        m_renderTarget[yIdx][x].r = std::clamp(static_cast<int>(255 * diffuseFactor + 128 * specularFactor) + 32, 0, 255);
+        m_renderTarget[yIdx][x].g = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
+        m_renderTarget[yIdx][x].b = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
       }
       else {
         m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);

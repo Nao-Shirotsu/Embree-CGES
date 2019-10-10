@@ -15,7 +15,9 @@ void ReadFTriple(const std::string& fStatement, size_t& vertex, size_t& tex, siz
   vertex = std::stoi(fStatement);
   const auto firstSlashPos = fStatement.find_first_of("/");
   const auto secondSlashPos = fStatement.find_last_of("/");
-  tex = std::stoi(fStatement.substr(firstSlashPos + 1, secondSlashPos - firstSlashPos - 1));
+  if (fStatement[firstSlashPos + 1] != '/') {
+    tex = std::stoi(fStatement.substr(firstSlashPos + 1, secondSlashPos - firstSlashPos - 1));
+  }
   normal = std::stoi(fStatement.substr(secondSlashPos + 1, fStatement.length() - secondSlashPos - 1));
   // str: 100/200/300
   // idx: 0123456789
