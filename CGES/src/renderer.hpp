@@ -27,6 +27,16 @@ private:
                     const glm::vec3& screenVerticalVec,
                     const glm::vec3& screenHorizontalVec,
                     RTCIntersectContext* context) const;
+  
+  ColorRGBA GetNormalPixel(const glm::vec3& faceNormal) const;
+  ColorRGBA GetUVPixel(const RTCHit& rayhit) const;
+  ColorRGBA GetPhongDiffusePixel(const glm::vec3& faceNormal) const;
+  ColorRGBA GetPhongSpecularPixel(const glm::vec3& faceNormal, const glm::vec3& cameraPos) const;
+  constexpr ColorRGBA GetPhongAmbientPixel() const{
+    return { 32, 16, 16, 0 };
+  }
+  ColorRGBA GetPhongShadingPixel(const glm::vec3& faceNormal, const glm::vec3& cameraPos) const;
+  ColorRGBA GetBGPixel(const float colorIntensity) const;
 
   RTCDevice m_rtcDevice;
   Scene m_scene;

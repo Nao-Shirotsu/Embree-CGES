@@ -4,6 +4,15 @@
 
 namespace cges {
 
+enum class RenderMode {
+  NORMAL,
+  UV,
+  PHONG_DIFFUSE,
+  PHONG_SPECULAR,
+  PHONG_AMBIENT,
+  PHONG_SHADING
+};
+
 class Camera {
 public:
   Camera(const glm::vec3& posWorld, const float radius);
@@ -16,6 +25,7 @@ public:
   float radius = 5.0f;
   float radXZ = 0.0f; // xê¨ï™Ç∆zê¨ï™ÇÃä‘ÇÃÇ»Ç∑äp
   float radYZ = 0.0f; // yê¨ï™Ç∆zê¨ï™ÇÃä‘ÇÃÇ»Ç∑äp
+  RenderMode mode = RenderMode::PHONG_SHADING;
 
 private:
   //glm::vec3 lookingPosLocal = { 0.0, 0.0, 0.0 };

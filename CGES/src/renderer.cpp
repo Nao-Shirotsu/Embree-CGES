@@ -118,20 +118,103 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
                         0,
                         reinterpret_cast<float*>(&faceNormal),
                         3);
-        const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
-        const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
-        const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
-        m_renderTarget[yIdx][x].r = std::clamp(static_cast<int>(255 * diffuseFactor + 128 * specularFactor) + 32, 0, 255);
-        m_renderTarget[yIdx][x].g = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
-        m_renderTarget[yIdx][x].b = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
+        faceNormal = glm::normalize(faceNormal);
+        switch(m_camera.mode) {
+          case RenderMode::NORMAL: {
+            m_renderTarget[yIdx][x] = GetNormalPixel(faceNormal);
+          } break;
+
+          case RenderMode::UV: {
+            m_renderTarget[yIdx][x] = GetUVPixel(rayhit.hit);
+          } break;
+
+          case RenderMode::PHONG_DIFFUSE: {
+            m_renderTarget[yIdx][x] = GetPhongDiffusePixel(faceNormal);
+          } break;
+
+          case RenderMode::PHONG_SPECULAR: {
+            m_renderTarget[yIdx][x] = GetPhongSpecularPixel(faceNormal, cameraPos);
+          } break;
+            
+          case RenderMode::PHONG_AMBIENT: {
+            m_renderTarget[yIdx][x] = GetPhongAmbientPixel();
+          } break;
+
+          case RenderMode::PHONG_SHADING: {
+            m_renderTarget[yIdx][x] = GetPhongShadingPixel(faceNormal, cameraPos);
+          } break;
+
+          default: {
+            m_renderTarget[yIdx][x] = GetBGPixel(bgColorIntensity);
+          }
+        }
       }
       else {
-        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);
-        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(bgColorIntensity / 1.5f);
-        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(bgColorIntensity);
+        m_renderTarget[yIdx][x] = GetBGPixel(bgColorIntensity);
       }
     }
   }
+}
+
+ColorRGBA Renderer::GetNormalPixel(const glm::vec3& faceNormal) const{
+  return ColorRGBA {
+    static_cast<uint8_t>(255 * std::clamp(faceNormal.x, 0.0f, 1.0f)),
+    static_cast<uint8_t>(255 * std::clamp(faceNormal.y, 0.0f, 1.0f)),
+    static_cast<uint8_t>(255 * std::clamp(faceNormal.z, 0.0f, 1.0f)),
+    0
+  };
+}
+
+ColorRGBA Renderer::GetUVPixel(const RTCHit& rayhit) const{
+  return ColorRGBA{
+    static_cast<uint8_t>(0),
+    static_cast<uint8_t>(255 * rayhit.u),
+    static_cast<uint8_t>(255 * rayhit.v),
+    0
+  };
+}
+
+ColorRGBA Renderer::GetPhongDiffusePixel(const glm::vec3& faceNormal) const{
+  const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
+  const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
+  return ColorRGBA{
+    static_cast<uint8_t>(std::clamp(255 * diffuseFactor, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(64 * diffuseFactor, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(64 * diffuseFactor, 0.0f, 255.0f)),
+    0
+  };
+}
+
+ColorRGBA Renderer::GetPhongSpecularPixel(const glm::vec3& faceNormal, const glm::vec3& cameraPos) const {
+  const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
+  const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
+  return ColorRGBA{
+    static_cast<uint8_t>(std::clamp(128 * specularFactor, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(128 * specularFactor, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(128 * specularFactor, 0.0f, 255.0f)),
+    0
+  };
+}
+
+ColorRGBA Renderer::GetPhongShadingPixel(const glm::vec3& faceNormal, const glm::vec3& cameraPos) const {
+  const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
+  const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
+  const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
+  return ColorRGBA{
+    static_cast<uint8_t>(std::clamp(255 * diffuseFactor + 128 * specularFactor + 32, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(64 * diffuseFactor + 128 * specularFactor + 16, 0.0f, 255.0f)),
+    static_cast<uint8_t>(std::clamp(64 * diffuseFactor + 128 * specularFactor + 16, 0.0f, 255.0f)),
+    0
+  };
+}
+
+ColorRGBA Renderer::GetBGPixel(const float colorIntensity) const {
+  return ColorRGBA{
+    static_cast<uint8_t>(colorIntensity / 1.5f),
+    static_cast<uint8_t>(colorIntensity / 1.5f),
+    static_cast<uint8_t>(colorIntensity),
+    0
+  };
 }
 
 } // namespace cges::obj

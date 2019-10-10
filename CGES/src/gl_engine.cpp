@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <glm/glm.hpp>
+#include <algorithm>
 
 namespace {
 
@@ -37,11 +38,7 @@ Engine::~Engine() {
 
 void Engine::Update(Camera& camera) {
   if (glfwGetKey(m_window, GLFW_KEY_UP)) {
-    camera.radYZ -= DELTA_SPIN_RADIAN;
-    if (camera.radYZ < DELTA_SPIN_RADIAN) {
-      camera.radYZ = 2.0f * PI;
-      //camera.upwardWorld = -camera.upwardWorld;
-    }
+    camera.radYZ =  std::clamp(camera.radYZ - DELTA_SPIN_RADIAN, DELTA_SPIN_RADIAN, PI - DELTA_SPIN_RADIAN);
     camera.UpdatePosLocal();
   }
   if (glfwGetKey(m_window, GLFW_KEY_RIGHT)) {
@@ -52,11 +49,7 @@ void Engine::Update(Camera& camera) {
     camera.UpdatePosLocal();
   }
   if (glfwGetKey(m_window, GLFW_KEY_DOWN)) {
-    camera.radYZ += DELTA_SPIN_RADIAN;
-    if (camera.radYZ > 2.0f * PI) {
-      camera.radYZ = DELTA_SPIN_RADIAN;
-      //camera.upwardWorld = -camera.upwardWorld;
-    }
+    camera.radYZ = std::clamp(camera.radYZ + DELTA_SPIN_RADIAN, DELTA_SPIN_RADIAN, PI - DELTA_SPIN_RADIAN);
     camera.UpdatePosLocal();
   }
   if (glfwGetKey(m_window, GLFW_KEY_LEFT)) {
@@ -65,6 +58,24 @@ void Engine::Update(Camera& camera) {
       camera.radXZ = 2.0f * PI;
     }
     camera.UpdatePosLocal();
+  }
+  if(glfwGetKey(m_window, GLFW_KEY_1)) {
+    camera.mode = RenderMode::NORMAL;
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_2)) {
+    camera.mode = RenderMode::UV;
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_3)) {
+    camera.mode = RenderMode::PHONG_DIFFUSE;
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_4)) {
+    camera.mode = RenderMode::PHONG_SPECULAR;
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_5)) {
+    camera.mode = RenderMode::PHONG_AMBIENT;
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_6)) {
+    camera.mode = RenderMode::PHONG_SHADING;
   }
 }
 
