@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\game_object.cpp" />
     <ClCompile Include="src\gl_engine.cpp" />
     <ClCompile Include="src\main.cpp" />
