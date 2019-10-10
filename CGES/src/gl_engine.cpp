@@ -38,29 +38,34 @@ Engine::~Engine() {
 void Engine::Update(Camera& camera) {
   if (glfwGetKey(m_window, GLFW_KEY_UP)) {
     camera.radYZ -= DELTA_SPIN_RADIAN;
-    if (camera.radYZ < 0.0f) {
+    if (camera.radYZ < DELTA_SPIN_RADIAN) {
       camera.radYZ = 2.0f * PI;
+      //camera.upwardWorld = -camera.upwardWorld;
     }
+    camera.UpdatePosLocal();
   }
   if (glfwGetKey(m_window, GLFW_KEY_RIGHT)) {
     camera.radXZ += DELTA_SPIN_RADIAN;
     if (camera.radXZ > 2.0f * PI) {
-      camera.radXZ = 0.0f;
+      camera.radXZ = DELTA_SPIN_RADIAN;
     }
+    camera.UpdatePosLocal();
   }
   if (glfwGetKey(m_window, GLFW_KEY_DOWN)) {
     camera.radYZ += DELTA_SPIN_RADIAN;
     if (camera.radYZ > 2.0f * PI) {
-      camera.radYZ = 0.0f;
+      camera.radYZ = DELTA_SPIN_RADIAN;
+      //camera.upwardWorld = -camera.upwardWorld;
     }
+    camera.UpdatePosLocal();
   }
   if (glfwGetKey(m_window, GLFW_KEY_LEFT)) {
     camera.radXZ -= DELTA_SPIN_RADIAN;
-    if (camera.radXZ < 0.0f) {
+    if (camera.radXZ < DELTA_SPIN_RADIAN) {
       camera.radXZ = 2.0f * PI;
     }
+    camera.UpdatePosLocal();
   }
-  camera.UpdatePosLocal();
 }
 
 void Engine::Draw(const RenderBuffer& renderTarget) const {

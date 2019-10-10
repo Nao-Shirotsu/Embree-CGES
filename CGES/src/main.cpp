@@ -8,7 +8,7 @@ constexpr int WINDOW_HEIGHT = 450;
 
 int main() {
   auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
-  auto camera = cges::Camera({ 0, 0, 0 }, 5.0f);
+  auto camera = cges::Camera({ -30, 370, 100 }, 220.0f);
   auto renderer = cges::Renderer(camera, renderTarget);
 
   auto engine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
