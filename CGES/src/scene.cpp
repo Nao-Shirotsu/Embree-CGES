@@ -6,8 +6,8 @@ namespace cges {
 
 Scene::Scene(const RTCDevice rtcDevice)
     : m_rtcScene{ rtcNewScene(rtcDevice) }
-    , m_objects{ 0 }
-    , m_lightSrcs{ 0 }
+    , m_objects( 0 )
+    , m_lightSrcs( 0 )
     , sceneChanged{false} {
   const float divRoot3 = 1.0f / std::sqrtf(3.0f);
   m_dirLight.dir = { -divRoot3, -divRoot3, -divRoot3 };
@@ -26,15 +26,9 @@ void Scene::Update() {
   sceneChanged = false;
 }
 
-void Scene::Add(GameObject&& object) {
+void Scene::Add(std::unique_ptr<gameobject::Base> object) {
   m_objects.push_back(std::move(object));
-  (m_objects.end() - 1)->AttachTo(m_rtcScene);
-  sceneChanged = true;
-}
-
-void Scene::Emplace(const RTCDevice device, const char* const filePath) {
-  m_objects.emplace_back(device, filePath);
-  (m_objects.end() - 1)->AttachTo(m_rtcScene);
+  (*(m_objects.end() - 1))->AttachTo(m_rtcScene);
   sceneChanged = true;
 }
 

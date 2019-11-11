@@ -1,10 +1,12 @@
 #pragma once
 
 #include <vector>
+#include <memory>
+
 #include <glm/vec3.hpp>
 #include <embree3/rtcore.h>
 
-#include "game_object.hpp"
+#include "gameobject_base.hpp"
 #include "light_source.hpp"
 
 namespace cges {
@@ -16,8 +18,7 @@ public:
   ~Scene() noexcept;
 
   void Update();
-  void Add(GameObject&& object);
-  void Emplace(const RTCDevice device, const char* const filePath); // íºê⁄ç\íz
+  void Add(std::unique_ptr<gameobject::Base> object);
   const RTCScene GetRTCScene() const;
   const glm::vec3& GetDirLightForward() const;
 
@@ -26,7 +27,7 @@ private:
   Scene& operator=(const Scene& other) = delete;
 
   RTCScene m_rtcScene;
-  std::vector<GameObject> m_objects;
+  std::vector<std::unique_ptr<gameobject::Base>> m_objects;
   std::vector<LightSource> m_lightSrcs;
   LightSource m_dirLight;
   bool sceneChanged;

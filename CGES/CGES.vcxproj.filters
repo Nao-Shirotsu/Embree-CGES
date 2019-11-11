@@ -12,9 +12,6 @@
     <ClCompile Include="src\util_objfile.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\game_object.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\renderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -24,8 +21,13 @@
     <ClCompile Include="src\gl_engine.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\Camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameobject_base.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -49,9 +51,6 @@
     <ClInclude Include="src\util_objfile.hpp">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\game_object.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\constants.hpp">
       <Filter>src</Filter>
     </ClInclude>
@@ -62,6 +61,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\light_source.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gameobject_base.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

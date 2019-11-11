@@ -5,6 +5,7 @@
 #include <numeric> // float infinity
 #include <cmath>
 #include <algorithm> // clamp
+#include <memory>
 
 #include <glm/glm.hpp>
 
@@ -22,7 +23,7 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_camera{ camera }
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
-  m_scene.Emplace(m_rtcDevice, "bin/cat.obj");
+  m_scene.Add(std::make_unique<GameObject>(m_rtcDevice, "bin/goat_filled.obj"));
 }
 
 Renderer::~Renderer() {

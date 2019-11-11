@@ -1,34 +1,13 @@
 #pragma once
 
+#include "bufferelements.hpp"
+
 #include <array>
 #include <fstream>
-#include <string>
+#include <vector>
 
 namespace cges::obj {
 
-// .objファイルの各行頭にあるマーカー
-enum class Marker {
-  V = 0,
-  F,
-  VT,
-  VN,
-  G,
-  MTLLIB,
-  USEMTL,
-  SKIP, // コメント及び不明なマーカ
-};
-
-// ↑の6要素が1つのobjに何個含まれるか保存する構造体
-class NumElements {
-public:
-  NumElements();
-  size_t& operator[](const Marker idx);
-
-private:
-  std::array<size_t, 7> m_count;
-};
-
-[[nodiscard]] Marker ToMarker(const std::string& marker);
-bool LoadFileProperties(std::ifstream& ifs, obj::NumElements& count, bool& fTriple);
+bool LoadFromFile(const char* const filePath, std::vector<Vector3f>& vertexBuf, std::vector<PolygonIndex>& indexBuf, std::vector<Vector3f>& vertexNormalBuf);
 
 } // namespace cges::obj

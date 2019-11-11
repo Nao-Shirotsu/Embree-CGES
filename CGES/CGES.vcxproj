@@ -140,7 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\game_object.cpp" />
+    <ClCompile Include="src\gameobject_base.cpp" />
     <ClCompile Include="src\gl_engine.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer.cpp" />
@@ -156,7 +156,7 @@
     <ClInclude Include="src\camera.hpp" />
     <ClInclude Include="src\color.hpp" />
     <ClInclude Include="src\constants.hpp" />
-    <ClInclude Include="src\game_object.hpp" />
+    <ClInclude Include="src\gameobject_base.hpp" />
     <ClInclude Include="src\gl_engine.hpp" />
     <ClInclude Include="src\light_source.hpp" />
     <ClInclude Include="src\renderer.hpp" />
