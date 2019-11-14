@@ -1,7 +1,7 @@
 #pragma once
 
 #include "camera.hpp"
-#include "render_buffer.hpp"
+#include "renderbuffer.hpp"
 #include "scene.hpp"
 
 #include <glm/vec3.hpp>

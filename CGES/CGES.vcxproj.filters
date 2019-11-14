@@ -15,15 +15,6 @@
     <ClCompile Include="src\renderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\render_buffer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gl_engine.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Camera.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\scene.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -33,31 +24,31 @@
     <ClCompile Include="src\gameobject_polygonalmesh.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\renderbuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glengine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\render_buffer.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\color.hpp">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\renderer.hpp">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\camera.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\util_objfile.hpp">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\constants.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gl_engine.hpp">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\scene.hpp">
@@ -73,6 +64,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\bufferelements.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glengine.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderbuffer.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\camera.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
