@@ -30,6 +30,9 @@
     <ClCompile Include="src\gameobject_base.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\gameobject_polygonalmesh.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -64,6 +67,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\gameobject_base.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gameobject_polygonalmesh.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bufferelements.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

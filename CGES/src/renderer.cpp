@@ -1,4 +1,5 @@
 #include "renderer.hpp"
+#include "gameobject_polygonalmesh.hpp"
 
 #include <thread>
 #include <vector>
@@ -23,7 +24,7 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_camera{ camera }
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
-  m_scene.Add(std::make_unique<GameObject>(m_rtcDevice, "bin/goat_filled.obj"));
+  m_scene.Add(std::make_unique<gameobject::PolygonalMesh>(m_rtcDevice, "bin/goat_filled.obj"));
 }
 
 Renderer::~Renderer() {

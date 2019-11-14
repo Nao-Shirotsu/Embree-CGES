@@ -204,6 +204,8 @@ bool LoadFromFile(const char* const filePath, std::vector<Vector3f>& vertexBuf, 
       } break;
     }
   } while (!ifs.eof());
+
+  return true;
 }
 
 }

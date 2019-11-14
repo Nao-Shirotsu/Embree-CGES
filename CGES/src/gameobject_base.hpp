@@ -8,7 +8,7 @@ namespace cges::gameobject{
 // シーンに配置される任意の3Dモデルのクラス
 class Base {
 public:
-  Base(const RTCDevice device);
+  Base(const RTCDevice device, const RTCGeometryType geomType);
 
   virtual ~Base() noexcept;
 
@@ -18,7 +18,7 @@ public:
   // Embree管理下のシーンにこのオブジェクトを登録
   unsigned int AttachTo(const RTCScene scene);
 
-private:
+protected:
   //glm::vec3 origin; // モデル座標系原点のワールド位置
   const RTCDevice m_rtcDevice;
   RTCGeometry m_rtcGeometry;

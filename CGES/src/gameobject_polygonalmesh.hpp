@@ -10,9 +10,7 @@ namespace cges::gameobject {
 // シーンに配置される任意の3Dモデルのクラス
 class PolygonalMesh : public Base {
 public:
-  PolygonalMesh(const RTCDevice device, std::vector<Vector3f> vertexBuf, std::vector<PolygonIndex> indexBuf, std::vector<Vector3f> vertexNormalBuf);
-
-  ~PolygonalMesh() noexcept;
+  PolygonalMesh(const RTCDevice device, const char* const filePath);
 
   bool HasAttribute() override;
 
