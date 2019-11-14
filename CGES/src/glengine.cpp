@@ -1,6 +1,6 @@
-#include "gl_engine.hpp"
+#include "glengine.hpp"
 
-#include "render_buffer.hpp"
+#include "renderbuffer.hpp"
 
 #include <algorithm>
 #include <cassert>

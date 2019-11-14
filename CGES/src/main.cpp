@@ -1,7 +1,7 @@
 #include "camera.hpp"
-#include "render_buffer.hpp"
+#include "renderbuffer.hpp"
 #include "renderer.hpp"
-#include "gl_engine.hpp"
+#include "glengine.hpp"
 
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 450;
