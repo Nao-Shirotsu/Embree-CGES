@@ -2,7 +2,6 @@
 
 #include "camera.hpp"
 #include "render_buffer.hpp"
-#include "game_object.hpp"
 #include "scene.hpp"
 
 #include <glm/vec3.hpp>
