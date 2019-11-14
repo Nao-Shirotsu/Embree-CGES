@@ -56,4 +56,9 @@ bool PolygonalMesh::HasAttribute() {
   return m_vertexNormalBuf.size() != 0;
 }
 
-}// namespace cges::gameobject
+} // namespace cges::gameobject
+
+std::unique_ptr<cges::gameobject::PolygonalMesh> cges::MakePolygonalMesh(const RTCDevice device, const char* const filePath) {
+  return std::make_unique<gameobject::PolygonalMesh>(device, filePath);
+}
+

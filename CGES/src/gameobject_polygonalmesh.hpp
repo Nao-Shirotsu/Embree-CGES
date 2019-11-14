@@ -4,6 +4,7 @@
 #include "bufferelements.hpp"
 
 #include <vector>
+#include <memory>
 
 namespace cges::gameobject {
 
@@ -21,3 +22,9 @@ private:
 };
 
 } // namespace cges::gameobject
+
+namespace cges{
+
+std::unique_ptr<gameobject::PolygonalMesh> MakePolygonalMesh(const RTCDevice device, const char* const filePath);
+
+} // namespace cges
