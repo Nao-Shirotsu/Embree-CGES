@@ -33,6 +33,9 @@
     <ClCompile Include="src\camera.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -73,6 +76,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\camera.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texture.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
