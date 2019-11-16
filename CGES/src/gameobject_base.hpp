@@ -1,5 +1,7 @@
 #pragma once
 
+#include "color.hpp"
+
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
 
@@ -17,6 +19,9 @@ public:
 
   // Embree管理下のシーンにこのオブジェクトを登録
   unsigned int AttachTo(const RTCScene scene);
+
+  // uv座標からピクセル色を返す
+  virtual ColorRGBA GetColorByUV(const float x, const float y) = 0;
 
 protected:
   //glm::vec3 origin; // モデル座標系原点のワールド位置

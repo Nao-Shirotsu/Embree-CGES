@@ -21,6 +21,7 @@ public:
   void Add(std::unique_ptr<gameobject::Base> object);
   const RTCScene GetRTCScene() const;
   const glm::vec3& GetDirLightForward() const;
+  ColorRGBA GetObjectColor(const size_t idx, const float u, const float v) const noexcept(false);
 
 private:
   Scene(const Scene& other) = delete;
