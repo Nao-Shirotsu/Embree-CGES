@@ -9,8 +9,9 @@
 
 namespace cges::gameobject {
 
-PolygonalMesh::PolygonalMesh(const RTCDevice device, const char* const filePath) 
-    : Base(device, RTC_GEOMETRY_TYPE_TRIANGLE) {
+PolygonalMesh::PolygonalMesh(const RTCDevice device, const char* const filePath, ColorRGBA diffuseColor) 
+    : Base(device, RTC_GEOMETRY_TYPE_TRIANGLE)
+    , m_diffuseColor(diffuseColor){
 #ifdef _DEBUG
   assert(obj::LoadFromFile(filePath, m_vertexBuf, m_indexBuf, m_vertexNormalBuf));
 #else
@@ -57,12 +58,12 @@ bool PolygonalMesh::HasAttribute() {
 }
 
 ColorRGBA PolygonalMesh::GetColorByUV(const float x, const float y) {
-  return {64, 255, 64, 255}; // TODO : ‚ ‚Æ‚ÅŽÀ‘•‚·‚é
+  return m_diffuseColor; // TODO : ‚ ‚Æ‚ÅŽÀ‘•‚·‚é
 }
 
 } // namespace cges::gameobject
 
-std::unique_ptr<cges::gameobject::PolygonalMesh> cges::MakePolygonalMesh(const RTCDevice device, const char* const filePath) {
-  return std::make_unique<gameobject::PolygonalMesh>(device, filePath);
+std::unique_ptr<cges::gameobject::PolygonalMesh> cges::MakePolygonalMesh(const RTCDevice device, const char* const filePath, ColorRGBA diffuseColor) {
+  return std::make_unique<gameobject::PolygonalMesh>(device, filePath, diffuseColor);
 }
 
