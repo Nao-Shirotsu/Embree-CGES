@@ -40,5 +40,9 @@ const glm::vec3& Scene::GetDirLightForward() const {
   return m_dirLight.dir;
 }
 
+ColorRGBA Scene::GetObjectColor(const size_t idx, const float u, const float v) const{
+  return m_objects[idx]->GetColorByUV(u, v);
+}
+
 
 } //namespace cges

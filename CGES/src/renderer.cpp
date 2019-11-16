@@ -123,9 +123,10 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
         const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
         const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
         const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
-        m_renderTarget[yIdx][x].r = std::clamp(static_cast<int>(255 * diffuseFactor + 128 * specularFactor) + 32, 0, 255);
-        m_renderTarget[yIdx][x].g = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
-        m_renderTarget[yIdx][x].b = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
+        const auto pixelColor = m_scene.GetObjectColor(rayhit.hit.geomID, rayhit.hit.u, rayhit.hit.v);
+        m_renderTarget[yIdx][x].r = std::clamp(static_cast<int>(pixelColor.r * diffuseFactor + 128 * specularFactor) + 32, 0, 255);
+        m_renderTarget[yIdx][x].g = std::clamp(static_cast<int>(pixelColor.g * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
+        m_renderTarget[yIdx][x].b = std::clamp(static_cast<int>(pixelColor.b * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
       }
       else {
         m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);

@@ -15,6 +15,8 @@ public:
 
   bool HasAttribute() override;
 
+  ColorRGBA GetColorByUV(const float x, const float y) override;
+
 private:
   std::vector<Vector3f> m_vertexBuf;
   std::vector<PolygonIndex> m_indexBuf;
