@@ -1,51 +1,47 @@
-# Embree3 入門解説 (概要と交差判定)
+# Embree3 入門解説 処理フロー概要
 
 ## はじめに
 
-[Embree]( https://www.embree.org/index.html )とは、Intelが提供する高速なレイトレーシングを実現するC言語のライブラリです。   
-EmbreeはCPUのみで処理を実行し、非常に高いパフォーマンスを発揮できます。   
-この記事では、これからEmbree 3.x系を利用する人へ向け、C++による実装を処理の流れに沿って解説します。     
-     
+[Embree]( https://www.embree.org/index.html )とは、Intelが提供する高速なレイトレーシングを実現するC言語(C99)のライブラリです。
+EmbreeはCPUのみで処理を実行し、非常に高いパフォーマンスを発揮してくれます。
+この記事では、これからEmbree 3.x系を利用する人へ向け、C++による実装を処理の流れに沿って解説します。
 
-## この記事の対象読者
+## 想定読者
 
 この記事の想定読者は以下の通りです。関連するトピックの用語を前置き無く使用しますのでご了承ください。  
 
+- Embreeを利用し始めたいが勝手が分からず困っている方
 - 基本的なC++の記法が分かる方
-- レイトレーシングの基本的な描画フローを理解している方   
-- Graphics APIにおける基本的なバッファの概念を理解している方    
-  
-
-## Embree APIバージョン
-
-Embreeは、2018年3月に発表された2.x系から3.0へのアップデートの際にAPIが刷新されました。  
-2.x系と3.x系では処理の流れは概ね同じですが、2.x系のAPIのほとんどが3.x系で利用できません。    
-この記事では、**Embree 3.x系の内容を取り扱います。**(以降Embree3と表記)     
-
-筆者も大いに参考にさせていただいたEmbree 2.x系の解説記事は[こちら](https://qiita.com/denirou/items/1933dbb1dceb59e3aa3c)。     
-
-
+- レイトレーシングの基本的な描画フローが分かる方
+- Graphics PipelineのVertex Buffer, Index Bufferを知っている方
 
 ## 開発環境
 
-執筆時の開発環境と、利用したEmbree3以外のライブラリを挙げます。       
-また、以後の解説で開発環境(後述)ごとに異なる部分は触れませんのでご了承ください。   
+執筆時の開発環境と、利用したEmbree3以外のライブラリを挙げます。
+また、以後の解説で開発環境(後述)ごとに異なる部分は触れませんのでご了承ください。
 
 - Windows10 Build_18956 insider preview
 - Visual Studio 2019
 - OpenGL v4.5
 - GLFW v3.3.0.1
-- GLM v0.9.9.600    
+- GLM v0.9.9.600
 
-※ OpenGLとGLFWはウィンドウへの描画にのみ利用します。    
+※ OpenGLとGLFWはウィンドウへの描画にのみ利用します。   
+
+## Embree APIバージョン
+
+Embreeは、2018年3月に発表された2.x系から3.0へのアップデートの際にAPIが刷新されました。
+2.x系と3.x系では処理の流れは概ね同じですが、2.x系のAPIのほとんどが3.x系で利用できません。
+この記事では、**Embree 3.x系に沿って**解説します。(以降Embree3と表記)   
+筆者も大いに参考にさせていただいたEmbree 2.x系の解説記事は[こちら](https://qiita.com/denirou/items/1933dbb1dceb59e3aa3c)。
 
 
 ## 描画モデル
 
 ![tetra_bottom](C:\Users\albus\Pictures\gomi\tetra_bottom.png)
 
-今回はこのモデル(頂点数6, ポリゴン数8)を利用します。
-以下にC++コードとして便宜的に示します。
+今回はこのモデル(頂点数6, ポリゴン数8)を利用して解説します。
+以下にC++コードで便宜的に示します。
 
 ```
 vertex[0] = { -0.5f,  0.0f,  0.0f };
@@ -69,20 +65,30 @@ index[7] = { 1, 4, 6 };
 
 ## 環境構築
 
-[公式ページ]( https://www.embree.org/downloads.html )から依存ファイルをダウンロードし、解凍して適切なディレクトリへ配置します。  
-開発環境ごとにヘッダファイル, リンクファイルに関する設定を行なってください。   
+[公式ページ]( https://www.embree.org/downloads.html )から依存ファイルをダウンロードし、お好きなディレクトリへインストールしてください。
+ヘッダファイル, リンクファイルの設定もお忘れなく。
+
+ちなみに、旧バージョンは[公式開発リポジトリのReleases](https://github.com/embree/embree/releases)から入手できます。
+
+## Embree3のオブジェクト
+
+Embree3にはDevice, Scene, Geometry, Buffer, BVH というオブジェクトがあります。
+(これらはEmbree3で特殊な意味を持つので、この記事上では曖昧さ回避のため便宜的に「Embree3オブジェクト」と表記します)
+これらに対応する型のインスタンスは通常`rtcNewXXX`(XXXにDevice等が入る)という関数で生成し、その返り値のハンドルをユーザが利用します。
+また、これらのオブジェクトは参照カウント方式で管理できます。`rtcNewXXX`で生成した直後はカウントが1で、`rtcRetainXXX`関数でインクリメント、`rtcReleaseXX`関数でデクリメントします。リリース時にカウントが0ならばインスタンスが解放されます。
+(この一連の操作を「ユーザ側で管理」と表現します)
 
 ## 処理フロー概要
 
 ![embree_qiita_api](C:\Users\albus\Pictures\gomi\embree_qiita_api.png)
 
-Embree3ではこのような流れでプログラムを記述していきます。   
-下記の各解説では、**利用する関数のシグネチャ -> 呼び出し側のコード** という順で表記します。   
-また、「Embree3のKernel」という単語を「APIコールによってEmbree3の内部で処理をする部分」という意味で用います。   
+Embree3ではこのような流れでプログラムを記述していきます。
+下記の各解説では、**利用する関数のシグネチャ -> 呼び出し側のコード** という順で表記します。
+また、「Embree3のKernel」という単語を「APIコールによってEmbree3の内部で処理をする部分」という意味で用います。
 
 ## デバイス生成
 
-Embree3のデバイスオブジェクトを生成します。  
+Embree3オブジェクト、Deviceを生成します。
 返り値はハンドルとして受け取り、ユーザ側で管理します。
 
 ```C++
@@ -95,13 +101,54 @@ RTCDevice rtcNewDevice(const char* config);
 RTCDevice device = rtcNewDevice(nullptr);
 ```
 
-このデバイスは、他のオブジェクトの生成に利用されます。   
-引数でオプションを指定できますが、この記事ではまだ必要にならないため説明は割愛します。   
+このデバイスは、他のEmbree3オブジェクトの生成に利用します。
+また、引数に特定の文字列を渡すことでconfiguration)ができます。
+
+#### `rtcNewDevice`のconfiguration項目
+
+空の文字列、`NULL`、`nullptr`を渡すとデフォルト設定になります。
+
+それ以外
+以下は設定項目リストと概説です。
+
+- `threads=[int]` 
+  ビルドスレッドの数？
+  
+- `user_threads=[int]`
+  シーンコミット`rtcJoinCommitScene`に使うスレッドの数？
+  
+- `set_affinity=[0/1]`
+  enable : ビルドスレッドがaffinitizeされる？(Xeon Phiでのみ可っぽい)
+  
+- `start_threads=[0/1]`
+  ビルドスレッドが先行して実行される？ スレッド生成時間を除いてベンチマークする時に便利。
+  
+- `isa=[sse2,sse4.2,avx,avx2,avx512knl,avx512skx]`
+  利用するCPU命令セットアーキテクチャを選択します。何も指定しなければ自動で選択されます。
+  
+- `max_isa=[sse2,sse4.2,avx,avx2,avx512knl,avx512skx]`
+  利用する命令セットアーキテクチャの自動選択のうち最高のものを指定します。指定したアーキテクチャより良いアーキテクチャは自動選択されなくなります。
+  
+- `hugepages=[0/1]`
+  huge pagesを有効化/無効化します。Linux環境ではデフォルトで有効、MacとWindows環境ではデフォルトで無効です。
+  
+- `enable_selockmemoryprivilege=[0/1]`
+  有効化すると、?
+  
+- `ignore_config_files=[0/1]`
+  configuration filesを無視する?
+  
+- `verbose=[0,1,2,3]`
+  Embree3による情報出力の冗長性を操作します。デフォルトでは何も出力しない0で、値を大きくするとより多くの情報を出力するようになります。
+
+- `frequency_level=[simd128,simd256,simd512]`
+
+  
 
 ## シーン初期化
 
-「3D空間上のオブジェクト」を保持するシーンを生成します。   
-返り値はハンドルとして受け取り、ユーザ側で管理します。
+「3D空間上のオブジェクト」を保持するシーンを生成します。
+返り値はハンドル(`RTCScene`型)として受け取り、ユーザ側で管理します。
 
 ```C++
 // declared in embree3/rtcore_scene.h
@@ -115,14 +162,12 @@ RTCScene scene = rtcNewScene(device);
 
 後に `scene` に「3D空間上のオブジェクト」を1つ以上アタッチし、レイトレースで利用します。
 
-
-
 ## ジオメトリ初期化
 
 #### ジオメトリ生成
 
-「3D空間上のオブジェクト」ことジオメトリを生成します。   
-返り値のハンドルを一時的に受け取りますが、この後の「シーンへのジオメトリ登録」の直後に解放し、ユーザ管理から切り離すことが できます。   
+「3D空間上のオブジェクト」ことジオメトリを生成します。
+返り値のハンドル(`RTCGeometry`型)を一時的に受け取りますが、この後の「シーンへのジオメトリ登録」の直後に解放し、ユーザ管理から切り離すことが できます。   
 
 ```C++
 // declared in embree3/rtcore_geometry.h
@@ -134,7 +179,7 @@ RTCGeometry rtcNewGeometry(RTCDevice device, RTCGeometryType type);
 RTCGeometry geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
 ```
 
-`rtcNewGeometry`の第2引数にはEmbree3が定義しているenum値`RTCGeometryType`を渡します。   
+`rtcNewGeometry`の第2引数にはEmbree3が定義しているenum値`RTCGeometryType`を渡します。
 このenum値によって、この「3D空間上のオブジェクト」がどういう形式のバッファとして確保されるかをEmbree3のKernel側に伝えます。      
 例えば`RTC_GEOMETRY_TYPE_TRIANGLE`を渡せば、ポリゴンメッシュ形式(Vertex Buffer & Index Buffer)でメモリ上に確保されることを指定できます。   
 
