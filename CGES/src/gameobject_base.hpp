@@ -21,7 +21,7 @@ public:
   virtual ColorRGBA GetColor(const float u, const float v) const = 0;
 
   // Embree管理下のシーンにこのオブジェクトを登録
-  unsigned int AttachTo(const RTCScene scene);
+  void AttachTo(const RTCScene scene, const unsigned int geomID);
 
 protected:
   //glm::vec3 origin; // モデル座標系原点のワールド位置
