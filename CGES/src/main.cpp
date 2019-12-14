@@ -1,15 +1,15 @@
-//#include "camera.hpp"
-//#include "renderbuffer.hpp"
-//#include "renderer.hpp"
-//#include "glengine.hpp"
+#include "camera.hpp"
+#include "renderbuffer.hpp"
+#include "renderer.hpp"
+#include "glengine.hpp"
 #include "texture.hpp"
 
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 450;
 
 int main() {
-  /*auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
-  auto camera = cges::Camera({ 0, 0, -1.125 }, 40.0f);
+  auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
+  auto camera = cges::Camera({ 0, 0, 0 }, 40.0f);
   auto renderer = cges::Renderer(camera, renderTarget);
 
   auto engine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
@@ -18,12 +18,7 @@ int main() {
     renderer.Update();
     renderer.Draw();
     engine.Draw(renderTarget);
-  }*/
-  auto texOk = cges::Texture("test.ppm");
-  texOk.SaveAsPpm("test_out.ppm");
-
-  auto texErr = cges::Texture("error");
-  texErr.SaveAsPpm("error_out.ppm");
+  }
 }
 
 // TODO:

@@ -1,9 +1,10 @@
 #include "renderer.hpp"
 #include "gameobject_polygonalmesh.hpp"
+#include "gameobject_sphere.hpp"
 
 #include <thread>
 #include <vector>
-#include <numeric> // float infinity
+#include <limits> // float infinity
 #include <cmath>
 #include <algorithm> // clamp
 #include <memory>
@@ -24,7 +25,9 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_camera{ camera }
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
-  m_scene.Add(MakePolygonalMesh(m_rtcDevice, "bin/goat_filled.obj"));
+  //m_scene.Add(MakePolygonalMesh(m_rtcDevice, "bin/goat_filled.obj"));
+  m_scene.Add(MakeSphere(m_rtcDevice, 3.0f, "CBfront.ppm"));
+  int n = 0;
 }
 
 Renderer::~Renderer() {
@@ -111,7 +114,7 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
 
       if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
         //const auto geomNormal = glm::normalize(glm::vec3{ rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z });
-        glm::vec3 faceNormal = { 0, 0, 0 };
+        /*glm::vec3 faceNormal = { 0, 0, 0 };
         rtcInterpolate0(rtcGetGeometry(m_scene.GetRTCScene(), rayhit.hit.geomID),
                         rayhit.hit.primID,
                         rayhit.hit.u,
@@ -125,7 +128,8 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
         const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
         m_renderTarget[yIdx][x].r = std::clamp(static_cast<int>(255 * diffuseFactor + 128 * specularFactor) + 32, 0, 255);
         m_renderTarget[yIdx][x].g = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
-        m_renderTarget[yIdx][x].b = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
+        m_renderTarget[yIdx][x].b = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);*/
+        m_renderTarget[yIdx][x] = { 255, 64, 64 };
       }
       else {
         m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);

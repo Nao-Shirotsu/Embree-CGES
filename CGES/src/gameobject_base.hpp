@@ -1,5 +1,7 @@
 #pragma once
 
+#include "color.hpp"
+
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
 
@@ -14,6 +16,9 @@ public:
 
   // 非必須属性(Embreeのバッファのslotに格納する値)を持っているかどうか
   virtual bool HasAttribute() = 0;
+
+  // オブジェクトのテクスチャ座標から色取得
+  virtual ColorRGBA GetColor(const float u, const float v) const = 0;
 
   // Embree管理下のシーンにこのオブジェクトを登録
   unsigned int AttachTo(const RTCScene scene);

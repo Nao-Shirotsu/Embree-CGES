@@ -56,6 +56,10 @@ bool PolygonalMesh::HasAttribute() {
   return m_vertexNormalBuf.size() != 0;
 }
 
+ColorRGBA PolygonalMesh::GetColor(const float u, const float v) const{
+  return {0xff, 0x40, 0x40, 0xff}; // TODO:ŽÀ‘•
+}
+
 } // namespace cges::gameobject
 
 std::unique_ptr<cges::gameobject::PolygonalMesh> cges::MakePolygonalMesh(const RTCDevice device, const char* const filePath) {
