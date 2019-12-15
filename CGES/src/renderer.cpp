@@ -112,6 +112,11 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
       rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
       rtcIntersect1(m_scene.GetRTCScene(), context, &rayhit);
 
+      if (rayhit.hit.geomID == RTC_INVALID_GEOMETRY_ID) {
+        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);
+        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(bgColorIntensity / 1.5f);
+        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(bgColorIntensity);
+      }
       if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
         //const auto geomNormal = glm::normalize(glm::vec3{ rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z });
         /*glm::vec3 faceNormal = { 0, 0, 0 };
@@ -129,12 +134,11 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
         m_renderTarget[yIdx][x].r = std::clamp(static_cast<int>(255 * diffuseFactor + 128 * specularFactor) + 32, 0, 255);
         m_renderTarget[yIdx][x].g = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);
         m_renderTarget[yIdx][x].b = std::clamp(static_cast<int>(64 * diffuseFactor + 128 * specularFactor) + 16, 0, 255);*/
-        m_renderTarget[yIdx][x] = { 255, 64, 64 };
+        const gameobject::Base& gameobj = m_scene.GetConstGameobject(rayhit.hit.geomID);
+        m_renderTarget[yIdx][x] = gameobj.GetColor(0.0f, 0.0f);
       }
-      else {
-        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);
-        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(bgColorIntensity / 1.5f);
-        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(bgColorIntensity);
+      if(rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
+
       }
     }
   }

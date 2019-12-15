@@ -21,6 +21,7 @@ public:
   void Add(std::unique_ptr<gameobject::Base> object);
   const RTCScene GetRTCScene() const;
   const glm::vec3& GetDirLightForward() const;
+  const gameobject::Base& GetConstGameobject(const unsigned int geomID) const;
 
 private:
   Scene(const Scene& other) = delete;

@@ -40,5 +40,9 @@ const glm::vec3& Scene::GetDirLightForward() const {
   return m_dirLight.dir;
 }
 
+const gameobject::Base& Scene::GetConstGameobject(const unsigned int geomID) const {
+  return *(m_objects[geomID]);
+}
+
 
 } //namespace cges
