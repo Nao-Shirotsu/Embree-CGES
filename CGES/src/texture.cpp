@@ -61,7 +61,7 @@ namespace cges {
 Texture::Texture(const char* const filePath) 
 : m_imageBuffer(LoadFromFile(filePath)) {}
 
-ColorRGBA Texture::GetPixel(const float x, const float y) {
+ColorRGBA Texture::GetPixel(const float x, const float y) const{
   uint32_t xIdx = std::clamp(x, 0.0f, 1.0f) * static_cast<uint32_t>(m_imageBuffer.GetWidth());
   uint32_t yIdx = std::clamp(y, 0.0f, 1.0f) * static_cast<uint32_t>(m_imageBuffer.GetHeight());
   return m_imageBuffer[yIdx][xIdx];

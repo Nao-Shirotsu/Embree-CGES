@@ -25,7 +25,7 @@ bool cges::gameobject::Sphere::HasAttribute() {
 }
 
 ColorRGBA cges::gameobject::Sphere::GetColor(const float u, const float v) const {
-  return { 0xff, 0x40, 0x40, 0xff }; // TODO:ŽÀ‘•‚·‚é
+  return m_texture.GetPixel(u, v);
 }
 
 RTCGeometryType Sphere::GetGeomType() const {

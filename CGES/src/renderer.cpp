@@ -14,6 +14,10 @@
 namespace {
 
 constexpr float SCREEN_WIDTH = 0.25;
+
+constexpr float PI = 3.1415926535897932384626433832795028841971;
+constexpr float PI2 = PI * 2.0f;
+
 bool IsInterpolatable(const RTCGeometryType geomType) {
   if(geomType == RTC_GEOMETRY_TYPE_GRID ||
      geomType == RTC_GEOMETRY_TYPE_INSTANCE ||
@@ -40,7 +44,7 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
   m_scene.Add(MakePolygonalMesh(m_rtcDevice, "bin/goat_filled.obj"));
-  m_scene.Add(MakeSphere(m_rtcDevice, 1.25f, "CBfront.ppm"));
+  m_scene.Add(MakeSphere(m_rtcDevice, 2.0f, "CBfront.ppm"));
   int n = 0;
 }
 
@@ -132,10 +136,11 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
         m_renderTarget[yIdx][x].b = static_cast<uint8_t>(bgColorIntensity);
         continue;
       }
-      m_renderTarget[yIdx][x] = m_scene.GetGeomColor(rayhit.hit.geomID, 0.0f, 0.0f);
 
       // shading
       glm::vec3 faceNormal = {0, 0, 0};
+      float texCoordU = rayhit.hit.u;
+      float texCoordV = rayhit.hit.v;
       if (IsInterpolatable(m_scene.GetGeomType(rayhit.hit.geomID))) {
         rtcInterpolate0(rtcGetGeometry(m_scene.GetRTCScene(), rayhit.hit.geomID),
                         rayhit.hit.primID,
@@ -146,13 +151,19 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
                         reinterpret_cast<float*>(&faceNormal),
                         3);
       }
+      else if (m_scene.GetGeomType(rayhit.hit.geomID) == RTC_GEOMETRY_TYPE_SPHERE_POINT) {
+        faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
+        const glm::vec3 surfaceToCenter = glm::normalize(-faceNormal);
+        texCoordU = 0.5f + std::atan2f(surfaceToCenter.z, surfaceToCenter.x) / PI2;
+        texCoordV = 0.5f - std::asin(surfaceToCenter.y) / PI;
+      }
       else {
         faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
       }
       const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
       const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
       const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
-      const ColorRGBA objColor = m_scene.GetGeomColor(rayhit.hit.geomID, rayhit.hit.u, rayhit.hit.v);
+      const ColorRGBA objColor = m_scene.GetGeomColor(rayhit.hit.geomID, texCoordU, texCoordV);
       m_renderTarget[yIdx][x].r = std::clamp(static_cast<int>(objColor.r * diffuseFactor + 96 * specularFactor) + 32, 0, 255);
       m_renderTarget[yIdx][x].g = std::clamp(static_cast<int>(objColor.g * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
       m_renderTarget[yIdx][x].b = std::clamp(static_cast<int>(objColor.b * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
