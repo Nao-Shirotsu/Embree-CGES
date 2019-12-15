@@ -20,6 +20,8 @@ public:
   // オブジェクトのテクスチャ座標から色取得
   virtual ColorRGBA GetColor(const float u, const float v) const = 0;
 
+  virtual RTCGeometryType GetGeomType() const = 0;
+
   // Embree管理下のシーンにこのオブジェクトを登録
   void AttachTo(const RTCScene scene, const unsigned int geomID);
 

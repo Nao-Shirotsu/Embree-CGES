@@ -17,6 +17,8 @@ public:
 
   ColorRGBA GetColor(const float u, const float v) const override;
 
+  RTCGeometryType GetGeomType() const override;
+
 private:
   struct {
     Vector3f m_center;

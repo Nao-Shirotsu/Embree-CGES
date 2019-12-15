@@ -60,6 +60,10 @@ ColorRGBA PolygonalMesh::GetColor(const float u, const float v) const{
   return {0xff, 0x40, 0x40, 0xff}; // TODO:ŽÀ‘•
 }
 
+RTCGeometryType PolygonalMesh::GetGeomType() const {
+  return RTC_GEOMETRY_TYPE_TRIANGLE;
+}
+
 } // namespace cges::gameobject
 
 std::unique_ptr<cges::gameobject::PolygonalMesh> cges::MakePolygonalMesh(const RTCDevice device, const char* const filePath) {

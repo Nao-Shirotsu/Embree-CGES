@@ -28,6 +28,10 @@ ColorRGBA cges::gameobject::Sphere::GetColor(const float u, const float v) const
   return { 0xff, 0x40, 0x40, 0xff }; // TODO:ŽÀ‘•‚·‚é
 }
 
+RTCGeometryType Sphere::GetGeomType() const {
+  return RTC_GEOMETRY_TYPE_SPHERE_POINT;
+}
+
 }// namespace cges::gameobject
 
 std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice device, const float radius, const char* const textureFilePath) {

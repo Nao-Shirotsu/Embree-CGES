@@ -17,6 +17,8 @@ public:
 
   ColorRGBA GetColor(const float u, const float v) const override;
 
+  RTCGeometryType GetGeomType() const override;
+
 private:
   std::vector<Vector3f> m_vertexBuf;
   std::vector<PolygonIndex> m_indexBuf;
