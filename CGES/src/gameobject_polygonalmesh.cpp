@@ -14,7 +14,7 @@ PolygonalMesh::PolygonalMesh(const RTCDevice device, const char* const filePath)
 #ifdef _DEBUG
   assert(obj::LoadFromFile(filePath, m_vertexBuf, m_indexBuf, m_vertexNormalBuf));
 #else
-  obj::LoadFromFile(filePath, vertexBuf, indexBuf, vertexNormalBuf);
+  obj::LoadFromFile(filePath, m_vertexBuf, m_indexBuf, m_vertexNormalBuf);
 #endif
   rtcSetSharedGeometryBuffer(
       m_rtcGeometry,
