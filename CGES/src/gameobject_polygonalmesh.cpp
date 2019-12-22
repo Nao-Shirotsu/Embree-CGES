@@ -57,8 +57,12 @@ bool PolygonalMesh::HasAttribute() {
   return m_vertexNormalBuf.size() != 0;
 }
 
-ColorRGBA PolygonalMesh::GetColorByUV(const float x, const float y) {
-  return m_diffuseColor; // TODO : ‚ ‚Æ‚ÅŽÀ‘•‚·‚é
+ColorRGBA PolygonalMesh::GetColor(const float u, const float v) const{
+  return {0xff, 0x40, 0x40, 0xff}; // TODO:ŽÀ‘•
+}
+
+RTCGeometryType PolygonalMesh::GetGeomType() const {
+  return RTC_GEOMETRY_TYPE_TRIANGLE;
 }
 
 } // namespace cges::gameobject

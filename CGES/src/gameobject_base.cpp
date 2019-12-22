@@ -10,8 +10,8 @@ Base::~Base() noexcept {
   rtcReleaseGeometry(m_rtcGeometry);
 }
 
-unsigned int Base::AttachTo(const RTCScene scene) {
-  return rtcAttachGeometry(scene, m_rtcGeometry);
+void Base::AttachTo(const RTCScene scene, const unsigned int geomID) {
+  rtcAttachGeometryByID(scene, m_rtcGeometry, geomID);
 }
 
 } // namespace cges::gameobject

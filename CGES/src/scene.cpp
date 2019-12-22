@@ -28,7 +28,7 @@ void Scene::Update() {
 
 void Scene::Add(std::unique_ptr<gameobject::Base> object) {
   m_objects.push_back(std::move(object));
-  (*(m_objects.end() - 1))->AttachTo(m_rtcScene);
+  (*(m_objects.end() - 1))->AttachTo(m_rtcScene, m_objects.size() - 1);
   sceneChanged = true;
 }
 
@@ -40,9 +40,14 @@ const glm::vec3& Scene::GetDirLightForward() const {
   return m_dirLight.dir;
 }
 
-ColorRGBA Scene::GetObjectColor(const size_t idx, const float u, const float v) const{
-  return m_objects[idx]->GetColorByUV(u, v);
+RTCGeometryType Scene::GetGeomType(const unsigned int objID) const{
+  int n = objID;
+  return m_objects[objID]->GetGeomType();
 }
 
+ColorRGBA Scene::GetGeomColor(const unsigned int objID, const float u, const float v) const{
+  int n = objID;
+  return m_objects[objID]->GetColor(u, v);
+}
 
 } //namespace cges

@@ -8,8 +8,7 @@
 
 cges::Camera::Camera(const glm::vec3& posWorld, const float radius) 
   : posWorld{ posWorld }
-  , radius{ radius } {
-}
+  , radius{ radius } {}
 
 void cges::Camera::UpdatePosLocal() {
   const float sinYZ = std::sinf(radYZ);

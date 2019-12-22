@@ -15,7 +15,9 @@ public:
 
   bool HasAttribute() override;
 
-  ColorRGBA GetColorByUV(const float x, const float y) override;
+  ColorRGBA GetColor(const float u, const float v) const override;
+
+  RTCGeometryType GetGeomType() const override;
 
 private:
   std::vector<Vector3f> m_vertexBuf;
