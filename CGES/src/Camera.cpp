@@ -11,10 +11,10 @@ cges::Camera::Camera(const glm::vec3& posWorld, const float radius)
   , radius{ radius } {}
 
 void cges::Camera::UpdatePosLocal() {
-  const float sinYZ = std::sinf(radYZ);
-  posLocal.x = radius * sinYZ * std::cosf(radXZ);
-  posLocal.y = radius * std::cosf(radYZ);
-  posLocal.z = radius * sinYZ * std::sinf(radXZ);
+  const float sinYZ = std::sin(radYZ);
+  posLocal.x = radius * sinYZ * std::cos(radXZ);
+  posLocal.y = radius * std::cos(radYZ);
+  posLocal.z = radius * sinYZ * std::sin(radXZ);
 
 #ifdef _DEBUG
   std::cout << "radXZ : ƒÎ*" << (radXZ / 3.14159265358979323846)  << std::endl;
