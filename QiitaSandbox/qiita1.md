@@ -44,20 +44,20 @@ Embreeは、2018年3月に発表された2.x系から3.0へのアップデート
 以下にC++コードで便宜的に示します。
 
 ```
-vertex[0] = { -0.5f,  0.0f,  0.0f };
-vertex[1] = { -0.0f,  1.0f,  0.0f };
-vertex[2] = {  0.5f,  0.0f,  0.0f };
-vertex[3] = {  0.0f, -1.0f,  0.0f };
-vertex[4] = {  0.0f,  0.0f, -0.5f };
-vertex[5] = {  0.0f,  0.0f,  0.5f };
-index[0] = { 1, 2, 5 };
-index[1] = { 2, 3, 5 };
-index[2] = { 3, 4, 5 };
-index[3] = { 4, 1, 5 };
-index[4] = { 2, 1, 6 };
-index[5] = { 3, 2, 6 };
-index[6] = { 4, 3, 6 };
-index[7] = { 1, 4, 6 };
+vertex[0] = { -0.5f,  0.0f, -2.0f };
+vertex[1] = { -0.0f,  1.0f, -2.0f };
+vertex[2] = {  0.5f,  0.0f, -2.0f };
+vertex[3] = {  0.0f, -1.0f, -2.0f };
+vertex[4] = {  0.0f,  0.0f, -2.5f };
+vertex[5] = {  0.0f,  0.0f, -2.5f };
+index[0] = { 1, 0, 4 };
+index[1] = { 1, 4, 2 };
+index[2] = { 3, 0, 4 };
+index[3] = { 3, 4, 2 };
+index[4] = { 1, 5, 0 };
+index[5] = { 1, 2, 5 };
+index[6] = { 3, 5, 0 };
+index[7] = { 3, 2, 5 };
 ```
 
 
@@ -83,7 +83,17 @@ Embree3にはDevice, Scene, Geometry, Buffer, BVH というオブジェクトが
 ![embree_qiita_api](C:\Users\albus\Pictures\gomi\embree_qiita_api.png)
 
 Embree3ではこのような流れでプログラムを記述していきます。
-下記の各解説では、**利用する関数のシグネチャ -> 呼び出し側のコード** という順で表記します。
+下記の各解説では、**利用する構造体と関数シグネチャ -> 呼び出し側のコード例** という順で表記します。
+
+```c++
+// 宣言されているヘッダファイル名
+struct Hoge;
+```
+
+```C++
+Hoge CreateHoge();
+```
+
 また、「Embree3のKernel」という単語を「APIコールによってEmbree3の内部で処理をする部分」という意味で用います。
 
 ## デバイス生成
@@ -92,7 +102,7 @@ Embree3オブジェクト、Deviceを生成します。
 返り値はハンドルとして受け取り、ユーザ側で管理します。
 
 ```C++
-// declared in embree3/rtcore_device.h
+// embree3/rtcore_device.h
 struct RTCDevice;
 RTCDevice rtcNewDevice(const char* config);
 ```
@@ -102,14 +112,25 @@ RTCDevice device = rtcNewDevice(nullptr);
 ```
 
 このデバイスは、他のEmbree3オブジェクトの生成に利用します。
-また、引数に特定の文字列を渡すことでconfiguration)ができます。
+また、引数に特定の文字列を渡すことでconfiguration)ができます。   
+`NULL`や`nullptr`を渡すとデフォルト設定になります。
 
-#### `rtcNewDevice`のconfiguration項目
+```c++
+RTCDevice device = rtcNewDevice("threads=1,isa=avx"); // コンマ区切りで複数指定
+```
 
-空の文字列、`NULL`、`nullptr`を渡すとデフォルト設定になります。
+他にもデバイス生成時にconfiguration文字列を渡す方法があります。   
+数字の大きい方が優先され、小さい方は無視されます。
 
-それ以外
-以下は設定項目リストと概説です。
+1. `rtcNewDevice`の引数に渡した文字列
+2. アプリケーションと同じディレクトリにある`.embree3`拡張子のファイル
+3. ホームディレクトリにある`.embree3`拡張子のファイル
+
+具体的な設定項目については割愛させていただきます。
+[公式リファレンス](https://www.embree.org/api.html)の`rtcNewDevice`の項に列挙されていますので、気になる方は覗いてみて下さい。
+Embree3のKernelが利用するSIMD化コードやスレッド数の設定などができます。
+
+#### rtcNewDevice`のconfiguration項目
 
 - `threads=[int]` 
   ビルドスレッドの数？
@@ -130,7 +151,7 @@ RTCDevice device = rtcNewDevice(nullptr);
   利用する命令セットアーキテクチャの自動選択のうち最高のものを指定します。指定したアーキテクチャより良いアーキテクチャは自動選択されなくなります。
   
 - `hugepages=[0/1]`
-  huge pagesを有効化/無効化します。Linux環境ではデフォルトで有効、MacとWindows環境ではデフォルトで無効です。
+  huge pagesをOSに利用させるか否か設定します。Linux環境ではデフォルトで有効、MacとWindows環境ではデフォルトで無効です。
   
 - `enable_selockmemoryprivilege=[0/1]`
   有効化すると、?
@@ -166,11 +187,11 @@ RTCScene scene = rtcNewScene(device);
 
 #### ジオメトリ生成
 
-「3D空間上のオブジェクト」ことジオメトリを生成します。
-返り値のハンドル(`RTCGeometry`型)を一時的に受け取りますが、この後の「シーンへのジオメトリ登録」の直後に解放し、ユーザ管理から切り離すことが できます。   
+**「3D空間上のオブジェクト」**こと**ジオメトリ**を生成します。
+返り値のハンドル(`RTCGeometry`型)を一時的に受け取りますが、この後の「シーンへのジオメトリ登録」の直後に解放し、ユーザ管理から切り離すことが できます。(理由は後述)   
 
 ```C++
-// declared in embree3/rtcore_geometry.h
+// embree3/rtcore_geometry.h
 struct RTCGeometry;
 RTCGeometry rtcNewGeometry(RTCDevice device, RTCGeometryType type);
 ```
@@ -180,17 +201,21 @@ RTCGeometry geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
 ```
 
 `rtcNewGeometry`の第2引数にはEmbree3が定義しているenum値`RTCGeometryType`を渡します。
-このenum値によって、この「3D空間上のオブジェクト」がどういう形式のバッファとして確保されるかをEmbree3のKernel側に伝えます。      
-例えば`RTC_GEOMETRY_TYPE_TRIANGLE`を渡せば、ポリゴンメッシュ形式(Vertex Buffer & Index Buffer)でメモリ上に確保されることを指定できます。   
+このenum値によって、この「3D空間上のオブジェクト」がどういう形式のバッファとして確保されるかをEmbree3のKernel側に伝えます。
+例えば`RTC_GEOMETRY_TYPE_TRIANGLE`を渡せば、ポリゴンメッシュ形式(Vertex Buffer & Index Buffer)でメモリ上に確保されることを指定できます。
 
 #### バッファの実体確保とジオメトリへのバインド
 
-次に、「3D空間上のオブジェクト」の実体を確保してジオメトリにバインドします。   
-実体の動的確保をEmbree3の関数にやってもらう方法と、ユーザ自身で確保してEmbree3のKernel側に伝える方法があります。     
-順に記述します。
+次に、「3D空間上のオブジェクト」の実体を確保してジオメトリにバインドします。
+実体の動的確保をEmbree3の関数にやってもらう方法と、ユーザ自身で確保してEmbree3のKernel側に伝える方法があります。
+
+順に説明します。
 
 ```C++
-// declared in embree3/rtcore_geometry.h
+// embree3/rtcore_geometry.h
+/*
+  Embree3に動的確保をやってもらう方法
+*/
 void* rtcSetNewGeometryBuffer(
   RTCGeometry geometry,    // 上で生成したジオメトリ
   enum RTCBufferType type, // バッファ形式
@@ -225,11 +250,14 @@ Index* geometryIndices = reinterpret_cast<PolygonIndex*>(rtcSetNewGeometryBuffer
                                                                           numPolygons));
 ```
 
-`rtcSetNewGeometryBuffer`を利用すると、Embree3が引数からサイズを計算してバッファ領域の動的確保をしてくれます。   
+`rtcSetNewGeometryBuffer`を利用すると、Embree3が引数からサイズを計算してバッファ領域の動的確保をしてくれます。
 上記の例では、返り値の`void *`を`geometryVertices`で受け取り、今後配列として利用します。
 
 ```C++
-// declared in embree3/rtcore_geometry.h
+// embree3/rtcore_geometry.h
+/*
+  ユーザ自身で確保してEmbree3のKernel側に伝える方法
+*/
 void rtcSetSharedGeometryBuffer(
   RTCGeometry geometry,
   enum RTCBufferType type,
@@ -243,7 +271,7 @@ void rtcSetSharedGeometryBuffer(
 ```
 
 ```C++
-struct Vertex {
+struct PolygonVertex {
   float x, y, z;
 };
 struct PolygonIndex{
@@ -252,7 +280,7 @@ struct PolygonIndex{
 // ~中略~
 constexpr size_t numVertex = 6;
 constexpr int numPolygons = 8;
-std::array<Vertex, numVertex> geometryVertices;
+std::array<PolygonVertex, numVertex> geometryVertices;
 std::array<PolygonIndex, numPolygons> geometryPolygons;
 
 rtcSetSharedGeometryBuffer(geometryHandle,
@@ -273,45 +301,43 @@ rtcSetSharedGeometryBuffer(geometryHandle,
                            geometryPolygons.size());
 ```
 
-`rtcSetSharedGeometryBuffer`を利用すると、既にユーザ側で確保したバッファ領域をジオメトリの実体として利用できます。   
-上記の例では、`std::array<Vertex, numVertex>`として定義した`geometryVertices`のアドレスを引数に渡します。    
+`rtcSetSharedGeometryBuffer`を利用すると、既にユーザ側で確保したバッファ領域をジオメトリの実体として利用できます。
+上記の例では、`std::array<PolygonVertex, numVertex>`として定義した`geometryVertices`のアドレスを引数に渡します。
 
 #### バッファへのデータ入力
 
-次に、上のいずれかの方法で定義したジオメトリに頂点データを入力します。    
-今回は手入力としますが、この処理を3Dモデルデータ読込処理に差し替えてしまえば、インポートが実現できます。     
-`rtcSetSharedGeometryBuffer`を利用してバッファ領域確保を行なう場合は、`geometryVertices`の定義時に以下のデータ入力処理をしておいても問題ありません。   
+次に、上のいずれかの方法で定義したジオメトリに頂点データを入力します。
+今回は手入力としますが、この処理を3Dモデルデータ読込処理に差し替えてしまえば、インポートが実現できます。
+`rtcSetSharedGeometryBuffer`を利用してバッファ領域確保を行なう場合は、`geometryVertices`の定義時に以下のデータ入力処理をしておいても問題ありません。
 
 ```C++
 // Embree3の関数は使用しません。
 ```
 
 ```C++
-geometryVertices[0] = {-0.5f,  0.0f,  0.0f};
-geometryVertices[1] = {-0.0f,  1.0f,  0.0f};
-geometryVertices[2] = { 0.5f,  0.0f,  0.0f};
-geometryVertices[3] = { 0.0f, -1.0f,  0.0f};
-geometryVertices[4] = { 0.0f,  0.0f, -0.5f};
-geometryVertices[5] = { 0.0f,  0.0f,  0.5f};
-geometryPolygons[0] = { 1, 2, 5 };
-geometryPolygons[1] = { 2, 3, 5 };
-geometryPolygons[2] = { 3, 4, 5 };
-geometryPolygons[3] = { 4, 1, 5 };
-geometryPolygons[4] = { 2, 1, 6 };
-geometryPolygons[5] = { 3, 2, 6 };
-geometryPolygons[6] = { 4, 3, 6 };
-geometryPolygons[7] = { 1, 4, 6 };
+geometryVertices[0] = {-0.5f,  0.0f, -2.0f};
+geometryVertices[1] = {-0.0f,  1.0f, -2.0f};
+geometryVertices[2] = { 0.5f,  0.0f, -2.0f};
+geometryVertices[3] = { 0.0f, -1.0f, -2.0f};
+geometryVertices[4] = { 0.0f,  0.0f, -2.5f};
+geometryVertices[5] = { 0.0f,  0.0f, -2.5f};
+geometryPolygons[0] = { 1, 0, 4 };
+geometryPolygons[1] = { 1, 4, 2 };
+geometryPolygons[2] = { 3, 0, 4 };
+geometryPolygons[3] = { 3, 4, 2 };
+geometryPolygons[4] = { 1, 5, 0 };
+geometryPolygons[5] = { 1, 2, 5 };
+geometryPolygons[6] = { 3, 5, 0 };
+geometryPolygons[7] = { 3, 2, 5 };
 ```
 
-   
 
+#### ジオメトリのコミット
 
-#### ジオメトリのコミット **変更で結果変わらん云々、ほんまか？
-
-ジオメトリのバッファのデータ入力まで終えた後、このジオメトリの状態をEmbree3のKernel側へ伝えます。   
+**ジオメトリのバッファへのデータ入力まで終えた後**、このジオメトリの状態をEmbree3のKernel側へ伝えます。
 
 ```C++
-// declared in embree3/rtcore_geometry.h
+// embree3/rtcore_geometry.h
 void rtcCommitGeometry(RTCGeometry geometry);
 ```
 
@@ -319,16 +345,16 @@ void rtcCommitGeometry(RTCGeometry geometry);
 rtcCommitGeometry(geometry);
 ```
 
-今後`geometryVertices`の要素に少しでも変更があった場合、この関数を呼び出さなければその変更がEmbree3のKernel側に伝わらず、後のレイトレースの結果も変わりません。   
-例えば、リアルタイムレンダリングでフレームごとににオブジェクトを移動させたいとき、毎フレームの更新処理でこの関数を呼び出す必要があります。   
+今後`geometryVertices`の各要素の値に少しでも変更があった場合、この関数を呼び出さなければその変更がEmbree3のKernel側に伝わらず、後のレイトレースの結果もコミット前と変わりません。
+例えば、リアルタイムレンダリングで描画フレームごとににオブジェクトを移動させたいとき、毎フレームの更新処理でこの関数を呼び出す必要があります。
 
 ##  シーンへのジオメトリ登録
 
-前ステップで初期化したジオメトリをシーンに登録します。   
-1つのシーンに複数のジオメトリを登録することももちろん可能です。
+前ステップで初期化したジオメトリをシーンに登録します。
+1つのシーンに複数のジオメトリを登録することが可能です。
 
 ```C++
-// declared in embree3/rtcore_scene.h
+// embree3/rtcore_scene.h
 unsigned int rtcAttachGeometry(
   RTCScene scene,
   RTCGeometry geometry
@@ -343,7 +369,7 @@ rtcAttachGeometry(geometry);
 登録の後、ジオメトリを解放することができます。   
 
 ```C++
-// declared in embree3/rtcore_geometry.h
+// embree3/rtcore_geometry.h
 void rtcReleaseGeometry(RTCGeometry geometry);
 ```
 
@@ -351,8 +377,8 @@ void rtcReleaseGeometry(RTCGeometry geometry);
 rtcReleaseGeometry(geometry);
 ```
 
-この関数呼び出しは、`rtcAttachGeometry`によってシーンが`geometry`への参照を獲得したため、**ユーザが管理をする必要が無くなったから解放しよう**ということです。   
-**必ずしもこのタイミングでは**ジオメトリ解放を行なう必要はありません。    
+この関数呼び出しは、`rtcAttachGeometry`によってシーン、すなわちEmbree3のKernel側)が`geometry`への参照を獲得したため、**ユーザが管理をする必要が無くなった**から解放しようということです。
+ただし、**必ずしもこのタイミングでは**ジオメトリ解放を行なう必要はありません。必要に応じてどうぞ。
 
 ##  シーン構築
 
@@ -367,7 +393,7 @@ void rtcCommitScene(RTCScene scene);
 rtcCommitScene(scene);
 ```
 
-この関数が呼び出されると、Embree3は内部的に[BVH]( https://en.wikipedia.org/wiki/Bounding_volume_hierarchy )の構築を行ないます。   
+この関数が呼び出されると、Embree3は内部的に[BVH]( https://en.wikipedia.org/wiki/Bounding_volume_hierarchy )の構築を行ないます。
 ここまでで描画するシーンのセットアップがすべて完了となります。   
 
 ## レイトレース
@@ -375,11 +401,11 @@ rtcCommitScene(scene);
 #### 1本のレイを飛ばす
 
 ```C++
-// declared in embree3/rtcore_common.h
+// embree3/rtcore_common.h
 struct RTCIntersectContext;
 void rtcInitIntersectContext(RTCIntersectContext* context);
 
-// declared in embree3/rtcore_ray.h
+// embree3/rtcore_ray.h
 struct RTCRay{
   float org_x;        // x coordinate of ray origin
   float org_y;        // y coordinate of ray origin
@@ -426,19 +452,16 @@ constexpr float FLOAT_INFINITY = std::numeric_limits<float>::max();
 RTCIntersectContext context;
 rtcInitIntersectContext(&context);
 
-RTCRayHit rayhit; // (0, 0, -10)から(0, 0, 10)方向へのレイ
+RTCRayHit rayhit;
 rayhit.ray.org_x = 0.0f;
-rayhit.ray.org_y = 0.0f;
+rayhit.ray.org_y = 0.0f;   // 始点(0, 0, -10)  
 rayhit.ray.org_z = -10.0f; 
 rayhit.ray.dir_x = 0.0f;
-rayhit.ray.dir_y = 0.0f;
-rayhit.ray.dir_z = 10.0f;
-rayhit.ray.tnear = 0; // (0, 0, -10)から距離0の位置からキャスト
-rayhit.ray.tfar = FLOAT_INFINITY; // レイを無限遠まで飛ばす
-rayhit.ray.mask = 0;
-rayhit.ray.flags = 0;
-rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+rayhit.ray.dir_y = 0.0f;   // 方向(0, 0, 1)
+rayhit.ray.dir_z = 1.0f;
+rayhit.ray.tnear = 0.0f;             // 始点から 
+rayhit.ray.tfar = FLOAT_INFINITY; // 距離∞だけレイを飛ばす
+rayhit.ray.flags = false; // このレイが一度何かと交差したか否か
 
 rtcIntersect1(sceneHandle, &context, &rayhit);
 
@@ -450,16 +473,15 @@ else{
 }
 ```
 
-`RTCRayHit`のインスタンスを生成し、`rtcIntersect1`によって交差判定を行います。   
-すると、`rayhit.hit.geomID`に、交差した最も近いジオメトリのIDが保存されます。    
-`RTCRayHit::dir_x`ら方向ベクトル成分は正規化されている必要はありません。   
+`RTCRayHit`のインスタンスを生成し、`rtcIntersect1`によって交差判定を行います。
+すると、`rayhit.hit.geomID`に、交差した最も近いジオメトリのIDが保存されます。
+`RTCRayHit::dir_x`ら方向ベクトル成分は正規化されている必要はありません。
 
 #### スクリーンにレイを飛ばす
 
-今回は簡単のため、カメラ位置などは考慮せず、平行投影と同様な交差判定をします。   
+今回は簡単のため、カメラ位置などは考慮せず、平行投影と同様な交差判定をします。
+100x100ピクセルのスクリーンを例として取り上げます。
 ![screen](C:\Users\albus\Pictures\gomi\screen.png) ![screenxy](C:\Users\albus\Pictures\gomi\screenxy.png)
-
-#### 
 
 ```C++
 // 1本の場合と同様
@@ -467,35 +489,41 @@ else{
 
 ```C++
 constexpr float FLOAT_INFINITY = std::numeric_limits<float>::max();
+constexpr uint32_t SCREEN_WIDTH_PX = 100;
+constexpr uint32_t SCREEN_HEIGHT_PX = 100;
+constexpr uint32_t HALF_HEIGHT = static_cast<int>(SCREEN_HEIGHT_PX) / 2;
+constexpr uint32_t HALF_WIDTH = static_cast<int>(SCREEN_WIDTH_PX) / 2;
 
 RTCIntersectContext context;
 rtcInitIntersectContext(&context);
 
-RTCRayHit rayhit; // (0, 0, -10)から(0, 0, 10)方向へのレイ
-rayhit.ray.org_x = 0.0f;
-rayhit.ray.org_y = 0.0f;
-rayhit.ray.org_z = -10.0f; 
-rayhit.ray.dir_x = 0.0f;
-rayhit.ray.dir_y = 0.0f;
-rayhit.ray.dir_z = 10.0f;
-rayhit.ray.tnear = 0;
-rayhit.ray.tfar = FLOAT_INFINITY;
-rayhit.ray.mask = 0;
-rayhit.ray.flags = 0;
-rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+RTCRayHit rayhit;
+rayhit.ray.org_z = -10.0f; // 始点は"手前"側
+rayhit.ray.dir_x = 0.0f;   //
+rayhit.ray.dir_y = 0.0f;   // (0, 0, 1)の方向へ飛ばす
+rayhit.ray.dir_z = 1.0f;   //
+rayhit.ray.tnear = 0.0f;
 
-rtcIntersect1(sceneHandle, &context, &rayhit);
-
-if(rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID){
-    // シーン上の何かしらと交差した
-}
-else{
-    // 何にも交差しなかった
+for (int32_t y = 0; y < SCREEN_HEIGHT_PX; ++y) {
+  for (int32_t x = 0; x < SCREEN_WIDTH_PX; ++x) {
+    rayhit.ray.org_x = (x - static_cast<int>(HALF_WIDTH)) / static_cast<float>(HALF_WIDTH);  // 毎ループ始点位置を更新
+    rayhit.ray.org_y = (y - static_cast<int>(HALF_HEIGHT)) / static_cast<float>(HALF_HEIGHT); // 毎ループ始点位置を更新
+    rayhit.ray.tfar = FLOAT_INFINITY;
+    rayhit.ray.flags = false;
+    rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+    rtcIntersect1(sceneHandle, &context, &rayhit);
+    if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
+      // シーン上の何かしらと交差した
+    }
+    else {
+      // 何にも交差しなかった
+    }
+  }
 }
 ```
 
-
+ちょっとした注意点ですが、`RTCRayHit::RTCRay::tfar`, `RTCRayHit::RTCRay::flags`, `RTCRayHit::RTCRay::geomID`は`rtcIntersect1`を呼び出すたびに書き込まれて変更される可能性があります。
+ループ中で1つの`RTCRayHit`を使いまわす場合は毎回の`rtcIntersect1`実行前にしっかり元の値に戻してあげましょう。
 
 ## 終了処理
 
@@ -510,26 +538,165 @@ void rtcReleaseDevice(RTCDevice device);
 ```
 
 ```C++
+rtcReleaseGeometry(geometryHandle); // 以前にやっていなければ
 rtcReleaseScene(sceneHandle);
 rtcReleaseDevice(deviceHandle);
-// その他必要な解放処理
 ```
 
+## まとめ
 
+同様のシーンに対して平行投影的に交差判定し、100x100ピクセルのppm画像に書き込みする例です。
+部分部分はこれまでのコードとほとんど同じです。
 
-## ソースコード(全体)
+#### ソースコード
 
 ```C++
-rtcCommitGeometry(geometry);
+#include <array>
+#include <vector>
+#include <embree3/rtcore.h>
+#include <iostream>
+#include <limits>
+#include <fstream>
+
+struct Vertex {
+  float x, y, z;
+};
+
+struct PolygonIndex {
+  unsigned int v0, v1, v2;
+};
+
+struct ColorRGB {
+  uint8_t r, g, b;
+};
+
+constexpr uint32_t SCREEN_WIDTH_PX = 100;
+constexpr uint32_t SCREEN_HEIGHT_PX = 100;
+
+//void SaveAsPpm(const std::array<std::array<ColorRGB, SCREEN_WIDTH_PX>, SCREEN_HEIGHT_PX>& image) {
+void SaveAsPpm(const std::vector<std::array<ColorRGB, SCREEN_WIDTH_PX>>& image, const char* const fileName) {
+  std::ofstream ofs(fileName);
+
+  if (!ofs) {
+    std::exit(1);
+  }
+
+  ofs << "P3\n"
+      << SCREEN_WIDTH_PX << " " << SCREEN_HEIGHT_PX << "\n255\n";
+  for (const auto& row : image) {
+    for (const auto& pixel : row) {
+      ofs << static_cast<int>(pixel.r) << " "
+          << static_cast<int>(pixel.g) << " "
+          << static_cast<int>(pixel.b) << "\n";
+    }
+  }
+
+  ofs.close();
+}
+
+int main() {
+  RTCDevice deviceHandle = rtcNewDevice(nullptr);
+  RTCScene sceneHandle = rtcNewScene(deviceHandle);
+  RTCGeometry geometryHandle = rtcNewGeometry(deviceHandle, RTC_GEOMETRY_TYPE_TRIANGLE);
+
+  constexpr size_t numVertices = 6;
+  constexpr size_t numPolygons = 8;
+
+  std::array<Vertex, numVertices> geometryVertices;
+  std::array<PolygonIndex, numPolygons> geometryPolygons;
+
+  rtcSetSharedGeometryBuffer(geometryHandle,
+                             RTC_BUFFER_TYPE_VERTEX,
+                             0,
+                             RTC_FORMAT_FLOAT3,
+                             &geometryVertices,
+                             0,
+                             sizeof(Vertex),
+                             geometryVertices.size());
+
+  geometryVertices[0] = { -0.5f,  0.0f,  0.0f };
+  geometryVertices[1] = {  0.0f,  1.0f,  0.0f };
+  geometryVertices[2] = {  0.5f,  0.0f,  0.0f };
+  geometryVertices[3] = {  0.0f, -1.0f,  0.0f };
+  geometryVertices[4] = {  0.0f,  0.0f, -0.5f };
+  geometryVertices[5] = {  0.0f,  0.0f,  0.5f };
+
+  rtcSetSharedGeometryBuffer(geometryHandle,
+                             RTC_BUFFER_TYPE_INDEX,
+                             0,
+                             RTC_FORMAT_UINT3,
+                             &geometryPolygons,
+                             0,
+                             sizeof(PolygonIndex),
+                             geometryPolygons.size());
+
+  geometryPolygons[0] = { 1, 0, 4 };
+  geometryPolygons[1] = { 1, 4, 2 };
+  geometryPolygons[2] = { 3, 0, 4 };
+  geometryPolygons[3] = { 3, 4, 2 };
+  geometryPolygons[4] = { 1, 5, 0 };
+  geometryPolygons[5] = { 1, 2, 5 };
+  geometryPolygons[6] = { 3, 5, 0 };
+  geometryPolygons[7] = { 3, 2, 5 };
+
+  rtcCommitGeometry(geometryHandle);
+  rtcAttachGeometry(sceneHandle, geometryHandle);
+  rtcReleaseGeometry(geometryHandle);
+  rtcCommitScene(sceneHandle);
+
+  constexpr float FLOAT_INFINITY = std::numeric_limits<float>::max();
+  std::vector<std::array<ColorRGB, SCREEN_WIDTH_PX>> screen{SCREEN_HEIGHT_PX};
+
+  RTCIntersectContext context;
+  rtcInitIntersectContext(&context);
+
+  RTCRayHit rayhit;
+  rayhit.ray.org_z = -10.0f;
+  rayhit.ray.dir_x = 0.0f;
+  rayhit.ray.dir_y = 0.0f;
+  rayhit.ray.dir_z = 1.0f;
+  rayhit.ray.tnear = 0.0f;
+
+  constexpr uint32_t HALF_HEIGHT = static_cast<int>(SCREEN_HEIGHT_PX) / 2;
+  constexpr uint32_t HALF_WIDTH = static_cast<int>(SCREEN_WIDTH_PX) / 2;
+
+  for (int32_t y = 0; y < SCREEN_HEIGHT_PX; ++y) {
+    for (int32_t x = 0; x < SCREEN_WIDTH_PX; ++x) {
+      rayhit.ray.org_x = (x - static_cast<int>(HALF_WIDTH)) / static_cast<float>(HALF_WIDTH);
+      rayhit.ray.org_y = (y - static_cast<int>(HALF_HEIGHT)) / static_cast<float>(HALF_HEIGHT);
+      rayhit.ray.tfar = FLOAT_INFINITY;
+      rayhit.ray.flags = false;
+      rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+      rtcIntersect1(sceneHandle, &context, &rayhit);
+      if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
+        screen[y][x].r = 0xff;
+        screen[y][x].g = 0x00;
+        screen[y][x].b = 0xff;
+      }
+      else {
+        screen[y][x].r = 0x00;
+        screen[y][x].g = 0x00;
+        screen[y][x].b = 0x00;
+      }
+    }
+  }
+
+  SaveAsPpm(screen, "result.ppm");
+
+  rtcReleaseScene(sceneHandle);
+  rtcReleaseDevice(deviceHandle);
+}
 ```
 
+#### 結果
 
+![3Dモデルのシルエット表示](https://imgur.com/swvxZs2.png)
 
 ## おわりに
 
-お疲れさまでした。  
-次回の解説ではシェーダプログラムを利用しないPhong shading実装まで行います。  
-もしこの記事内に間違いや不適切な記述を見つけた場合は、コメントでお教えください。   
+お疲れさまでした。
+~~次回解説でPhong Shadingの実装解説を予定していましたが体力が尽きました~~
+もしこの記事内に間違いや不適切な記述を見つけた場合は、コメントでお教えください。
 
 
 
@@ -540,4 +707,3 @@ Embree公式ページ(Overview) : https://www.embree.org/index.html
 Embree公式ページ(API reference) : https://www.embree.org/api.html
 Embree公式リポジトリ : https://github.com/embree/embree
 Wikipedia BVH :  https://en.wikipedia.org/wiki/Bounding_volume_hierarchy 
-
