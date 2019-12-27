@@ -328,3 +328,12 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+
+CMakeCache.txt
+CMakeFiles/
+FindGLFW_Test/
+Makefile
+cmake_install.cmake
+embree3/
+embree-3.6.1.x86_64.linux.tar.gz
