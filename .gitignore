@@ -337,3 +337,5 @@ Makefile
 cmake_install.cmake
 embree3/
 embree-3.6.1.x86_64.linux.tar.gz
+*.md
+!README.md
