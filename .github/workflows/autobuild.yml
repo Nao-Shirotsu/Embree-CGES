@@ -20,6 +20,5 @@ jobs :
         shell : bash
         run   : |
           cd $GITHUB_WORKSPACE
-          ls
-          sh ./install.sh
+          bash ./install.sh
         

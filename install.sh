@@ -1,5 +1,11 @@
 #!/bin/bash
 
+function exit_with_error(){
+    if [ $1 != 0 ]; then # exit statusが正常でない
+        exit $1
+    fi
+}
+
 cd CGES
 # ↓diffとって判定した方がよさそう
 echo "[CGES] Log files about installing will be generated in CGES_HOME/install_log"
@@ -18,10 +24,13 @@ else
     date >> $LOG_PATH
     echo  >> $LOG_PATH
     wget https://github.com/embree/embree/releases/download/v3.6.1/embree-3.6.1.x86_64.linux.tar.gz >> $LOG_PATH
+    exit_with_error $?
     echo "[CGES] Installing embree dependencies..."
     tar -xvzf embree-3.6.1.x86_64.linux.tar.gz >> $LOG_PATH
+    exit_with_error $?
     rm embree-3.6.1.x86_64.linux.tar.gz
     mv embree-3.6.1.x86_64.linux embree3
+    echo "[CGES] Downloading DONE!"
 fi
 
 if [ -d ./FindGLFW_Test ]; then
@@ -35,6 +44,8 @@ else
     date >> $LOG_PATH
     echo  >> $LOG_PATH
     git clone git@github.com:benikabocha/FindGLFW_Test.git >> $LOG_PATH
+    exit_with_error $?
+    echo "[CGES] Cloning DONE!"
 fi
 
 # ↓diffとって判定した方がよさそう
@@ -54,7 +65,10 @@ else
     fi
     cd build
     cmake -DCMAKE_BUILD_TYPE=Release .. >> ../$LOG_PATH
+    exit_with_error $?
     make >> ../$LOG_PATH
+    exit_with_error $?
     cd ..
+    echo "[CGES] Building DONE!"
 fi
 cd ..
