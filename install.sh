@@ -1,10 +1,9 @@
-#!/bin/zsh
+#!/bin/bash
 
 cd CGES
 # ↓diffとって判定した方がよさそう
 echo "[CGES] Log files about installing will be generated in CGES_HOME/install_log"
-if [ -d ../install_log ]; then
-else
+if [ ! -d ../install_log ]; then
     mkdir ../install_log
 fi
 
@@ -26,13 +25,13 @@ else
 fi
 
 if [ -d ./FindGLFW_Test ]; then
-    echo "[CGES] GLFW .cmake files already installed."
+    echo "[CGES] .cmake files for GLFW already installed."
 else
     LOG_PATH=../install_log/install_findglfw.log
     if [ -f $LOG_PATH ]; then
         rm $LOG_PATH
     fi
-    echo "[CGES] Downloading GLFW .cmake files..."
+    echo "[CGES] Cloning .cmake files for GLFW..."
     date >> $LOG_PATH
     echo  >> $LOG_PATH
     git clone git@github.com:benikabocha/FindGLFW_Test.git >> $LOG_PATH
@@ -50,8 +49,7 @@ else
     date >> $LOG_PATH
     echo  >> $LOG_PATH
     # ↓diffとって判定した方がよさそう
-    if [ -d ./build ]; then
-    else
+    if [ ! -d ./build ]; then
         mkdir build
     fi
     cd build
