@@ -17,33 +17,36 @@ if [ -d ./embree3 ]; then
     echo "[CGES] Embree dependencies already installed."
 else
     echo "[CGES] Downloading embree dependencies..."
-    LOG_PATH="../install_log/install_embree.log"
-    if [ -f $LOG_PATH ]; then
-        rm $LOG_PATH
+    CGES_LOG_PATH="../install_log/install_embree.log"
+    if [ -f $CGES_LOG_PATH ]; then
+        rm $CGES_LOG_PATH
     fi
-    date >> $LOG_PATH
-    echo  >> $LOG_PATH
-    wget https://github.com/embree/embree/releases/download/v3.6.1/embree-3.6.1.x86_64.linux.tar.gz >> $LOG_PATH
+    date >> $CGES_LOG_PATH
+    echo  >> $CGES_LOG_PATH
+    wget https://github.com/embree/embree/releases/download/v3.6.1/embree-3.6.1.x86_64.linux.tar.gz >> $CGES_LOG_PATH
     exit_with_error $?
+    echo "[CGES] Downloading DONE!"
     echo "[CGES] Installing embree dependencies..."
-    tar -xvzf embree-3.6.1.x86_64.linux.tar.gz >> $LOG_PATH
+    tar -xvzf embree-3.6.1.x86_64.linux.tar.gz >> $CGES_LOG_PATH
     exit_with_error $?
     rm embree-3.6.1.x86_64.linux.tar.gz
     mv embree-3.6.1.x86_64.linux embree3
-    echo "[CGES] Downloading DONE!"
+    source embree3/embree-vars.sh
+    exit_with_error $?
+    echo "[CGES] Installing DONE!"
 fi
 
 if [ -d ./FindGLFW_Test ]; then
     echo "[CGES] .cmake files for GLFW already installed."
 else
-    LOG_PATH=../install_log/install_findglfw.log
-    if [ -f $LOG_PATH ]; then
-        rm $LOG_PATH
+    CGES_LOG_PATH=../install_log/install_findglfw.log
+    if [ -f $CGES_LOG_PATH ]; then
+        rm $CGES_LOG_PATH
     fi
     echo "[CGES] Cloning .cmake files for GLFW..."
-    date >> $LOG_PATH
-    echo  >> $LOG_PATH
-    git clone git@github.com:benikabocha/FindGLFW_Test.git >> $LOG_PATH
+    date >> $CGES_LOG_PATH
+    echo  >> $CGES_LOG_PATH
+    git clone git@github.com:benikabocha/FindGLFW_Test.git >> $CGES_LOG_PATH
     exit_with_error $?
     echo "[CGES] Cloning DONE!"
 fi
@@ -53,20 +56,20 @@ if [ -f ./bin/cges ]; then
     echo "[CGES] cges build already completed!"
 else
     echo "[CGES] Building cges binaries..."
-    LOG_PATH=../install_log/install_cges.log
-    if [ -f $LOG_PATH ]; then
-        rm $LOG_PATH
+    CGES_LOG_PATH=../install_log/install_cges.log
+    if [ -f $CGES_LOG_PATH ]; then
+        rm $CGES_LOG_PATH
     fi
-    date >> $LOG_PATH
-    echo  >> $LOG_PATH
+    date >> $CGES_LOG_PATH
+    echo  >> $CGES_LOG_PATH
     # ↓diffとって判定した方がよさそう
     if [ ! -d ./build ]; then
         mkdir build
     fi
     cd build
-    cmake -DCMAKE_BUILD_TYPE=Release .. >> ../$LOG_PATH
+    cmake -DCMAKE_BUILD_TYPE=Release .. >> ../$CGES_LOG_PATH
     exit_with_error $?
-    make >> ../$LOG_PATH
+    make >> ../$CGES_LOG_PATH
     exit_with_error $?
     cd ..
     echo "[CGES] Building DONE!"

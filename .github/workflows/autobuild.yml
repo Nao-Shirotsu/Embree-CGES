@@ -18,7 +18,9 @@ jobs :
           ref   : autobuild_setup
       - name  : install
         shell : bash
+        env   :
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run   : |
           cd $GITHUB_WORKSPACE
+          git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/benikabocha/FindGLFW_Test.git >> $LOG_PATH
           bash ./install.sh
-        
