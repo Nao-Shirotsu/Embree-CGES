@@ -43,12 +43,17 @@ else
     if [ -f $CGES_LOG_PATH ]; then
         rm $CGES_LOG_PATH
     fi
-    echo "[CGES] Cloning .cmake files for GLFW..."
+    echo "[CGES] Downloading .cmake files for GLFW..."
     date >> $CGES_LOG_PATH
     echo  >> $CGES_LOG_PATH
-    git clone git@github.com:benikabocha/FindGLFW_Test.git >> $CGES_LOG_PATH
+    #git clone git@github.com:benikabocha/FindGLFW_Test.git >> $CGES_LOG_PATH
+    wget https://github.com/benikabocha/FindGLFW_Test/archive/master.zip >> $CGES_LOG_PATH    
     exit_with_error $?
-    echo "[CGES] Cloning DONE!"
+    unzip master.zip
+    exit_with_error $?
+    mv FindGLFW_Test-master FindGLFW_Test
+    rm master.zip
+    echo "[CGES] Downloading DONE!"
 fi
 
 # ↓diffとって判定した方がよさそう
