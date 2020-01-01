@@ -13,6 +13,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps  :
-      - name : test print
-        run  : echo "this is test print"
+      - name : install
+        run  : ./instal.sh
         shell: bash
