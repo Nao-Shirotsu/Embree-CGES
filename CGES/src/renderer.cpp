@@ -39,7 +39,7 @@ Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
     , m_camera{ camera }
     , m_renderTarget{ renderTarget }
     , m_maxThreads{ std::thread::hardware_concurrency() } {
-  m_scene.Add(MakePolygonalMesh(m_rtcDevice, "bin/goat_filled.obj", {64, 64, 255}));
+  //m_scene.Add(MakePolygonalMesh(m_rtcDevice, "bin/goat_filled.obj", {64, 64, 255}));
   m_scene.Add(MakeSphere(m_rtcDevice, 1.25f, "CBfront.ppm"));
 }
 
