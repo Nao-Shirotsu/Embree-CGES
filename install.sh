@@ -7,12 +7,13 @@ function exit_with_error(){
 }
 
 cd CGES
-# ↓diffとって判定した方がよさそう
 echo "[CGES] Log files about installing will be generated in CGES_HOME/install_log"
+# ↓diffとって判定した方がよさそう
 if [ ! -d ../install_log ]; then
     mkdir ../install_log
 fi
 
+# ↓diffとって判定した方がよさそう
 if [ -d ./embree3 ]; then
     echo "[CGES] Embree dependencies already installed."
 else
@@ -23,9 +24,9 @@ else
     fi
     date >> $CGES_LOG_PATH
     echo  >> $CGES_LOG_PATH
-    wget https://github.com/embree/embree/releases/download/v3.6.1/embree-3.6.1.x86_64.linux.tar.gz >> $CGES_LOG_PATH
+    curl -OL https://github.com/embree/embree/releases/download/v3.6.1/embree-3.6.1.x86_64.linux.tar.gz >> $CGES_LOG_PATH
     exit_with_error $?
-    echo "[CGES] Downloading DONE!"
+    echo "[CGES] Embree successfully downloaded!"
     echo "[CGES] Installing embree dependencies..."
     tar -xvzf embree-3.6.1.x86_64.linux.tar.gz >> $CGES_LOG_PATH
     exit_with_error $?
@@ -33,7 +34,7 @@ else
     mv embree-3.6.1.x86_64.linux embree3
     source embree3/embree-vars.sh
     exit_with_error $?
-    echo "[CGES] Installing DONE!"
+    echo "[CGES] Embree successfully Installed!"
 fi
 
 if [ -d ./FindGLFW_Test ]; then
@@ -43,17 +44,16 @@ else
     if [ -f $CGES_LOG_PATH ]; then
         rm $CGES_LOG_PATH
     fi
-    echo "[CGES] Downloading .cmake files for GLFW..."
+    echo "[CGES] Downloading cmake files for GLFW..."
     date >> $CGES_LOG_PATH
     echo  >> $CGES_LOG_PATH
-    #git clone git@github.com:benikabocha/FindGLFW_Test.git >> $CGES_LOG_PATH
-    wget https://github.com/benikabocha/FindGLFW_Test/archive/master.zip >> $CGES_LOG_PATH    
+    curl -OL https://github.com/benikabocha/FindGLFW_Test/archive/master.zip >> $CGES_LOG_PATH
     exit_with_error $?
-    unzip master.zip
+    unzip master.zip >> $CGES_LOG_PATH
     exit_with_error $?
     mv FindGLFW_Test-master FindGLFW_Test
     rm master.zip
-    echo "[CGES] Downloading DONE!"
+    echo "[CGES] cmake files for GLFW successfully downloaded!"
 fi
 
 # ↓diffとって判定した方がよさそう
@@ -77,6 +77,7 @@ else
     make >> ../$CGES_LOG_PATH
     exit_with_error $?
     cd ..
-    echo "[CGES] Building DONE!"
+    echo "[CGES] CGES binary successfully built!"
+    echo "[CGES] Now you can run CGES/bin/cges."
 fi
 cd ..
