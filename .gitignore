@@ -328,3 +328,10 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+*.md
+!README.md
+
+build/
+embree3/
+FindGLFW_Test/
