@@ -52,8 +52,6 @@ cges::RenderBuffer LoadFromFile(const char* const filePath) {
   return std::move(imageBuf);
 }
 
-
-
 }
 
 namespace cges {
