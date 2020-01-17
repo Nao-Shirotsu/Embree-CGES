@@ -149,6 +149,8 @@
     <ClCompile Include="src\renderbuffer.cpp" />
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\texture.cpp" />
+    <ClCompile Include="src\tex_loadpng.cpp" />
+    <ClCompile Include="src\tex_loadppm.cpp" />
     <ClCompile Include="src\util_objfile.cpp" />
     <ClCompile Include="src\util_texture.cpp" />
   </ItemGroup>
@@ -170,6 +172,9 @@
     <ClInclude Include="src\renderbuffer.hpp" />
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\texture.hpp" />
+    <ClInclude Include="src\tex_geterrorimage.hpp" />
+    <ClInclude Include="src\tex_loadpng.hpp" />
+    <ClInclude Include="src\tex_loadppm.hpp" />
     <ClInclude Include="src\util_objfile.hpp" />
     <ClInclude Include="src\util_texture.hpp" />
   </ItemGroup>

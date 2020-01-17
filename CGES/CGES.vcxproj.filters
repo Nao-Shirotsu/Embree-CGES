@@ -42,6 +42,12 @@
     <ClCompile Include="src\util_texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\tex_loadppm.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tex_loadpng.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -91,6 +97,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\util_texture.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tex_loadppm.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tex_geterrorimage.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tex_loadpng.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

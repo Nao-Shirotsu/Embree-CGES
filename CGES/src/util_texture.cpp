@@ -1,17 +1,11 @@
 #include "util_texture.hpp"
+#include "tex_geterrorimage.hpp"
+#include "tex_loadppm.hpp"
+#include "tex_loadpng.hpp"
 
-#include <fstream>
 #include <string>
-#include <functional>
 
 namespace {
-
-cges::RenderBuffer GetErrorImage() {
-  auto imageBuf = cges::RenderBuffer(1, 1);
-  imageBuf[0][0].r = 255u;
-  imageBuf[0][0].b = 255u;
-  return std::move(imageBuf);
-}
 
 enum class FileFormat {
   UNSUPPORTED,
@@ -29,44 +23,6 @@ FileFormat DetectFileFormat(const char* const filePath) {
     return FileFormat::PPM;
   }
   return FileFormat::UNSUPPORTED;
-}
-
-cges::RenderBuffer LoadPng(const char* const filePath) {
-  return GetErrorImage();
-}
-
-cges::RenderBuffer LoadPpm(const char* const filePath) {
-  using namespace cges;
-  std::ifstream ifs(filePath);
-  if (!ifs) {
-    return GetErrorImage();
-  }
-
-  const char magicNum1 = ifs.get();
-  const char magicNum2 = ifs.get();
-  if (magicNum1 != 'P' || magicNum2 != '3') {
-    return GetErrorImage();
-  }
-  size_t width;
-  size_t height;
-  size_t colorNumber;
-  ifs >> width >> height >> colorNumber;
-
-  auto imageBuf = RenderBuffer(width, height);
-
-  for (auto y = 0u; y < height; ++y) {
-    for (auto x = 0u; x < width; ++x) {
-      uint32_t recv;
-      ifs >> recv;
-      imageBuf[y][x].r = static_cast<uint8_t>(recv);
-      ifs >> recv;
-      imageBuf[y][x].g = static_cast<uint8_t>(recv);
-      ifs >> recv;
-      imageBuf[y][x].b = static_cast<uint8_t>(recv);
-    }
-  }
-
-  return std::move(imageBuf);
 }
 
 }// anonimous namespace
