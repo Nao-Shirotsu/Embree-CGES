@@ -150,6 +150,7 @@
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\util_objfile.cpp" />
+    <ClCompile Include="src\util_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -170,17 +171,20 @@
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\texture.hpp" />
     <ClInclude Include="src\util_objfile.hpp" />
+    <ClInclude Include="src\util_texture.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\glfw.3.3.0.1\build\native\glfw.targets" Condition="Exists('..\packages\glfw.3.3.0.1\build\native\glfw.targets')" />
-    <Import Project="..\packages\glm.0.9.9.600\build\native\glm.targets" Condition="Exists('..\packages\glm.0.9.9.600\build\native\glm.targets')" />
+    <Import Project="..\packages\libpng-msvc-x64.1.6.33.8807\build\native\libpng-msvc-x64.targets" Condition="Exists('..\packages\libpng-msvc-x64.1.6.33.8807\build\native\libpng-msvc-x64.targets')" />
+    <Import Project="..\packages\glm.0.9.9.700\build\native\glm.targets" Condition="Exists('..\packages\glm.0.9.9.700\build\native\glm.targets')" />
+    <Import Project="..\packages\glfw.3.3.1\build\native\glfw.targets" Condition="Exists('..\packages\glfw.3.3.1\build\native\glfw.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\glfw.3.3.0.1\build\native\glfw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glfw.3.3.0.1\build\native\glfw.targets'))" />
-    <Error Condition="!Exists('..\packages\glm.0.9.9.600\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.0.9.9.600\build\native\glm.targets'))" />
+    <Error Condition="!Exists('..\packages\libpng-msvc-x64.1.6.33.8807\build\native\libpng-msvc-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libpng-msvc-x64.1.6.33.8807\build\native\libpng-msvc-x64.targets'))" />
+    <Error Condition="!Exists('..\packages\glm.0.9.9.700\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.0.9.9.700\build\native\glm.targets'))" />
+    <Error Condition="!Exists('..\packages\glfw.3.3.1\build\native\glfw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glfw.3.3.1\build\native\glfw.targets'))" />
   </Target>
 </Project>

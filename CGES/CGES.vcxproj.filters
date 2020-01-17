@@ -39,6 +39,9 @@
     <ClCompile Include="src\gameobject_sphere.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\util_texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -85,6 +88,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\gameobject_sphere.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util_texture.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
