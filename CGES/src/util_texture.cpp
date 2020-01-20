@@ -25,7 +25,7 @@ FileFormat DetectFileFormat(const char* const filePath) {
   return FileFormat::UNSUPPORTED;
 }
 
-}// anonimous namespace
+}// anonymous namespace
 
 namespace cges::tex {
 
