@@ -335,3 +335,4 @@ ASALocalRun/
 build/
 embree3/
 FindGLFW_Test/
+stb/
