@@ -93,8 +93,5 @@
     <ClInclude Include="src\util_texture.hpp">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\tex_geterrorimage.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

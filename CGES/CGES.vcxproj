@@ -170,7 +170,6 @@
     <ClInclude Include="src\renderbuffer.hpp" />
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\texture.hpp" />
-    <ClInclude Include="src\tex_geterrorimage.hpp" />
     <ClInclude Include="src\util_objfile.hpp" />
     <ClInclude Include="src\util_texture.hpp" />
   </ItemGroup>

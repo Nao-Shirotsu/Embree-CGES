@@ -1,5 +1,4 @@
 #include "util_texture.hpp"
-#include "tex_geterrorimage.hpp"
 
 #include <string>
 
@@ -12,12 +11,19 @@
 #endif
 
 #define EARLY_RETURN_UNSUPPORTED_FORMAT(errMsg, filePath) \
-  PrintErrorMsg((errMsg), (filePath));     \
+  PrintErrorMsg((errMsg), (filePath)); \
   return GetErrorImage()
 
 namespace {
 
 constexpr unsigned int MAGICNUMBER_LENGTH = 8;
+
+cges::RenderBuffer GetErrorImage() {
+  auto imageBuf = cges::RenderBuffer(1, 1);
+  imageBuf[0][0].r = 255u;
+  imageBuf[0][0].b = 255u;
+  return std::move(imageBuf);
+}
 
 void PrintErrorMsg(const char* const errMsg, const char* const filePath) {
 #ifdef _DEBUG
