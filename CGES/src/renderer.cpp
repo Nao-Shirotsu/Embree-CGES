@@ -52,9 +52,6 @@ void Renderer::Update() {
 }
 
 void cges::Renderer::Draw() const {
-  RTCIntersectContext context;
-  rtcInitIntersectContext(&context);
-
   const int32_t width = static_cast<int32_t>(m_renderTarget.GetWidth());
   const int32_t height = static_cast<int32_t>(m_renderTarget.GetHeight());
   const float aspectRatio = height / static_cast<float>(width);
@@ -71,8 +68,7 @@ void cges::Renderer::Draw() const {
                  height,
                  initialPos,
                  screenVerticalVec,
-                 screenHorizontalVec,
-                 &context);
+                 screenHorizontalVec);
   }
 
   auto threads = std::vector<std::thread>(m_maxThreads);
@@ -90,15 +86,14 @@ void cges::Renderer::Draw() const {
                              loopEndIdx,
                              initialPos,
                              screenVerticalVec,
-                             screenHorizontalVec,
-                             &context);
+                             screenHorizontalVec);
   }
   for (auto& th : threads) {
     th.join();
   }
 }
 
-void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec3& initialPos, const glm::vec3& screenVerticalVec, const glm::vec3& screenHorizontalVec, RTCIntersectContext* context) const{
+void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec3& initialPos, const glm::vec3& screenVerticalVec, const glm::vec3& screenHorizontalVec) const{
   const auto cameraPos = m_camera.posWorld + m_camera.GetPosLocal();
   for (size_t y = loopMin; y < loopMax; ++y) {
     const size_t height = m_renderTarget.GetHeight();
@@ -107,6 +102,8 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
     const size_t width = m_renderTarget.GetWidth();
     const size_t yIdx = height - y - 1;
     for (size_t x = 0; x < width; ++x) {
+      RTCIntersectContext context;
+      rtcInitIntersectContext(&context);
       const float xRate = x / static_cast<float>(width);
       const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
       const glm::vec3 rayDir = pixelPos - cameraPos;
@@ -123,7 +120,7 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
       rayhit.ray.flags = 0;
       rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
       rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-      rtcIntersect1(m_scene.GetRTCScene(), context, &rayhit);
+      rtcIntersect1(m_scene.GetRTCScene(), &context, &rayhit);
 
       if (!WasIntersected(rayhit.hit.geomID)) {
         m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);

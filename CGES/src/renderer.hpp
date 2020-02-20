@@ -24,8 +24,7 @@ private:
                     const int loopMax,
                     const glm::vec3& initialPos,
                     const glm::vec3& screenVerticalVec,
-                    const glm::vec3& screenHorizontalVec,
-                    RTCIntersectContext* context) const;
+                    const glm::vec3& screenHorizontalVec) const;
 
   RTCDevice m_rtcDevice;
   Scene m_scene;
