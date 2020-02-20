@@ -33,38 +33,28 @@ bool WasIntersected(const unsigned int geomID) {
 
 namespace cges {
 
-Renderer::Renderer(const Camera& camera, RenderBuffer& renderTarget)
-    : m_rtcDevice{ rtcNewDevice(nullptr) }
-    , m_scene{ m_rtcDevice }
-    , m_camera{ camera }
-    , m_renderTarget{ renderTarget }
-    , m_maxThreads{ std::thread::hardware_concurrency() } {
-  //m_scene.Add(MakePolygonalMesh(m_rtcDevice, "bin/goat_filled.obj", {64, 64, 255}));
-  m_scene.Add(MakeSphere(m_rtcDevice, 1.25f, "bin/aizu_library.jpg"));
-}
+Renderer::Renderer()
+  : m_maxThreads{ std::thread::hardware_concurrency() } {}
 
-Renderer::~Renderer() {
-  rtcReleaseDevice(m_rtcDevice);
-}
+Renderer::~Renderer() {}
 
-void Renderer::Update() {
-  m_scene.Update();
-}
-
-void cges::Renderer::Draw() const {
-  const int32_t width = static_cast<int32_t>(m_renderTarget.GetWidth());
-  const int32_t height = static_cast<int32_t>(m_renderTarget.GetHeight());
+void cges::Renderer::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& scene) const {
+  const int32_t width = static_cast<int32_t>(renderTarget.GetWidth());
+  const int32_t height = static_cast<int32_t>(renderTarget.GetHeight());
   const float aspectRatio = height / static_cast<float>(width);
-  const glm::vec3 cameraFront = glm::normalize(glm::vec3{0, 0, 0} - m_camera.GetPosLocal());
-  const glm::vec3 screenHorizontalVec = glm::normalize(glm::cross(m_camera.upwardWorld, cameraFront)) * SCREEN_WIDTH;
+  const glm::vec3 cameraFront = glm::normalize(glm::vec3{0, 0, 0} - camera.GetPosLocal());
+  const glm::vec3 screenHorizontalVec = glm::normalize(glm::cross(camera.upwardWorld, cameraFront)) * SCREEN_WIDTH;
   const glm::vec3 screenVerticalVec = glm::normalize(glm::cross(screenHorizontalVec, cameraFront)) * SCREEN_WIDTH * aspectRatio;
-  const glm::vec3 screenCenterPos = m_camera.posWorld + m_camera.GetPosLocal() + cameraFront;
+  const glm::vec3 screenCenterPos = camera.posWorld + camera.GetPosLocal() + cameraFront;
 
   // スクリーン左上(pixel[0][0])のワールド座標
   const glm::vec3 initialPos = screenCenterPos - (glm::vec3{ 0.5, 0.5, 0.5 } * screenVerticalVec) - (glm::vec3{ 0.5, 0.5, 0.5 } * screenHorizontalVec);
 
   if (!m_maxThreads) {
-    ParallelDraw(0,
+    ParallelDraw(std::cref(camera),
+                 std::ref(renderTarget),
+                 std::cref(scene),
+                 0,
                  height,
                  initialPos,
                  screenVerticalVec,
@@ -82,6 +72,9 @@ void cges::Renderer::Draw() const {
     }
     threads[y] = std::thread(&Renderer::ParallelDraw,
                              this,
+                             std::cref(camera),
+                             std::ref(renderTarget),
+                             std::cref(scene),
                              loopBegIdx,
                              loopEndIdx,
                              initialPos,
@@ -93,13 +86,20 @@ void cges::Renderer::Draw() const {
   }
 }
 
-void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec3& initialPos, const glm::vec3& screenVerticalVec, const glm::vec3& screenHorizontalVec) const{
-  const auto cameraPos = m_camera.posWorld + m_camera.GetPosLocal();
+void Renderer::ParallelDraw(const Camera& camera,
+                            RenderBuffer& renderTarget,
+                            const Scene& scene, 
+                            const int loopMin, 
+                            const int loopMax, 
+                            const glm::vec3& initialPos, 
+                            const glm::vec3& screenVerticalVec, 
+                            const glm::vec3& screenHorizontalVec) const {
+  const auto cameraPos = camera.posWorld + camera.GetPosLocal();
   for (size_t y = loopMin; y < loopMax; ++y) {
-    const size_t height = m_renderTarget.GetHeight();
+    const size_t height = renderTarget.GetHeight();
     const float yRate = y / static_cast<float>(height);
     const float bgColorIntensity = 255 * (1.0f - yRate);
-    const size_t width = m_renderTarget.GetWidth();
+    const size_t width = renderTarget.GetWidth();
     const size_t yIdx = height - y - 1;
     for (size_t x = 0; x < width; ++x) {
       RTCIntersectContext context;
@@ -120,20 +120,20 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
       rayhit.ray.flags = 0;
       rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
       rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-      rtcIntersect1(m_scene.GetRTCScene(), &context, &rayhit);
+      rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
 
       if (!WasIntersected(rayhit.hit.geomID)) {
-        m_renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);
-        m_renderTarget[yIdx][x].g = static_cast<uint8_t>(bgColorIntensity / 1.5f);
-        m_renderTarget[yIdx][x].b = static_cast<uint8_t>(bgColorIntensity);
+        renderTarget[yIdx][x].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);
+        renderTarget[yIdx][x].g = static_cast<uint8_t>(bgColorIntensity / 1.5f);
+        renderTarget[yIdx][x].b = static_cast<uint8_t>(bgColorIntensity);
         continue;
       }
-      m_renderTarget[yIdx][x] = m_scene.GetGeomColor(rayhit.hit.geomID, 0.0f, 0.0f);
+      renderTarget[yIdx][x] = scene.GetGeomColor(rayhit.hit.geomID, 0.0f, 0.0f);
 
       // shading
       glm::vec3 faceNormal = {0, 0, 0};
-      if (IsInterpolatable(m_scene.GetGeomType(rayhit.hit.geomID))) {
-        rtcInterpolate0(rtcGetGeometry(m_scene.GetRTCScene(), rayhit.hit.geomID),
+      if (IsInterpolatable(scene.GetGeomType(rayhit.hit.geomID))) {
+        rtcInterpolate0(rtcGetGeometry(scene.GetRTCScene(), rayhit.hit.geomID),
                         rayhit.hit.primID,
                         rayhit.hit.u,
                         rayhit.hit.v,
@@ -145,13 +145,13 @@ void Renderer::ParallelDraw(const int loopMin, const int loopMax, const glm::vec
       else {
         faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
       }
-      const glm::vec3 reflectedDir = m_scene.GetDirLightForward() - 2.0f * glm::dot(m_scene.GetDirLightForward(), faceNormal) * faceNormal;
+      const glm::vec3 reflectedDir = scene.GetDirLightForward() - 2.0f * glm::dot(scene.GetDirLightForward(), faceNormal) * faceNormal;
       const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
-      const float diffuseFactor = std::clamp(glm::dot(-m_scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
-      const ColorRGBA objColor = m_scene.GetGeomColor(rayhit.hit.geomID, rayhit.hit.u, rayhit.hit.v);
-      m_renderTarget[yIdx][x].r = std::clamp(static_cast<int>(objColor.r * diffuseFactor + 96 * specularFactor) + 32, 0, 255);
-      m_renderTarget[yIdx][x].g = std::clamp(static_cast<int>(objColor.g * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
-      m_renderTarget[yIdx][x].b = std::clamp(static_cast<int>(objColor.b * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
+      const float diffuseFactor = std::clamp(glm::dot(-scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
+      const ColorRGBA objColor = scene.GetGeomColor(rayhit.hit.geomID, rayhit.hit.u, rayhit.hit.v);
+      renderTarget[yIdx][x].r = std::clamp(static_cast<int>(objColor.r * diffuseFactor + 96 * specularFactor) + 32, 0, 255);
+      renderTarget[yIdx][x].g = std::clamp(static_cast<int>(objColor.g * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
+      renderTarget[yIdx][x].b = std::clamp(static_cast<int>(objColor.b * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
     }
   }
 }

@@ -12,24 +12,22 @@ namespace cges {
 
 class Renderer {
 public:
-  Renderer(const Camera& camera, RenderBuffer& renderTarget);
+  Renderer();
   ~Renderer();
 
-  void Update();
-  void Draw() const;
+  void Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& scene) const;
 
 private:
   // [loopMin, loopMax) ÇÃîÕàÕÇÃçsÇï`âÊÇ∑ÇÈ
-  void ParallelDraw(const int loopMin,
+  void ParallelDraw(const Camera& camera, 
+                    RenderBuffer& renderTarget, 
+                    const Scene& scene,
+                    const int loopMin,
                     const int loopMax,
                     const glm::vec3& initialPos,
                     const glm::vec3& screenVerticalVec,
                     const glm::vec3& screenHorizontalVec) const;
 
-  RTCDevice m_rtcDevice;
-  Scene m_scene;
-  const Camera& m_camera;
-  RenderBuffer& m_renderTarget;
   const uint32_t m_maxThreads;
 };
 

@@ -2,23 +2,34 @@
 #include "renderbuffer.hpp"
 #include "renderer.hpp"
 #include "glengine.hpp"
-#include "texture.hpp"
+#include "scene.hpp"
+#include "gameobject_sphere.hpp"
+#include "gameobject_polygonalmesh.hpp"
+
+#include <embree3/rtcore.h>
 
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 450;
 
 int main() {
+  auto embreeDevice = rtcNewDevice(nullptr);
   auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
   auto camera = cges::Camera({ 0, 0, 0 }, 40.0f);
-  auto renderer = cges::Renderer(camera, renderTarget);
+  auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
+  auto scene = cges::Scene(embreeDevice);
+  auto renderer = cges::Renderer();
 
-  auto engine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
-  while(!engine.ShouldTerminate()) {
-    engine.Update(camera);
-    renderer.Update();
-    renderer.Draw();
-    engine.Draw(renderTarget);
+  //scene.Add(cges::MakePolygonalMesh(embreeDevice, "bin/goat_filled.obj", {64, 64, 255}));
+  scene.Add(cges::MakeSphere(embreeDevice, 1.25f, "bin/aizu_library.jpg"));
+
+  while (!graphicsEngine.ShouldTerminate()) {
+    graphicsEngine.Update(camera);
+    scene.Update();
+    renderer.Draw(camera, renderTarget, scene);
+    graphicsEngine.Draw(renderTarget);
   }
+
+  rtcReleaseDevice(embreeDevice);
 }
 
 // TODO:
