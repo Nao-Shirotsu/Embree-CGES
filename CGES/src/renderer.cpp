@@ -1,10 +1,10 @@
 #include "renderer.hpp"
 #include "gameobject_polygonalmesh.hpp"
 #include "gameobject_sphere.hpp"
+#include "util_renderer.hpp"
 
 #include <thread>
 #include <vector>
-#include <limits> // float infinity
 #include <cmath>
 #include <algorithm> // clamp
 #include <memory>
@@ -96,30 +96,17 @@ void Renderer::ParallelDraw(const Camera& camera,
                             const glm::vec3& screenHorizontalVec) const {
   const auto cameraPos = camera.posWorld + camera.GetPosLocal();
   for (size_t y = loopMin; y < loopMax; ++y) {
-    const size_t height = renderTarget.GetHeight();
-    const float yRate = y / static_cast<float>(height);
+    const float yRate = y / static_cast<float>(renderTarget.GetHeight());
     const float bgColorIntensity = 255 * (1.0f - yRate);
-    const size_t width = renderTarget.GetWidth();
-    const size_t yIdx = height - y - 1;
-    for (size_t x = 0; x < width; ++x) {
+    const size_t yIdx = renderTarget.GetHeight() - y - 1;
+    for (size_t x = 0; x < renderTarget.GetWidth(); ++x) {
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
-      const float xRate = x / static_cast<float>(width);
+      const float xRate = x / static_cast<float>(renderTarget.GetWidth());
       const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
       const glm::vec3 rayDir = pixelPos - cameraPos;
       RTCRayHit rayhit;
-      rayhit.ray.org_x = cameraPos.x;
-      rayhit.ray.org_y = cameraPos.y;
-      rayhit.ray.org_z = cameraPos.z;
-      rayhit.ray.dir_x = rayDir.x;
-      rayhit.ray.dir_y = rayDir.y;
-      rayhit.ray.dir_z = rayDir.z;
-      rayhit.ray.tnear = 0;
-      rayhit.ray.tfar = std::numeric_limits<float>::max();
-      rayhit.ray.mask = 0;
-      rayhit.ray.flags = 0;
-      rayhit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
-      rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+      InitRayHit(rayhit, cameraPos, rayDir);
       rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
 
       if (!WasIntersected(rayhit.hit.geomID)) {

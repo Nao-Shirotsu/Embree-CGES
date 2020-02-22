@@ -150,6 +150,7 @@
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\util_objfile.cpp" />
+    <ClCompile Include="src\util_renderer.cpp" />
     <ClCompile Include="src\util_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\texture.hpp" />
     <ClInclude Include="src\util_objfile.hpp" />
+    <ClInclude Include="src\util_renderer.hpp" />
     <ClInclude Include="src\util_texture.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

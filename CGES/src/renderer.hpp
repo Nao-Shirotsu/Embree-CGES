@@ -17,7 +17,7 @@ public:
 
   void Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& scene) const;
 
-private:
+protected:
   // [loopMin, loopMax) ‚Ì”ÍˆÍ‚Ìs‚ğ•`‰æ‚·‚é
   void ParallelDraw(const Camera& camera, 
                     RenderBuffer& renderTarget, 
