@@ -19,4 +19,15 @@ void cges::InitRayHit(RTCRayHit& rayhit, const glm::vec3& org, const glm::vec3& 
   rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
 }
 
+bool IsInterpolatable(const RTCGeometryType geomType) noexcept{
+  if (geomType == RTC_GEOMETRY_TYPE_GRID || geomType == RTC_GEOMETRY_TYPE_INSTANCE || geomType == RTC_GEOMETRY_TYPE_DISC_POINT || geomType == RTC_GEOMETRY_TYPE_SPHERE_POINT || geomType == RTC_GEOMETRY_TYPE_USER) {
+    return false;
+  }
+  return true;
+}
+
+bool WasIntersected(const unsigned int geomID) noexcept{
+  return geomID != static_cast<int>(-1);
+}
+
 }// namespace cges
