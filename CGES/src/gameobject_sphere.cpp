@@ -2,6 +2,8 @@
 
 #include <embree3/rtcore_geometry.h>
 
+#include <cmath>
+
 namespace cges::gameobject {
 
 cges::gameobject::Sphere::Sphere(const RTCDevice device, const float radius, const char* const textureFilePath)
@@ -25,7 +27,7 @@ bool cges::gameobject::Sphere::HasAttribute() {
 }
 
 ColorRGBA cges::gameobject::Sphere::GetColor(const float u, const float v) const {
-  return { 0xff, 0x40, 0x40, 0xff }; // TODO:ŽÀ‘•‚·‚é
+  return m_texture.GetPixel(u, v);
 }
 
 RTCGeometryType Sphere::GetGeomType() const {

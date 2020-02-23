@@ -12,9 +12,6 @@
     <ClCompile Include="src\util_objfile.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\scene.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -39,6 +36,16 @@
     <ClCompile Include="src\gameobject_sphere.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\util_texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util_renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer_base.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer_phoneshader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -46,9 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\color.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderer.hpp">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\util_objfile.hpp">
@@ -85,6 +89,18 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\gameobject_sphere.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util_texture.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util_renderer.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_base.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_phoneshader.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
