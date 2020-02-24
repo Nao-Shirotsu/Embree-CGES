@@ -45,7 +45,12 @@
     <ClCompile Include="src\renderer_base.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer_phoneshader.cpp" />
+    <ClCompile Include="src\renderer_phoneshader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameobject_plane.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -101,6 +106,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\renderer_phoneshader.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gameobject_plane.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

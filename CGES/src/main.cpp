@@ -5,6 +5,7 @@
 #include "scene.hpp"
 #include "gameobject_sphere.hpp"
 #include "gameobject_polygonalmesh.hpp"
+#include "gameobject_plane.hpp"
 
 #include <embree3/rtcore.h>
 
@@ -19,7 +20,8 @@ int main() {
   auto scene = cges::Scene(embreeDevice);
   auto renderer = cges::renderer::PhoneShader();
 
-  scene.Add(cges::MakePolygonalMesh(embreeDevice, "bin/goat_filled.obj", {64, 64, 255}));
+  //scene.Add(cges::MakePolygonalMesh(embreeDevice, "bin/goat_filled.obj", {64, 64, 255}));
+  scene.Add(cges::MakePlane(embreeDevice, { -3.0f, 3.0f, 3.0f }, { 3.0f, 3.0f, 3.0f }, { 0.0f, 0.0f, 1.0f }, { 255, 255, 255, 255 }));
   //scene.Add(cges::MakeSphere(embreeDevice, 1.25f, "bin/aizu_library.jpg"));
 
   while (!graphicsEngine.ShouldTerminate()) {

@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\gameobject_base.cpp" />
+    <ClCompile Include="src\gameobject_plane.cpp" />
     <ClCompile Include="src\gameobject_polygonalmesh.cpp" />
     <ClCompile Include="src\gameobject_sphere.cpp" />
     <ClCompile Include="src\glengine.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="src\color.hpp" />
     <ClInclude Include="src\constants.hpp" />
     <ClInclude Include="src\gameobject_base.hpp" />
+    <ClInclude Include="src\gameobject_plane.hpp" />
     <ClInclude Include="src\gameobject_polygonalmesh.hpp" />
     <ClInclude Include="src\gameobject_sphere.hpp" />
     <ClInclude Include="src\glengine.hpp" />
