@@ -58,7 +58,7 @@ bool PolygonalMesh::HasAttribute() {
 }
 
 ColorRGBA PolygonalMesh::GetColor(const float u, const float v) const{
-  return {0xff, 0x40, 0x40, 0xff}; // TODO:ŽÀ‘•
+  return m_diffuseColor;
 }
 
 RTCGeometryType PolygonalMesh::GetGeomType() const {
