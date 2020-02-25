@@ -20,7 +20,7 @@ void cges::InitRayHit(RTCRayHit& rayhit, const glm::vec3& org, const glm::vec3& 
 }
 
 bool IsInterpolatable(const RTCGeometryType geomType) noexcept{
-  if (geomType == RTC_GEOMETRY_TYPE_GRID || geomType == RTC_GEOMETRY_TYPE_INSTANCE || geomType == RTC_GEOMETRY_TYPE_DISC_POINT || geomType == RTC_GEOMETRY_TYPE_SPHERE_POINT || geomType == RTC_GEOMETRY_TYPE_USER) {
+  if (geomType == RTC_GEOMETRY_TYPE_GRID || geomType == RTC_GEOMETRY_TYPE_INSTANCE || geomType == RTC_GEOMETRY_TYPE_DISC_POINT || geomType == RTC_GEOMETRY_TYPE_SPHERE_POINT || geomType == RTC_GEOMETRY_TYPE_USER || geomType == RTC_GEOMETRY_TYPE_QUAD) {
     return false;
   }
   return true;

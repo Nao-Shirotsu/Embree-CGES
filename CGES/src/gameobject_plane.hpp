@@ -13,7 +13,7 @@ namespace cges::gameobject {
 class Plane : public Base {
 public:
   // vertex1, vertex2Ç2í∏ì_Ç∆ÇµnormalÇ…êÇíºÇ»ãÈå`Çê∂ê¨
-  Plane(const RTCDevice device, const glm::vec3& vertex1, const glm::vec3& vertex2, const glm::vec3& normal, const ColorRGBA diffuseColor);
+  Plane(const RTCDevice device, const glm::vec3& vertex1, const glm::vec3& vertex2, const glm::vec3& vertex3, const ColorRGBA diffuseColor);
 
   bool HasAttribute() override;
 
@@ -23,7 +23,7 @@ public:
 
 private:
   std::array<glm::vec3, 4> m_vertexBuf;
-  glm::vec3 m_normal;
+  const std::array<unsigned int, 4> m_indexBuf;
   ColorRGBA m_diffuseColor;
 };
 
@@ -34,7 +34,7 @@ namespace cges {
 std::unique_ptr<gameobject::Plane> MakePlane(const RTCDevice device, 
                                              const glm::vec3& vertex1, 
                                              const glm::vec3& vertex2, 
-                                             const glm::vec3& normal, 
+                                             const glm::vec3& vertex3, 
                                              const ColorRGBA diffuseColor);
 
 } // namespace cges
