@@ -12,7 +12,7 @@ namespace cges::gameobject {
 // シーンに配置される任意の3Dモデルのクラス
 class Plane : public Base {
 public:
-  // vertex1, vertex2を2頂点としnormalに垂直な矩形を生成
+  // vertex1, vertex2, vertex3を3頂点とした矩形を生成 (v1, v2,v3の順で反時計回り)
   Plane(const RTCDevice device, const glm::vec3& vertex1, const glm::vec3& vertex2, const glm::vec3& vertex3, const ColorRGBA diffuseColor);
 
   bool HasAttribute() override;
@@ -30,7 +30,7 @@ private:
 } // namespace cges::gameobject
 
 namespace cges {
-
+// vertex1, vertex2, vertex3を3頂点とした矩形を生成 (v1, v2, v3の順で反時計回り)
 std::unique_ptr<gameobject::Plane> MakePlane(const RTCDevice device, 
                                              const glm::vec3& vertex1, 
                                              const glm::vec3& vertex2, 

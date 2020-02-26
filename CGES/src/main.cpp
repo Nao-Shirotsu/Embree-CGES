@@ -21,7 +21,11 @@ int main() {
   auto renderer = cges::renderer::PhoneShader();
 
   scene.Add(cges::MakePolygonalMesh(embreeDevice, "bin/goat_filled.obj", {64, 64, 255}));
-  scene.Add(cges::MakePlane(embreeDevice, { -1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, { -1.0f, 0.0f, 1.0f }, { 255, 128, 128 }));
+  scene.Add(cges::MakePlane(embreeDevice, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { +3.0f, +3.0f, -3.0f }, { 255, 64, 64 }));   // âEï«
+  scene.Add(cges::MakePlane(embreeDevice, { -3.0f, -3.0f, -3.0f }, { +3.0f, -3.0f, -3.0f }, { +3.0f, +3.0f, -3.0f }, { 192, 192, 192 })); // âúï«
+  scene.Add(cges::MakePlane(embreeDevice, { -3.0f, -3.0f, +3.0f }, { -3.0f, -3.0f, -3.0f }, { -3.0f, +3.0f, -3.0f }, { 64, 64, 255 }));   // ç∂ï«
+  scene.Add(cges::MakePlane(embreeDevice, { -3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, -3.0f }, { 192, 192, 192 })); // è„ï«
+  scene.Add(cges::MakePlane(embreeDevice, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { -3.0f, -3.0f, -3.0f }, { 192, 192, 192 })); // â∫ï«
   //scene.Add(cges::MakeSphere(embreeDevice, 1.25f, "bin/aizu_library.jpg"));
 
   while (!graphicsEngine.ShouldTerminate()) {
