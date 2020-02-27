@@ -60,14 +60,14 @@ void Engine::Update(Camera& camera) {
     camera.UpdatePosLocal();
   }
   if (glfwGetKey(m_window, GLFW_KEY_I)) {
-    camera.radius -= 0.0625f;
+    camera.radius -= 0.5f;
     if (camera.radius < 0.0f) {
       camera.radius = 0.0f;
     }
     camera.UpdatePosLocal();
   }
   if (glfwGetKey(m_window, GLFW_KEY_O)) {
-    camera.radius += 0.0625f;
+    camera.radius += 0.5f;
     camera.UpdatePosLocal();
   }
 }
