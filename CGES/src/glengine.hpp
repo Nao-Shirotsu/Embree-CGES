@@ -21,7 +21,6 @@ public:
 
 private:
   GLFWwindow* m_window;
-  bool m_valid = false;
 };
 
 } // namespace gl::engine

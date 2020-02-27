@@ -28,8 +28,6 @@ Engine::Engine(const size_t windowWidth, const size_t windowHeight, const char* 
 
   glfwMakeContextCurrent(m_window);
   glfwSwapInterval(1);
-
-  m_valid = true;
 }
 
 Engine::~Engine() {
@@ -70,6 +68,9 @@ void Engine::Update(Camera& camera) {
     camera.radius += 0.5f;
     camera.UpdatePosLocal();
   }
+  if (glfwGetKey(m_window, GLFW_KEY_ESCAPE)) {
+    glfwSetWindowShouldClose(m_window, static_cast<int>(true));
+  }
 }
 
 void Engine::Draw(const RenderBuffer& renderTarget) const {
@@ -81,7 +82,7 @@ void Engine::Draw(const RenderBuffer& renderTarget) const {
 }
 
 bool Engine::ShouldTerminate() const noexcept {
-  return m_valid && glfwWindowShouldClose(m_window);
+  return glfwWindowShouldClose(m_window);
 }
 
 } // namespace gl::enginea
