@@ -63,9 +63,6 @@
     <ClInclude Include="src\util_objfile.hpp">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\constants.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\scene.hpp">
       <Filter>src</Filter>
     </ClInclude>
