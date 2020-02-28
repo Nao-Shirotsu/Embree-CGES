@@ -8,7 +8,7 @@ Scene::Scene(const RTCDevice rtcDevice)
     : m_rtcScene{ rtcNewScene(rtcDevice) }
     , m_objects( 0 )
     , m_lightSrcs( 0 )
-    , sceneChanged{false} {
+    , m_sceneChanged{false} {
   const float divRoot3 = 1.0f / std::sqrtf(3.0f);
   m_dirLight.dir = { -divRoot3, -divRoot3, -divRoot3 };
   m_dirLight.emitColor = { 128, 128, 128, 255 };
@@ -19,17 +19,17 @@ Scene::~Scene() noexcept {
 }
 
 void Scene::Update() {
-  if (!sceneChanged) {
+  if (!m_sceneChanged) {
     return;
   }
   rtcCommitScene(m_rtcScene);
-  sceneChanged = false;
+  m_sceneChanged = false;
 }
 
 void Scene::Add(std::unique_ptr<gameobject::Base> object) {
   m_objects.push_back(std::move(object));
   (*(m_objects.end() - 1))->AttachTo(m_rtcScene, m_objects.size() - 1);
-  sceneChanged = true;
+  m_sceneChanged = true;
 }
 
 const RTCScene Scene::GetRTCScene() const {
