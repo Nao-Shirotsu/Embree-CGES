@@ -11,7 +11,12 @@
 
 namespace {
 
+constexpr float PI = 3.14159265358979323846;
 constexpr float SCREEN_WIDTH = 0.25;
+
+float DegToRad(const float degree) {
+  return degree * PI / 180.0f;
+}
 
 }
 
@@ -29,7 +34,8 @@ void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& s
   const glm::vec3 cameraFront = glm::normalize(glm::vec3{0, 0, 0} - camera.GetPosLocal());
   const glm::vec3 screenHorizontalVec = glm::normalize(glm::cross(camera.upwardWorld, cameraFront)) * SCREEN_WIDTH;
   const glm::vec3 screenVerticalVec = glm::normalize(glm::cross(screenHorizontalVec, cameraFront)) * SCREEN_WIDTH * aspectRatio;
-  const glm::vec3 screenCenterPos = camera.posWorld + camera.GetPosLocal() + cameraFront;
+  const auto distanceToScreen = std::tanf(DegToRad((180.0f - camera.fov) / 2.0f)) * SCREEN_WIDTH / 2.0f;
+  const glm::vec3 screenCenterPos = camera.posWorld + camera.GetPosLocal() + cameraFront * distanceToScreen;
 
   // スクリーン左上(pixel[0][0])のワールド座標
   const glm::vec3 initialPos = screenCenterPos - (glm::vec3{ 0.5, 0.5, 0.5 } * screenVerticalVec) - (glm::vec3{ 0.5, 0.5, 0.5 } * screenHorizontalVec);

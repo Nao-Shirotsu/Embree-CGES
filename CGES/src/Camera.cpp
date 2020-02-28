@@ -2,9 +2,12 @@
 
 #include <cmath>
 
-cges::Camera::Camera(const glm::vec3& posWorld, const float radius) 
+cges::Camera::Camera(const glm::vec3& posWorld, const float radius, const float fov) 
   : posWorld{ posWorld }
-  , radius{ radius } {}
+  , radius{ radius }
+  , fov{ fov } {
+  UpdatePosLocal();
+}
 
 void cges::Camera::UpdatePosLocal() {
   const float sinYZ = std::sinf(radYZ);
