@@ -19,7 +19,7 @@ public:
   float fov;           // Ž‹–ìŠp
 
 private:
-  glm::vec3 posLocal;
+  glm::vec3 m_posLocal;
 };
 
 }// namespace cges

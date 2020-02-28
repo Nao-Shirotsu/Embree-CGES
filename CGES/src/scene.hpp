@@ -32,7 +32,7 @@ private:
   std::vector<std::unique_ptr<gameobject::Base>> m_objects;
   std::vector<LightSource> m_lightSrcs;
   LightSource m_dirLight;
-  bool sceneChanged;
+  bool m_sceneChanged;
 };
 
 } // namespace
