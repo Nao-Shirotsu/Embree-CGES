@@ -1,9 +1,10 @@
 #include "util_objfile.hpp"
-#include "constants.hpp"
 
 #include <string>
 
 namespace {
+
+constexpr int INPUT_BUFFER_SIZE = 512;
 
 // .objファイルの各行頭にあるマーカー
 enum class Marker {

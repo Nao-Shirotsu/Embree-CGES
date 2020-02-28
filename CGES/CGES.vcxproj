@@ -163,7 +163,6 @@
     <ClInclude Include="src\bufferelements.hpp" />
     <ClInclude Include="src\camera.hpp" />
     <ClInclude Include="src\color.hpp" />
-    <ClInclude Include="src\constants.hpp" />
     <ClInclude Include="src\gameobject_base.hpp" />
     <ClInclude Include="src\gameobject_plane.hpp" />
     <ClInclude Include="src\gameobject_polygonalmesh.hpp" />
