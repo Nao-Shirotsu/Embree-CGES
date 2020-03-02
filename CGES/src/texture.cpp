@@ -5,8 +5,13 @@
 
 namespace cges {
 
-Texture::Texture(const char* const filePath) 
-: m_imageBuffer(tex::LoadFromFile(filePath)) {}
+Texture::Texture(const char* const filePath)
+    : m_imageBuffer(tex::LoadFromFile(filePath)) {}
+
+Texture::Texture(const ColorRGBA singleColor)
+    : m_imageBuffer(1, 1) {
+  m_imageBuffer[0][0] = singleColor;
+}
 
 ColorRGBA Texture::GetPixel(const float x, const float y) const noexcept{
   uint32_t xIdx = std::clamp(x, 0.0f, 1.0f) * static_cast<uint32_t>(m_imageBuffer.GetWidth());

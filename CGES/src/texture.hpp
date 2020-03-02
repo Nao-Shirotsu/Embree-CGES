@@ -9,6 +9,7 @@ namespace cges {
 class Texture {
 public:
   Texture(const char* const filePath);
+  Texture(const ColorRGBA singleColor);
 
   // テクスチャ座標を浮動小数で指定して色を取得
   ColorRGBA GetPixel(const float x, const float y) const noexcept;
