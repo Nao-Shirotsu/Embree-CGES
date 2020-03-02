@@ -4,6 +4,7 @@
 
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
+#include <glm/vec3.hpp>
 
 namespace cges::gameobject{
 
@@ -22,11 +23,13 @@ public:
 
   virtual RTCGeometryType GetGeomType() const = 0;
 
+  // ワールド座標位置を取得 (メンバ変数のアラインメントの都合で純粋仮想)
+  virtual glm::vec3 GetPosWorld() const = 0;
+
   // Embree管理下のシーンにこのオブジェクトを登録
   void AttachTo(const RTCScene scene, const unsigned int geomID);
 
 protected:
-  //glm::vec3 origin; // モデル座標系原点のワールド位置
   const RTCDevice m_rtcDevice;
   RTCGeometry m_rtcGeometry;
 };

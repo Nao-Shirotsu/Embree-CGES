@@ -13,16 +13,17 @@ constexpr size_t NUM_OFFSETS = 0;
 
 namespace cges::gameobject {
 
-Plane::Plane(const RTCDevice device, const glm::vec3& vertex1, const glm::vec3& vertex2, const glm::vec3& vertex3, const ColorRGBA diffuseColor)
+Plane::Plane(const RTCDevice device, const glm::vec3& posWorld, const glm::vec3& vertex1, const glm::vec3& vertex2, const glm::vec3& vertex3, const ColorRGBA diffuseColor)
     : Base(device, RTC_GEOMETRY_TYPE_QUAD)
     , m_indexBuf{0, 1, 2, 3}
+    , m_posWorld(posWorld)
     , m_diffuseColor(diffuseColor) {
   const auto v2tov3 = vertex3 - vertex2;
   
-  m_vertexBuf[0] = vertex1 + v2tov3;
-  m_vertexBuf[1] = vertex1;
-  m_vertexBuf[2] = vertex2;
-  m_vertexBuf[3] = vertex3;
+  m_vertexBuf[0] = vertex1 + v2tov3 + m_posWorld;
+  m_vertexBuf[1] = vertex1 + m_posWorld;
+  m_vertexBuf[2] = vertex2 + m_posWorld;
+  m_vertexBuf[3] = vertex3 + m_posWorld;
 
   rtcSetSharedGeometryBuffer(
       m_rtcGeometry,
@@ -61,12 +62,17 @@ RTCGeometryType Plane::GetGeomType() const {
   return RTC_GEOMETRY_TYPE_QUAD;
 }
 
+glm::vec3 Plane::GetPosWorld() const {
+  return m_posWorld;
+}
+
 }// namespace cges::gameobject
 
 std::unique_ptr<cges::gameobject::Plane> cges::MakePlane(const RTCDevice device, 
+                                                         const glm::vec3& posWorld,
                                                          const glm::vec3& vertex1, 
                                                          const glm::vec3& vertex2, 
                                                          const glm::vec3& vertex3, 
                                                          const cges::ColorRGBA diffuseColor) {
-  return std::make_unique<cges::gameobject::Plane>(device, vertex1, vertex2, vertex3, diffuseColor);
+  return std::make_unique<cges::gameobject::Plane>(device, posWorld, vertex1, vertex2, vertex3, diffuseColor);
 }

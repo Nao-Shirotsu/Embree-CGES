@@ -9,13 +9,14 @@
 
 namespace cges::gameobject {
 
-PolygonalMesh::PolygonalMesh(const RTCDevice device, const char* const filePath, ColorRGBA diffuseColor) 
+PolygonalMesh::PolygonalMesh(const RTCDevice device, const glm::vec3& posWorld, const char* const filePath, ColorRGBA diffuseColor) 
     : Base(device, RTC_GEOMETRY_TYPE_TRIANGLE)
+    , m_posWorld(posWorld)
     , m_diffuseColor(diffuseColor){
 #ifdef _DEBUG
-  assert(obj::LoadFromFile(filePath, m_vertexBuf, m_indexBuf, m_vertexNormalBuf));
+  assert(obj::LoadFromFile(filePath, posWorld, m_vertexBuf, m_indexBuf, m_vertexNormalBuf));
 #else
-  obj::LoadFromFile(filePath, vertexBuf, indexBuf, vertexNormalBuf);
+  obj::LoadFromFile(filePath, posWorld, vertexBuf, indexBuf, vertexNormalBuf);
 #endif
   rtcSetSharedGeometryBuffer(
       m_rtcGeometry,
@@ -65,9 +66,13 @@ RTCGeometryType PolygonalMesh::GetGeomType() const {
   return RTC_GEOMETRY_TYPE_TRIANGLE;
 }
 
+glm::vec3 PolygonalMesh::GetPosWorld() const {
+  return m_posWorld;
+}
+
 } // namespace cges::gameobject
 
-std::unique_ptr<cges::gameobject::PolygonalMesh> cges::MakePolygonalMesh(const RTCDevice device, const char* const filePath, ColorRGBA diffuseColor) {
-  return std::make_unique<gameobject::PolygonalMesh>(device, filePath, diffuseColor);
+std::unique_ptr<cges::gameobject::PolygonalMesh> cges::MakePolygonalMesh(const RTCDevice device, const glm::vec3& posWorld, const char* const filePath, ColorRGBA diffuseColor) {
+  return std::make_unique<gameobject::PolygonalMesh>(device, posWorld, filePath, diffuseColor);
 }
 

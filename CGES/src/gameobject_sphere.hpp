@@ -11,7 +11,7 @@ namespace cges::gameobject {
 // シーンに配置される任意の3Dモデルのクラス
 class Sphere : public Base {
 public:
-  Sphere(const RTCDevice device, const float radius, const char* const textureFilePath);
+  Sphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const char* const textureFilePath);
 
   bool HasAttribute() override;
 
@@ -19,11 +19,11 @@ public:
 
   RTCGeometryType GetGeomType() const override;
 
+  glm::vec3 GetPosWorld() const override;
+
 private:
-  struct {
-    Vector3f m_center;
-    float m_radius;
-  } m_value;
+  glm::vec3 m_posWorld;
+  float m_radius;
   Texture m_texture;
 };
 
@@ -31,6 +31,6 @@ private:
 
 namespace cges {
 
-std::unique_ptr<gameobject::Sphere> MakeSphere(const RTCDevice device, const float radius, const char* const textureFilePath);
+std::unique_ptr<gameobject::Sphere> MakeSphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const char* const textureFilePath);
 
 } // namespace cges

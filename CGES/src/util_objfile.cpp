@@ -104,7 +104,7 @@ bool LoadFileProperties(std::ifstream& ifs, NumElements& count, bool& fTriple) {
 
 namespace cges::obj {
 
-bool LoadFromFile(const char* const filePath, std::vector<Vector3f>& vertexBuf, std::vector<PolygonIndex>& indexBuf, std::vector<Vector3f>& vertexNormalBuf) {
+bool LoadFromFile(const char* const filePath, const glm::vec3& posWorld, std::vector<Vector3f>& vertexBuf, std::vector<PolygonIndex>& indexBuf, std::vector<Vector3f>& vertexNormalBuf) {
   auto ifs = std::ifstream(filePath);
   if (!ifs) {
     return false;
@@ -143,6 +143,9 @@ bool LoadFromFile(const char* const filePath, std::vector<Vector3f>& vertexBuf, 
         ifs >> vertexBuf[verBufIndex].x;
         ifs >> vertexBuf[verBufIndex].y;
         ifs >> vertexBuf[verBufIndex].z;
+        vertexBuf[verBufIndex].x += posWorld.x;
+        vertexBuf[verBufIndex].y += posWorld.y;
+        vertexBuf[verBufIndex].z += posWorld.z;
         ++verBufIndex;
       } break;
 

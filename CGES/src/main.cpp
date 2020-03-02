@@ -20,13 +20,13 @@ int main() {
   auto scene = cges::Scene(embreeDevice);
   auto renderer = cges::renderer::PhoneShader();
 
-  scene.Add(cges::MakePolygonalMesh(embreeDevice, "bin/goat_filled.obj", {64, 64, 255}));
-  scene.Add(cges::MakePlane(embreeDevice, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { +3.0f, +3.0f, -3.0f }, { 255, 64, 64 }));   // âEï«
-  scene.Add(cges::MakePlane(embreeDevice, { -3.0f, -3.0f, -3.0f }, { +3.0f, -3.0f, -3.0f }, { +3.0f, +3.0f, -3.0f }, { 192, 192, 192 })); // âúï«
-  scene.Add(cges::MakePlane(embreeDevice, { -3.0f, -3.0f, +3.0f }, { -3.0f, -3.0f, -3.0f }, { -3.0f, +3.0f, -3.0f }, { 64, 64, 255 }));   // ç∂ï«
-  scene.Add(cges::MakePlane(embreeDevice, { -3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, -3.0f }, { 192, 192, 192 })); // è„ï«
-  scene.Add(cges::MakePlane(embreeDevice, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { -3.0f, -3.0f, -3.0f }, { 192, 192, 192 })); // â∫ï«
-  //scene.Add(cges::MakeSphere(embreeDevice, 1.25f, "bin/aizu_library.jpg"));
+  scene.Add(cges::MakePolygonalMesh(embreeDevice, {0.0f, 0.0f, 0.0f}, "bin/goat_filled.obj", { 64, 64, 255 }));
+  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { +3.0f, +3.0f, -3.0f }, { 255, 64, 64 })); // âEï«
+  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { -3.0f, -3.0f, -3.0f }, { +3.0f, -3.0f, -3.0f }, { +3.0f, +3.0f, -3.0f }, { 192, 192, 192 })); // âúï«
+  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { -3.0f, -3.0f, +3.0f }, { -3.0f, -3.0f, -3.0f }, { -3.0f, +3.0f, -3.0f }, { 64, 64, 255 }));   // ç∂ï«
+  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { -3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, -3.0f }, { 192, 192, 192 })); // è„ï«
+  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { -3.0f, -3.0f, -3.0f }, { 192, 192, 192 })); // â∫ï«
+  scene.Add(cges::MakeSphere(embreeDevice, { 1.5f, -1.5f, 1.5f }, 1.0f, "bin/aizu_library.jpg"));
 
   while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera);
