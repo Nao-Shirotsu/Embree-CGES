@@ -26,7 +26,7 @@ int main() {
   scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { -3.0f, -3.0f, +3.0f }, { -3.0f, -3.0f, -3.0f }, { -3.0f, +3.0f, -3.0f }, { 64, 64, 255 }));   // ç∂ï«
   scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { -3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, -3.0f }, { 192, 192, 192 })); // è„ï«
   scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { -3.0f, -3.0f, -3.0f }, { 192, 192, 192 })); // â∫ï«
-  scene.Add(cges::MakeSphere(embreeDevice, { 1.5f, -1.5f, 1.5f }, 1.0f, "bin/aizu_library.jpg"));
+  scene.Add(cges::MakeSphere(embreeDevice, { 1.5f, -1.5f, 1.5f }, 1.0f, {0, 255, 0, 0}));
 
   while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera);

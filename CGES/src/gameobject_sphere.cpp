@@ -26,12 +26,23 @@ Sphere::Sphere(const RTCDevice device, const glm::vec3& posWorld, const float ra
       sizeof(m_posWorld),
       1);
 
-  std::cout << (&(m_posWorld.x)) << std::endl;
-  std::cout << (&(m_posWorld.y)) << std::endl;
-  std::cout << (&(m_posWorld.z)) << std::endl;
-  std::cout << (&m_radius) << std::endl;
+  rtcCommitGeometry(m_rtcGeometry);
+}
 
-  auto err = rtcGetDeviceError(m_rtcDevice);
+Sphere::Sphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const ColorRGBA diffuseColor)
+    : Base(device, RTC_GEOMETRY_TYPE_SPHERE_POINT)
+    , m_posWorld(posWorld)
+    , m_radius(radius)
+    , m_texture(diffuseColor) {
+  rtcSetSharedGeometryBuffer(
+      m_rtcGeometry,
+      RTC_BUFFER_TYPE_VERTEX,
+      0,
+      RTC_FORMAT_FLOAT4,
+      &m_posWorld,
+      0,
+      sizeof(m_posWorld),
+      1);
 
   rtcCommitGeometry(m_rtcGeometry);
 }
@@ -56,4 +67,8 @@ glm::vec3 Sphere::GetPosWorld() const {
 
 std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const char* const textureFilePath) {
   return std::make_unique<gameobject::Sphere>(device, posWorld, radius, textureFilePath);
+}
+
+std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const ColorRGBA diffuseColor) {
+  return std::make_unique<gameobject::Sphere>(device, posWorld, radius, diffuseColor);
 }
