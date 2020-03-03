@@ -6,12 +6,8 @@
 
 namespace cges {
 
-// “_ŒõŒ¹ Œ“ wŒü«ŒõŒ¹
-struct LightSource {
-  union {
-    glm::vec3 pos;
-    glm::vec3 dir;
-  };
+struct DirectionalLight {
+  glm::vec3 dir;
   ColorRGBA emitColor;
 };
 
