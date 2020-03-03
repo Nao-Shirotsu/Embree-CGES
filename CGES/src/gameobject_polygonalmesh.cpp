@@ -25,7 +25,7 @@ PolygonalMesh::PolygonalMesh(const RTCDevice device, const glm::vec3& posWorld, 
       RTC_FORMAT_FLOAT3,
       m_vertexBuf.data(),
       0,
-      sizeof(Vector3f),
+      sizeof(glm::vec3),
       m_vertexBuf.size());
 
   rtcSetSharedGeometryBuffer(
@@ -47,7 +47,7 @@ PolygonalMesh::PolygonalMesh(const RTCDevice device, const glm::vec3& posWorld, 
         RTC_FORMAT_FLOAT3,
         m_vertexNormalBuf.data(),
         0,
-        sizeof(Vector3f),
+        sizeof(glm::vec3),
         m_vertexNormalBuf.size());
   }
 

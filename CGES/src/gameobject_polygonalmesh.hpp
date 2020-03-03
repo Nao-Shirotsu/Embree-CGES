@@ -23,9 +23,9 @@ public:
   glm::vec3 GetPosWorld() const override;
 
 private:
-  std::vector<Vector3f> m_vertexBuf;
+  std::vector<glm::vec3> m_vertexBuf;
   std::vector<PolygonIndex> m_indexBuf;
-  std::vector<Vector3f> m_vertexNormalBuf;
+  std::vector<glm::vec3> m_vertexNormalBuf;
   glm::vec3 m_posWorld;
   ColorRGBA m_diffuseColor;
 };
