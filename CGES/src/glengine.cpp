@@ -8,7 +8,7 @@
 
 namespace {
 
-constexpr float PI = 3.14159265358979323846;
+constexpr float PI = 3.14159265358979323846f;
 constexpr float DELTA_SPIN_RADIAN = PI / 15.0f;
 
 }
@@ -19,7 +19,7 @@ Engine::Engine(const size_t windowWidth, const size_t windowHeight, const char* 
   if (glfwInit() == GL_FALSE) {
     assert(false);
   }
-  m_window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, nullptr, nullptr);
+  m_window = glfwCreateWindow(static_cast<int>(windowWidth), static_cast<int>(windowHeight), windowTitle, nullptr, nullptr);
   if (!m_window) {
     return;
   }
@@ -75,7 +75,7 @@ void Engine::Update(Camera& camera) {
 
 void Engine::Draw(const RenderBuffer& renderTarget) const {
   glClear(GL_COLOR_BUFFER_BIT);
-  glDrawPixels(renderTarget.GetWidth(), renderTarget.GetHeight(), GL_RGBA, GL_UNSIGNED_BYTE, renderTarget[0]);
+  glDrawPixels(static_cast<int>(renderTarget.GetWidth()), static_cast<int>(renderTarget.GetHeight()), GL_RGBA, GL_UNSIGNED_BYTE, renderTarget[0]);
   glFlush();
   glfwSwapBuffers(m_window);
   glfwPollEvents();

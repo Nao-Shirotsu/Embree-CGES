@@ -11,8 +11,8 @@
 
 namespace {
 
-constexpr float PI = 3.14159265358979323846;
-constexpr float SCREEN_WIDTH = 0.25;
+constexpr float PI = 3.14159265358979323846f;
+constexpr float SCREEN_WIDTH = 0.25f;
 
 float DegToRad(const float degree) {
   return degree * PI / 180.0f;
@@ -28,8 +28,8 @@ Base::Base()
 Base::~Base() {}
 
 void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& scene) const {
-  const int32_t width = static_cast<int32_t>(renderTarget.GetWidth());
-  const int32_t height = static_cast<int32_t>(renderTarget.GetHeight());
+  const auto width = renderTarget.GetWidth();
+  const auto height = renderTarget.GetHeight();
   const float aspectRatio = height / static_cast<float>(width);
   const glm::vec3 cameraFront = glm::normalize(glm::vec3{0, 0, 0} - camera.GetPosLocal());
   const glm::vec3 screenHorizontalVec = glm::normalize(glm::cross(camera.upwardWorld, cameraFront)) * SCREEN_WIDTH;

@@ -164,17 +164,17 @@ bool LoadFromFile(const char* const filePath, const glm::vec3& posWorld, std::ve
           size_t verIdx, texIdx, normIdx;
           ifs >> recv;
           ReadObjFLine(recv, verIdx, texIdx, normIdx);
-          indexBuf[idxBufIndex].v0 = verIdx - 1;
+          indexBuf[idxBufIndex].v0 = static_cast<unsigned int>(verIdx - 1);
           vertexNormalBuf[verIdx - 1] = vnBuf[normIdx - 1];
 
           ifs >> recv;
           ReadObjFLine(recv, verIdx, texIdx, normIdx);
-          indexBuf[idxBufIndex].v1 = verIdx - 1;
+          indexBuf[idxBufIndex].v1 = static_cast<unsigned int>(verIdx - 1);
           vertexNormalBuf[verIdx - 1] = vnBuf[normIdx - 1];
 
           ifs >> recv;
           ReadObjFLine(recv, verIdx, texIdx, normIdx);
-          indexBuf[idxBufIndex].v2 = verIdx - 1;
+          indexBuf[idxBufIndex].v2 = static_cast<unsigned int>(verIdx - 1);
           vertexNormalBuf[verIdx - 1] = vnBuf[normIdx - 1];
         }
         ++idxBufIndex;
