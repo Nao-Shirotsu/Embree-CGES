@@ -14,8 +14,8 @@ Texture::Texture(const ColorRGBA singleColor)
 }
 
 ColorRGBA Texture::GetPixel(const float x, const float y) const noexcept{
-  uint32_t xIdx = std::clamp(x, 0.0f, 1.0f) * static_cast<uint32_t>(m_imageBuffer.GetWidth());
-  uint32_t yIdx = std::clamp(y, 0.0f, 1.0f) * static_cast<uint32_t>(m_imageBuffer.GetHeight());
+  uint32_t xIdx = static_cast<uint32_t>(std::clamp(x, 0.0f, 1.0f) * m_imageBuffer.GetWidth());
+  uint32_t yIdx = static_cast<uint32_t>(std::clamp(y, 0.0f, 1.0f) * m_imageBuffer.GetHeight());
   return m_imageBuffer[yIdx][xIdx];
 }
 

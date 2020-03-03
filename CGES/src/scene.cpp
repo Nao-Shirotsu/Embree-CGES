@@ -28,7 +28,7 @@ void Scene::Update() {
 
 void Scene::Add(std::unique_ptr<gameobject::Base> object) {
   m_objects.push_back(std::move(object));
-  (*(m_objects.end() - 1))->AttachTo(m_rtcScene, m_objects.size() - 1);
+  (*(m_objects.end() - 1))->AttachTo(m_rtcScene, static_cast<unsigned int>(m_objects.size()) - 1);
   m_sceneChanged = true;
 }
 
