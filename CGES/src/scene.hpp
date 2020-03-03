@@ -30,8 +30,8 @@ private:
 
   RTCScene m_rtcScene;
   std::vector<std::unique_ptr<gameobject::Base>> m_objects;
-  std::vector<LightSource> m_lightSrcs;
-  LightSource m_dirLight;
+  std::vector<DirectionalLight> m_lightSrcs;
+  DirectionalLight m_dirLight;
   bool m_sceneChanged;
 };
 
