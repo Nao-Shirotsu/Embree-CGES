@@ -168,7 +168,7 @@
     <ClInclude Include="src\gameobject_polygonalmesh.hpp" />
     <ClInclude Include="src\gameobject_sphere.hpp" />
     <ClInclude Include="src\glengine.hpp" />
-    <ClInclude Include="src\light_source.hpp" />
+    <ClInclude Include="src\directionallight.hpp" />
     <ClInclude Include="src\renderer_base.hpp" />
     <ClInclude Include="src\renderbuffer.hpp" />
     <ClInclude Include="src\renderer_phoneshader.hpp" />
