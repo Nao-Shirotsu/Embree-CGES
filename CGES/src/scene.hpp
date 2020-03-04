@@ -7,7 +7,7 @@
 #include <embree3/rtcore.h>
 
 #include "gameobject_base.hpp"
-#include "light_source.hpp"
+#include "directionallight.hpp"
 
 namespace cges {
 
