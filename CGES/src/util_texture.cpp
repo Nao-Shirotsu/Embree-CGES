@@ -56,27 +56,31 @@ RenderBuffer LoadFromFile(const char* const filePath) {
     EARLY_RETURN_UNSUPPORTED_FORMAT("file format not supported", filePath);
   }
 
-  unsigned char* pixels;
+  unsigned char* pixelsStart;
   int width;
   int height;
   int bytesPerPixel;
-  pixels = stbi_load(filePath, &width, &height, &bytesPerPixel, 4);
-  if (!pixels) {
+  pixelsStart = stbi_load(filePath, &width, &height, &bytesPerPixel, 4);
+  if (!pixelsStart) {
     EARLY_RETURN_UNSUPPORTED_FORMAT("image loading failed", filePath);
   }
-
+  auto pixelsItr = pixelsStart;
   auto cgesImage = RenderBuffer(static_cast<size_t>(width), static_cast<size_t>(height));
   for (size_t y = 0; y < cgesImage.GetHeight(); ++y) {
     for (size_t x = 0; x < cgesImage.GetWidth(); ++x) {
-      cgesImage[y][x].r = *(pixels + (cgesImage.GetWidth() * y + x + 0));
-      cgesImage[y][x].g = *(pixels + (cgesImage.GetWidth() * y + x + 1));
-      cgesImage[y][x].b = *(pixels + (cgesImage.GetWidth() * y + x + 2));
-      cgesImage[y][x].a = *(pixels + (cgesImage.GetWidth() * y + x + 3));
+      cgesImage[y][x].r = *pixelsItr;
+      ++pixelsItr;
+      cgesImage[y][x].g = *pixelsItr;
+      ++pixelsItr;
+      cgesImage[y][x].b = *pixelsItr;
+      ++pixelsItr;
+      cgesImage[y][x].a = *pixelsItr;
+      ++pixelsItr;
     }
   }
 
   // ƒƒ‚ƒŠã‚Ì‰æ‘œƒf[ƒ^‚ð”jŠü
-  stbi_image_free(pixels);
+  stbi_image_free(pixelsStart);
   return std::move(cgesImage);
 }
 
