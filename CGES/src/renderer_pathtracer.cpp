@@ -52,13 +52,8 @@ void PathTracer::ParallelDraw(const Camera& camera,
       else {
         faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
       }
-      const glm::vec3 reflectedDir = scene.GetDirLightForward() - 2.0f * glm::dot(scene.GetDirLightForward(), faceNormal) * faceNormal;
-      const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
-      const float diffuseFactor = std::clamp(glm::dot(-scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
-      const ColorRGBA objColor = scene.GetGeomColor(rayhit.hit.geomID, rayhit.hit.u, rayhit.hit.v);
-      renderTarget[yIdx][xIdx].r = std::clamp(static_cast<int>(objColor.r * diffuseFactor + 96 * specularFactor) + 32, 0, 255);
-      renderTarget[yIdx][xIdx].g = std::clamp(static_cast<int>(objColor.g * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
-      renderTarget[yIdx][xIdx].b = std::clamp(static_cast<int>(objColor.b * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
+      
+      
     }
   }
 }
