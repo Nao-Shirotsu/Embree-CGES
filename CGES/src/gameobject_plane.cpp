@@ -19,8 +19,9 @@ Plane::Plane(const RTCDevice device,
              const glm::vec3& vertex1, 
              const glm::vec3& vertex2, 
              const glm::vec3& vertex3, 
-             const ColorRGBA diffuseColor)
-    : Base(device, RTC_GEOMETRY_TYPE_QUAD)
+             const ColorRGBA diffuseColor,
+             const ColorRGBA emissionColor)
+    : Base(device, RTC_GEOMETRY_TYPE_QUAD, emissionColor)
     , m_indexBuf{0, 1, 2, 3}
     , m_posWorld(posWorld)
     , m_texture(diffuseColor) {
@@ -59,8 +60,9 @@ Plane::Plane(const RTCDevice device,
              const glm::vec3& vertex1, 
              const glm::vec3& vertex2, 
              const glm::vec3& vertex3, 
-             const char* const textureFilePath)
-    : Base(device, RTC_GEOMETRY_TYPE_QUAD)
+             const char* const textureFilePath,
+             const ColorRGBA emissionColor)
+    : Base(device, RTC_GEOMETRY_TYPE_QUAD, emissionColor)
     , m_indexBuf{ 0, 1, 2, 3 }
     , m_posWorld(posWorld)
     , m_texture(textureFilePath) {
@@ -117,8 +119,9 @@ std::unique_ptr<cges::gameobject::Plane> cges::MakePlane(const RTCDevice device,
                                                          const glm::vec3& vertex1, 
                                                          const glm::vec3& vertex2, 
                                                          const glm::vec3& vertex3, 
-                                                         const cges::ColorRGBA diffuseColor) {
-  return std::make_unique<cges::gameobject::Plane>(device, posWorld, vertex1, vertex2, vertex3, diffuseColor);
+                                                         const cges::ColorRGBA diffuseColor,
+                                                         const ColorRGBA emissionColor) {
+  return std::make_unique<cges::gameobject::Plane>(device, posWorld, vertex1, vertex2, vertex3, diffuseColor, emissionColor);
 }
 
 std::unique_ptr<cges::gameobject::Plane> cges::MakePlane(const RTCDevice device, 
@@ -126,6 +129,7 @@ std::unique_ptr<cges::gameobject::Plane> cges::MakePlane(const RTCDevice device,
                                                          const glm::vec3& vertex1, 
                                                          const glm::vec3& vertex2, 
                                                          const glm::vec3& vertex3, 
-                                                         const char* const textureFilePath) {
-  return std::make_unique<cges::gameobject::Plane>(device, posWorld, vertex1, vertex2, vertex3, textureFilePath);
+                                                         const char* const textureFilePath,
+                                                         const ColorRGBA emissionColor) {
+  return std::make_unique<cges::gameobject::Plane>(device, posWorld, vertex1, vertex2, vertex3, textureFilePath, emissionColor);
 }

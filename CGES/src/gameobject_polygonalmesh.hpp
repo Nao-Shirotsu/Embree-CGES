@@ -12,7 +12,11 @@ namespace cges::gameobject {
 // シーンに配置される任意の3Dモデルのクラス
 class PolygonalMesh : public Base {
 public:
-  PolygonalMesh(const RTCDevice device, const glm::vec3& posWorld, const char* const filePath, ColorRGBA diffuseColor);
+  PolygonalMesh(const RTCDevice device, 
+                const glm::vec3& posWorld, 
+                const char* const filePath, 
+                const ColorRGBA diffuseColor, 
+                const ColorRGBA emissionColor);
 
   bool HasAttribute() override;
 
@@ -34,6 +38,10 @@ private:
 
 namespace cges{
 
-std::unique_ptr<gameobject::PolygonalMesh> MakePolygonalMesh(const RTCDevice device, const glm::vec3& posWorld, const char* const filePath, ColorRGBA diffuseColor);
+std::unique_ptr<gameobject::PolygonalMesh> MakePolygonalMesh(const RTCDevice device, 
+                                                             const glm::vec3& posWorld, 
+                                                             const char* const filePath, 
+                                                             const ColorRGBA diffuseColor, 
+                                                             const ColorRGBA emissionColor);
 
 } // namespace cges

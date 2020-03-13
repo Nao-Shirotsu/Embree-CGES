@@ -21,13 +21,56 @@ int main() {
   auto scene = cges::Scene(embreeDevice);
   auto renderer = cges::renderer::PathTracer();
 
-  scene.Add(cges::MakePolygonalMesh(embreeDevice, {0.0f, 0.0f, 0.0f}, "bin/goat_filled.obj", { 64, 64, 255 }));
-  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { +3.0f, +3.0f, -3.0f }, { 255, 64, 64 }));   // âEï«
-  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { -3.0f, -3.0f, -3.0f }, { +3.0f, -3.0f, -3.0f }, { +3.0f, +3.0f, -3.0f }, { 192, 192, 192 } ));// âúï«
-  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { -3.0f, -3.0f, +3.0f }, { -3.0f, -3.0f, -3.0f }, { -3.0f, +3.0f, -3.0f }, "bin/textest.jpg")); // ç∂ï«
-  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { -3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, +3.0f }, { +3.0f, +3.0f, -3.0f }, { 192, 192, 192 })); // è„ï«
-  scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { -3.0f, -3.0f, -3.0f }, { 192, 192, 192 })); // â∫ï«
-  scene.Add(cges::MakeSphere(embreeDevice, { 1.5f, -1.5f, 1.5f }, 1.0f, {0, 255, 0, 0}));
+  scene.Add(cges::MakePolygonalMesh(embreeDevice, 
+                                    {0.0f, 0.0f, 0.0f}, 
+                                    "bin/goat_filled.obj", 
+                                    { 64, 64, 255 }, 
+                                    {0, 0, 0}));
+  scene.Add(cges::MakePlane(embreeDevice, 
+                            { 0.0f, 0.0f, 0.0f }, 
+                            { +3.0f, -3.0f, +3.0f }, 
+                            { +3.0f, -3.0f, -3.0f }, 
+                            { +3.0f, +3.0f, -3.0f }, 
+                            { 255, 64, 64 },
+                            { 0, 0, 0 }));                                                                                                                      // âEï«
+  scene.Add(cges::MakePlane(embreeDevice, 
+                            { 0.0f, 0.0f, 0.0f }, 
+                            { -3.0f, -3.0f, -3.0f }, 
+                            { +3.0f, -3.0f, -3.0f }, 
+                            { +3.0f, +3.0f, -3.0f }, 
+                            { 192, 192, 192 },
+                            { 0, 0, 0 }));                                                                                                                      // âúï«
+  scene.Add(cges::MakePlane(embreeDevice,
+                            { 0.0f, 0.0f, 0.0f }, 
+                            { -3.0f, -3.0f, +3.0f }, 
+                            { -3.0f, -3.0f, -3.0f }, 
+                            { -3.0f, +3.0f, -3.0f }, 
+                            "bin/textest.jpg",
+                            { 0, 0, 0 }));                                                                                                                      // ç∂ï«
+  scene.Add(cges::MakePlane(embreeDevice, 
+                            { 0.0f, 0.0f, 0.0f }, 
+                            { -3.0f, +3.0f, +3.0f }, 
+                            { +3.0f, +3.0f, +3.0f }, 
+                            { +3.0f, +3.0f, -3.0f }, 
+                            { 192, 192, 192 }, 
+                            { 0, 0, 0 }));                                                                                                   // è„ï«
+  scene.Add(cges::MakePlane(embreeDevice, 
+                            { 0.0f, 0.0f, 0.0f }, 
+                            { +3.0f, -3.0f, +3.0f }, 
+                            { +3.0f, -3.0f, -3.0f }, 
+                            { -3.0f, -3.0f, -3.0f }, 
+                            { 192, 192, 192 },
+                            { 0, 0, 0 })); // â∫ï«
+  scene.Add(cges::MakeSphere(embreeDevice, 
+                             { 1.5f, -1.5f, 1.5f }, 
+                             1.0f, 
+                             {0, 255, 0},
+                             { 0, 0, 0 }));
+  scene.Add(cges::MakeSphere(embreeDevice,
+                             { 0.0f, 3.0f, 0.0f },
+                             0.75f,
+                             { 0, 0, 0 },
+                             { 128, 128, 128 }));
 
   while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera);

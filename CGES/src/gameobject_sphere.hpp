@@ -11,8 +11,17 @@ namespace cges::gameobject {
 // シーンに配置される任意の3Dモデルのクラス
 class Sphere : public Base {
 public:
-  Sphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const char* const textureFilePath);
-  Sphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const ColorRGBA diffuseColor);
+  Sphere(const RTCDevice device,
+         const glm::vec3& posWorld,
+         const float radius, 
+         const char* const textureFilePath, 
+         const ColorRGBA emissionColor);
+
+  Sphere(const RTCDevice device,
+         const glm::vec3& posWorld, 
+         const float radius, 
+         const ColorRGBA diffuseColor,
+         const ColorRGBA emissionColor);
 
   bool HasAttribute() override;
 
@@ -32,7 +41,16 @@ private:
 
 namespace cges {
 
-std::unique_ptr<gameobject::Sphere> MakeSphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const char* const textureFilePath);
-std::unique_ptr<gameobject::Sphere> MakeSphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const ColorRGBA diffuseColor);
+std::unique_ptr<gameobject::Sphere> MakeSphere(const RTCDevice device, 
+                                               const glm::vec3& posWorld, 
+                                               const float radius, 
+                                               const char* const textureFilePath,
+                                               const ColorRGBA emissionColor);
+
+std::unique_ptr<gameobject::Sphere> MakeSphere(const RTCDevice device, 
+                                               const glm::vec3& posWorld, 
+                                               const float radius, 
+                                               const ColorRGBA diffuseColor,
+                                               const ColorRGBA emissionColor);
 
 } // namespace cges
