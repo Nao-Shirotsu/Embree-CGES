@@ -11,7 +11,7 @@ namespace cges::gameobject{
 // シーンに配置される任意の3Dモデルのクラス
 class Base {
 public:
-  Base(const RTCDevice device, const RTCGeometryType geomType);
+  Base(const RTCDevice device, const RTCGeometryType geomType, const ColorRGBA emissionColor);
 
   virtual ~Base() noexcept;
 
@@ -20,6 +20,8 @@ public:
 
   // オブジェクトのテクスチャ座標から色取得
   virtual ColorRGBA GetColor(const float u, const float v) const = 0;
+
+  ColorRGBA GetEmission() const;
 
   virtual RTCGeometryType GetGeomType() const = 0;
 
@@ -32,6 +34,7 @@ public:
 protected:
   const RTCDevice m_rtcDevice;
   RTCGeometry m_rtcGeometry;
+  const ColorRGBA m_emissionColor;
 };
 
 } // namespace cges::gameobject

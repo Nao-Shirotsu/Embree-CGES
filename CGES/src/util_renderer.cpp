@@ -1,8 +1,35 @@
 #include "util_renderer.hpp"
 
 #include <limits> // float infinity
+#include <cmath>
+
+#include <iostream>
+
+namespace {
+
+RandomGen cgesRandom;
+
+}// anonymous namespace
 
 namespace cges {
+
+RussianRoulette::RussianRoulette(const size_t limit, const float hitRate)
+    : m_numTrials(0)
+    , m_recursionLimit(limit)
+    , m_hitRate(hitRate)
+    , m_continuationRate(1.0f - hitRate) {}
+
+bool RussianRoulette::Spin() noexcept {
+  if (m_numTrials >= m_recursionLimit) {
+    m_continuationRate =  static_cast<float>(std::pow(m_hitRate, m_numTrials));
+  }
+  std::cout << m_numTrials << "th trial:" << m_continuationRate << std::endl;
+  if (cgesRandom() > m_continuationRate){
+    return true;
+  }
+  ++m_numTrials;
+  return false;
+}
 
 void cges::InitRayHit(RTCRayHit& rayhit, const glm::vec3& org, const glm::vec3& dir) noexcept {
   rayhit.ray.org_x = org.x;
@@ -30,4 +57,4 @@ bool WasIntersected(const unsigned int geomID) noexcept{
   return geomID != static_cast<int>(-1);
 }
 
-}// namespace cges
+} // namespace cges

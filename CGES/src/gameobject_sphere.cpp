@@ -11,8 +11,12 @@
 
 namespace cges::gameobject {
 
-Sphere::Sphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const char* const textureFilePath)
-    : Base(device, RTC_GEOMETRY_TYPE_SPHERE_POINT)
+Sphere::Sphere(const RTCDevice device, 
+               const glm::vec3& posWorld, 
+               const float radius, 
+               const char* const textureFilePath, 
+               const ColorRGBA emissionColor)
+    : Base(device, RTC_GEOMETRY_TYPE_SPHERE_POINT, emissionColor)
     , m_posWorld(posWorld)
     , m_radius(radius)
     , m_texture(textureFilePath) {
@@ -29,8 +33,12 @@ Sphere::Sphere(const RTCDevice device, const glm::vec3& posWorld, const float ra
   rtcCommitGeometry(m_rtcGeometry);
 }
 
-Sphere::Sphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const ColorRGBA diffuseColor)
-    : Base(device, RTC_GEOMETRY_TYPE_SPHERE_POINT)
+Sphere::Sphere(const RTCDevice device, 
+               const glm::vec3& posWorld, 
+               const float radius, 
+               const ColorRGBA diffuseColor,
+               const ColorRGBA emissionColor)
+    : Base(device, RTC_GEOMETRY_TYPE_SPHERE_POINT, emissionColor)
     , m_posWorld(posWorld)
     , m_radius(radius)
     , m_texture(diffuseColor) {
@@ -65,10 +73,18 @@ glm::vec3 Sphere::GetPosWorld() const {
 
 }// namespace cges::gameobject
 
-std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const char* const textureFilePath) {
-  return std::make_unique<gameobject::Sphere>(device, posWorld, radius, textureFilePath);
+std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice device, 
+                                                           const glm::vec3& posWorld, 
+                                                           const float radius, 
+                                                           const char* const textureFilePath,
+                                                           const ColorRGBA emissionColor) {
+  return std::make_unique<gameobject::Sphere>(device, posWorld, radius, textureFilePath, emissionColor);
 }
 
-std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice device, const glm::vec3& posWorld, const float radius, const ColorRGBA diffuseColor) {
-  return std::make_unique<gameobject::Sphere>(device, posWorld, radius, diffuseColor);
+std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice device, 
+                                                           const glm::vec3& posWorld, 
+                                                           const float radius, 
+                                                           const ColorRGBA diffuseColor, 
+                                                           const ColorRGBA emissionColor) {
+  return std::make_unique<gameobject::Sphere>(device, posWorld, radius, diffuseColor, emissionColor);
 }
