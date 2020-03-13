@@ -51,6 +51,9 @@
     <ClCompile Include="src\gameobject_plane.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\renderer_pathtracer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -106,6 +109,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\directionallight.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_pathtracer.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

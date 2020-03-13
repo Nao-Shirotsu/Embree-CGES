@@ -148,6 +148,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer_base.cpp" />
     <ClCompile Include="src\renderbuffer.cpp" />
+    <ClCompile Include="src\renderer_pathtracer.cpp" />
     <ClCompile Include="src\renderer_phoneshader.cpp" />
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\texture.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="src\directionallight.hpp" />
     <ClInclude Include="src\renderer_base.hpp" />
     <ClInclude Include="src\renderbuffer.hpp" />
+    <ClInclude Include="src\renderer_pathtracer.hpp" />
     <ClInclude Include="src\renderer_phoneshader.hpp" />
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\texture.hpp" />

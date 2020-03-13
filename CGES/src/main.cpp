@@ -1,6 +1,7 @@
 #include "camera.hpp"
 #include "renderbuffer.hpp"
 #include "renderer_phoneshader.hpp"
+#include "renderer_pathtracer.hpp"
 #include "glengine.hpp"
 #include "scene.hpp"
 #include "gameobject_sphere.hpp"
@@ -18,7 +19,7 @@ int main() {
   auto camera = cges::Camera({ 0, 0, 0 }, 40.0f, 90.0f);
   auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
   auto scene = cges::Scene(embreeDevice);
-  auto renderer = cges::renderer::PhoneShader();
+  auto renderer = cges::renderer::PathTracer();
 
   scene.Add(cges::MakePolygonalMesh(embreeDevice, {0.0f, 0.0f, 0.0f}, "bin/goat_filled.obj", { 64, 64, 255 }));
   scene.Add(cges::MakePlane(embreeDevice, { 0.0f, 0.0f, 0.0f }, { +3.0f, -3.0f, +3.0f }, { +3.0f, -3.0f, -3.0f }, { +3.0f, +3.0f, -3.0f }, { 255, 64, 64 }));   // ‰E•Ç
