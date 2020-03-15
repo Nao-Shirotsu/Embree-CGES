@@ -2,7 +2,18 @@
 #include "util_renderer.hpp"
 
 #include <glm/glm.hpp>
-#include <algorithm>
+#include <algorithm> // std::clamp
+#include <limits>    // float minimum
+
+namespace {
+
+constexpr float EPSILON = 1.0e-6f;
+constexpr float MIN = std::numeric_limits<float>::min();
+
+constexpr size_t TRACE_LIMIT = 64;
+constexpr float ROULETTE_HIT_RATE = 0.25f;
+
+}
 
 namespace cges::renderer {
 
@@ -15,6 +26,7 @@ void PathTracer::ParallelDraw(const Camera& camera,
                               const glm::vec3& screenVerticalVec, 
                               const glm::vec3& screenHorizontalVec) const {
   const auto cameraPos = camera.posWorld + camera.GetPosLocal();
+  RussianRoulette roulette(TRACE_LIMIT, ROULETTE_HIT_RATE);
   for (size_t y = loopMin; y < loopMax; ++y) {
     const float yRate = y / static_cast<float>(renderTarget.GetHeight());
     const float bgColorIntensity = 255 * (1.0f - yRate);
@@ -54,6 +66,10 @@ void PathTracer::ParallelDraw(const Camera& camera,
       }
 
       // ŽÀ‘•‚·‚é
+      glm::vec3 cumulativeRadiance = {0.0f, 0.0f, 0.0f};
+      while (!roulette.Spin()) {
+        
+      }
     }
   }
 }
