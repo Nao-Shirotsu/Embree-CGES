@@ -1,33 +1,29 @@
 #include "util_renderer.hpp"
 
 #include <limits> // float infinity
-#include <cmath>
-
-#include <iostream>
-
-namespace {
-
-RandomGen cgesRandom;
-
-}// anonymous namespace
 
 namespace cges {
 
-RussianRoulette::RussianRoulette(const size_t limit, const float hitRate)
-    : m_numTrials(0)
+RandomGenerator::RandomGenerator()
+    : mt(std::random_device()())
+    , distr(0.0f, 1.0f) {}
+
+float RandomGenerator::operator()() {
+  return distr(mt);
+}
+
+RussianRoulette::RussianRoulette(RandomGenerator& rnd, const size_t limit, const float hitRate)
+    : m_rnd(rnd)
+    , m_numTrials(0)
     , m_recursionLimit(limit)
     , m_hitRate(hitRate)
     , m_continuationRate(1.0f - hitRate) {}
 
 bool RussianRoulette::Spin() noexcept {
-  if (m_numTrials >= m_recursionLimit) {
-    m_continuationRate =  static_cast<float>(std::pow(m_hitRate, m_numTrials));
-  }
-  std::cout << m_numTrials << "th trial:" << m_continuationRate << std::endl;
-  if (cgesRandom() > m_continuationRate){
+  ++m_numTrials;
+  if (m_numTrials >= m_recursionLimit || m_rnd() > m_continuationRate) {
     return true;
   }
-  ++m_numTrials;
   return false;
 }
 
