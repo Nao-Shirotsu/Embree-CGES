@@ -114,5 +114,8 @@
     <ClInclude Include="src\renderer_pathtracer.hpp">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\material_base.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
