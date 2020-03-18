@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\brdf.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\gameobject_base.cpp" />
     <ClCompile Include="src\gameobject_plane.cpp" />
@@ -146,7 +147,6 @@
     <ClCompile Include="src\gameobject_sphere.cpp" />
     <ClCompile Include="src\glengine.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\material_lambertian.cpp" />
     <ClCompile Include="src\renderer_base.cpp" />
     <ClCompile Include="src\renderbuffer.cpp" />
     <ClCompile Include="src\renderer_pathtracer.cpp" />
@@ -162,6 +162,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\brdf.hpp" />
     <ClInclude Include="src\bufferelements.hpp" />
     <ClInclude Include="src\camera.hpp" />
     <ClInclude Include="src\color.hpp" />
@@ -171,8 +172,6 @@
     <ClInclude Include="src\gameobject_sphere.hpp" />
     <ClInclude Include="src\glengine.hpp" />
     <ClInclude Include="src\directionallight.hpp" />
-    <ClInclude Include="src\material_base.hpp" />
-    <ClInclude Include="src\material_lambertian.hpp" />
     <ClInclude Include="src\renderer_base.hpp" />
     <ClInclude Include="src\renderbuffer.hpp" />
     <ClInclude Include="src\renderer_pathtracer.hpp" />
