@@ -23,6 +23,7 @@ public:
   const glm::vec3& GetDirLightForward() const;
   RTCGeometryType GetGeomType(const unsigned int objID) const;
   ColorRGBA GetGeomColor(const unsigned int objID, const float u, const float v) const;
+  ColorRGBA GetGeomEmission(const unsigned int objID) const;
 
 private:
   Scene(const Scene& other) = delete;

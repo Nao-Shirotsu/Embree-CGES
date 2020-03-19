@@ -50,4 +50,8 @@ ColorRGBA Scene::GetGeomColor(const unsigned int objID, const float u, const flo
   return m_objects[objID]->GetColor(u, v);
 }
 
+ColorRGBA Scene::GetGeomEmission(const unsigned int objID) const {
+  return m_objects[objID]->GetEmission();
+}
+
 } //namespace cges
