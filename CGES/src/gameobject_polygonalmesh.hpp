@@ -16,7 +16,8 @@ public:
                 const glm::vec3& posWorld, 
                 const char* const filePath, 
                 const ColorRGBA diffuseColor, 
-                const ColorRGBA emissionColor);
+                const ColorRGBA emissionColor, 
+                brdf::BRDFType* brdf);
 
   bool HasAttribute() override;
 
@@ -42,6 +43,7 @@ std::unique_ptr<gameobject::PolygonalMesh> MakePolygonalMesh(const RTCDevice dev
                                                              const glm::vec3& posWorld, 
                                                              const char* const filePath, 
                                                              const ColorRGBA diffuseColor, 
-                                                             const ColorRGBA emissionColor);
+                                                             const ColorRGBA emissionColor, 
+                                                             brdf::BRDFType* brdf);
 
 } // namespace cges
