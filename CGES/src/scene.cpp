@@ -54,4 +54,16 @@ ColorRGBA Scene::GetGeomEmission(const unsigned int objID) const {
   return m_objects[objID]->GetEmission();
 }
 
+glm::vec3 Scene::GetGeomBRDFValue(const unsigned int objID,
+                          const glm::vec3& surfacePoint,
+                          const glm::vec3& outgoingDir,
+                          const glm::vec3& incomingDir,
+                          const glm::vec3& normal) const {
+  return m_objects[objID]->BRDF(surfacePoint, 
+                                outgoingDir, 
+                                incomingDir, 
+                                normal, 
+                                GetGeomColor(objID, 0.0f, 0.0f));
+}
+
 } //namespace cges
