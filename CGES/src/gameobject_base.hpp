@@ -1,6 +1,7 @@
 #pragma once
 
 #include "color.hpp"
+#include "brdf.hpp"
 
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
@@ -11,7 +12,7 @@ namespace cges::gameobject{
 // シーンに配置される任意の3Dモデルのクラス
 class Base {
 public:
-  Base(const RTCDevice device, const RTCGeometryType geomType, const ColorRGBA emissionColor);
+  Base(const RTCDevice device, const RTCGeometryType geomType, const ColorRGBA emissionColor, brdf::BRDFType* brdf);
 
   virtual ~Base() noexcept;
 
@@ -30,6 +31,8 @@ public:
 
   // Embree管理下のシーンにこのオブジェクトを登録
   void AttachTo(const RTCScene scene, const unsigned int geomID);
+
+  brdf::BRDFType* const BRDF;
 
 protected:
   const RTCDevice m_rtcDevice;
