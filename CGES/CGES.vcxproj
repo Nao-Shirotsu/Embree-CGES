@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\brdf.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\gameobject_base.cpp" />
     <ClCompile Include="src\gameobject_plane.cpp" />
@@ -161,6 +162,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\brdf.hpp" />
     <ClInclude Include="src\bufferelements.hpp" />
     <ClInclude Include="src\camera.hpp" />
     <ClInclude Include="src\color.hpp" />

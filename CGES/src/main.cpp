@@ -7,6 +7,7 @@
 #include "gameobject_sphere.hpp"
 #include "gameobject_polygonalmesh.hpp"
 #include "gameobject_plane.hpp"
+#include "brdf.hpp"
 
 #include <embree3/rtcore.h>
 
@@ -25,52 +26,60 @@ int main() {
                                     {0.0f, 0.0f, 0.0f}, 
                                     "bin/goat_filled.obj", 
                                     { 64, 64, 255 }, 
-                                    {0, 0, 0})); //山羊のオブジェ
+                                    {0, 0, 0},
+                                    cges::brdf::Lambertian)); //山羊のオブジェ
   scene.Add(cges::MakePlane(embreeDevice, 
                             { 0.0f, 0.0f, 0.0f }, 
                             { +3.0f, -3.0f, +3.0f }, 
                             { +3.0f, -3.0f, -3.0f }, 
                             { +3.0f, +3.0f, -3.0f }, 
                             { 255, 64, 64 },
-                            { 0, 0, 0 })); // 右壁
+                            { 0, 0, 0 },
+                            cges::brdf::Lambertian)); // 右壁
   scene.Add(cges::MakePlane(embreeDevice, 
                             { 0.0f, 0.0f, 0.0f }, 
                             { -3.0f, -3.0f, -3.0f }, 
                             { +3.0f, -3.0f, -3.0f }, 
                             { +3.0f, +3.0f, -3.0f }, 
                             { 192, 192, 192 },
-                            { 0, 0, 0 })); // 奥壁
+                            { 0, 0, 0 },
+                            cges::brdf::Lambertian)); // 奥壁
   scene.Add(cges::MakePlane(embreeDevice,
                             { 0.0f, 0.0f, 0.0f }, 
                             { -3.0f, -3.0f, +3.0f }, 
                             { -3.0f, -3.0f, -3.0f }, 
                             { -3.0f, +3.0f, -3.0f }, 
                             "bin/textest.jpg",
-                            { 0, 0, 0 })); // 左壁
+                            { 0, 0, 0 },
+                            cges::brdf::Lambertian)); // 左壁
   scene.Add(cges::MakePlane(embreeDevice, 
                             { 0.0f, 0.0f, 0.0f }, 
                             { -3.0f, +3.0f, +3.0f }, 
                             { +3.0f, +3.0f, +3.0f }, 
                             { +3.0f, +3.0f, -3.0f }, 
                             { 192, 192, 192 }, 
-                            { 0, 0, 0 })); // 上壁
+                            { 0, 0, 0 },
+                            cges::brdf::Lambertian)); // 上壁
   scene.Add(cges::MakePlane(embreeDevice, 
                             { 0.0f, 0.0f, 0.0f }, 
                             { +3.0f, -3.0f, +3.0f }, 
                             { +3.0f, -3.0f, -3.0f }, 
                             { -3.0f, -3.0f, -3.0f }, 
                             { 192, 192, 192 },
-                            { 0, 0, 0 })); // 下壁
+                            { 0, 0, 0 },
+                            cges::brdf::Lambertian)); // 下壁
   scene.Add(cges::MakeSphere(embreeDevice, 
                              { 1.5f, -1.5f, 1.5f }, 
                              1.0f, 
                              {0, 255, 0},
-                             { 0, 0, 0 })); // 緑球
+                             { 0, 0, 0 },
+                             cges::brdf::Lambertian)); // 緑球
   scene.Add(cges::MakeSphere(embreeDevice,
                              { 0.0f, 3.0f, 0.0f },
                              0.75f,
                              { 0, 0, 0 },
-                             { 128, 128, 128 })); // 光源球
+                             { 128, 128, 128 },
+                             cges::brdf::Lambertian)); // 光源球
 
   while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera);

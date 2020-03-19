@@ -19,7 +19,8 @@ public:
         const glm::vec3& vertex2, 
         const glm::vec3& vertex3, 
         const ColorRGBA diffuseColor,
-        const ColorRGBA emissionColor);
+        const ColorRGBA emissionColor, 
+        brdf::BRDFType* brdf);
 
   Plane(const RTCDevice device, 
         const glm::vec3& posWorld, 
@@ -27,7 +28,8 @@ public:
         const glm::vec3& vertex2, 
         const glm::vec3& vertex3, 
         const char* const textureFilePath,
-        const ColorRGBA emissionColor);
+        const ColorRGBA emissionColor,
+        brdf::BRDFType* brdf);
 
   bool HasAttribute() override;
 
@@ -54,7 +56,8 @@ std::unique_ptr<gameobject::Plane> MakePlane(const RTCDevice device,
                                              const glm::vec3& vertex2, 
                                              const glm::vec3& vertex3, 
                                              const ColorRGBA diffuseColor,
-                                             const ColorRGBA emissionColor);
+                                             const ColorRGBA emissionColor,
+                                             brdf::BRDFType* brdf);
 
 std::unique_ptr<gameobject::Plane> MakePlane(const RTCDevice device,
                                              const glm::vec3& posWorld,
@@ -62,6 +65,7 @@ std::unique_ptr<gameobject::Plane> MakePlane(const RTCDevice device,
                                              const glm::vec3& vertex2,
                                              const glm::vec3& vertex3,
                                              const char* const textureFilePath,
-                                             const ColorRGBA emissionColor);
+                                             const ColorRGBA emissionColor, 
+                                             brdf::BRDFType* brdf);
 
 } // namespace cges
