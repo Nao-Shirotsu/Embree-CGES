@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <algorithm> // std::clamp
 #include <limits>    // float minimum
+#include <stack>
 
 namespace {
 
@@ -12,6 +13,10 @@ constexpr float MIN = std::numeric_limits<float>::min();
 
 constexpr size_t TRACE_LIMIT = 64;
 constexpr float ROULETTE_HIT_RATE = 0.25f;
+
+bool IsEmitting(const unsigned int geomID) {
+  
+}
 
 }
 
@@ -29,7 +34,6 @@ void PathTracer::ParallelDraw(const Camera& camera,
   RussianRoulette roulette(TRACE_LIMIT, ROULETTE_HIT_RATE);
   for (size_t y = loopMin; y < loopMax; ++y) {
     const float yRate = y / static_cast<float>(renderTarget.GetHeight());
-    const float bgColorIntensity = 255 * (1.0f - yRate);
     const size_t yIdx = renderTarget.GetHeight() - y - 1; // openGLÇÃï`âÊÇÕleft-bottom-upÇ»ÇÃÇ≈ãtÇ…Ç∑ÇÈ
     for (size_t xIdx = 0; xIdx < renderTarget.GetWidth(); ++xIdx) {
       RTCIntersectContext context;
@@ -39,37 +43,22 @@ void PathTracer::ParallelDraw(const Camera& camera,
       const glm::vec3 rayDir = pixelPos - cameraPos;
       RTCRayHit rayhit;
       InitRayHit(rayhit, cameraPos, rayDir);
-      rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
 
-      if (!WasIntersected(rayhit.hit.geomID)) {
-        renderTarget[yIdx][xIdx].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);
-        renderTarget[yIdx][xIdx].g = static_cast<uint8_t>(bgColorIntensity / 1.5f);
-        renderTarget[yIdx][xIdx].b = static_cast<uint8_t>(bgColorIntensity);
-        continue;
-      }
-      renderTarget[yIdx][xIdx] = scene.GetGeomColor(rayhit.hit.geomID, 0.0f, 0.0f);
+      //scene.GetGeomColor(rayhit.hit.geomID, 0.0f, 0.0f)
 
-      // shading
-      glm::vec3 faceNormal = { 0, 0, 0 };
-      if (IsInterpolatable(scene.GetGeomType(rayhit.hit.geomID))) {
-        rtcInterpolate0(rtcGetGeometry(scene.GetRTCScene(), rayhit.hit.geomID),
-                        rayhit.hit.primID,
-                        rayhit.hit.u,
-                        rayhit.hit.v,
-                        RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
-                        0,
-                        reinterpret_cast<float*>(&faceNormal),
-                        3);
-      }
-      else {
-        faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
-      }
+      // ÉåÉìÉ_ÉäÉìÉOï˚íˆéÆÇÃç∂ï”
+      glm::vec3 cumulativeRadiance = { 0.0f, 0.0f, 0.0f };
 
-      // é¿ëïÇ∑ÇÈ
-      glm::vec3 cumulativeRadiance = {0.0f, 0.0f, 0.0f};
-      while (!roulette.Spin()) {
+      while (!roulette.Spin() && WasIntersected(rayhit.hit.geomID)) {
+        glm::vec3 faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
         
       }
+      cumulativeRadiance.r = std::clamp(cumulativeRadiance.r, 0.0f, 1.0f);
+      cumulativeRadiance.g = std::clamp(cumulativeRadiance.g, 0.0f, 1.0f);
+      cumulativeRadiance.b = std::clamp(cumulativeRadiance.b, 0.0f, 1.0f);
+      renderTarget[yIdx][xIdx].r = static_cast<uint8_t>((cumulativeRadiance.r * 255.0f));
+      renderTarget[yIdx][xIdx].g = static_cast<uint8_t>((cumulativeRadiance.g * 255.0f));
+      renderTarget[yIdx][xIdx].b = static_cast<uint8_t>((cumulativeRadiance.b * 255.0f));
     }
   }
 }
