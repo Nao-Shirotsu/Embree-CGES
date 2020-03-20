@@ -40,14 +40,8 @@ const glm::vec3& Scene::GetDirLightForward() const {
   return m_dirLight.dir;
 }
 
-RTCGeometryType Scene::GetGeomType(const unsigned int objID) const{
-  int n = objID;
-  return m_objects[objID]->GetGeomType();
-}
-
-ColorRGBA Scene::GetGeomColor(const unsigned int objID, const float u, const float v) const{
-  int n = objID;
-  return m_objects[objID]->GetColor(u, v);
+const gameobject::Base& Scene::GetGeomRef(const unsigned int objID) const {
+  return *(m_objects[objID]);
 }
 
 } //namespace cges

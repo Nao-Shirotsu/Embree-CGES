@@ -35,11 +35,12 @@ void PathTracer::ParallelDraw(const Camera& camera,
         renderTarget[yIdx][xIdx].b = static_cast<uint8_t>(bgColorIntensity);
         continue;
       }
-      renderTarget[yIdx][xIdx] = scene.GetGeomColor(rayhit.hit.geomID, 0.0f, 0.0f);
+      const auto& gameObjRef = scene.GetGeomRef(rayhit.hit.geomID);
+      renderTarget[yIdx][xIdx] = gameObjRef.GetColor(0.0f, 0.0f);
 
       // shading
       glm::vec3 faceNormal = { 0, 0, 0 };
-      if (IsInterpolatable(scene.GetGeomType(rayhit.hit.geomID))) {
+      if (IsInterpolatable(gameObjRef.GetGeomType())) {
         rtcInterpolate0(rtcGetGeometry(scene.GetRTCScene(), rayhit.hit.geomID),
                         rayhit.hit.primID,
                         rayhit.hit.u,

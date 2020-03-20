@@ -35,11 +35,12 @@ void PhoneShader::ParallelDraw(const Camera& camera,
         renderTarget[yIdx][x].b = static_cast<uint8_t>(bgColorIntensity);
         continue;
       }
-      renderTarget[yIdx][x] = scene.GetGeomColor(rayhit.hit.geomID, 0.0f, 0.0f);
+      const auto& gameObjRef = scene.GetGeomRef(rayhit.hit.geomID);
+      renderTarget[yIdx][x] = gameObjRef.GetColor(0.0f, 0.0f);
 
       // shading
       glm::vec3 faceNormal = {0, 0, 0};
-      if (IsInterpolatable(scene.GetGeomType(rayhit.hit.geomID))) {
+      if (IsInterpolatable(gameObjRef.GetGeomType())) {
         rtcInterpolate0(rtcGetGeometry(scene.GetRTCScene(), rayhit.hit.geomID),
                         rayhit.hit.primID,
                         rayhit.hit.u,
@@ -55,7 +56,7 @@ void PhoneShader::ParallelDraw(const Camera& camera,
       const glm::vec3 reflectedDir = scene.GetDirLightForward() - 2.0f * glm::dot(scene.GetDirLightForward(), faceNormal) * faceNormal;
       const float specularFactor = std::clamp(glm::dot(glm::normalize(reflectedDir), glm::normalize(cameraPos)), 0.0f, 1.0f);
       const float diffuseFactor = std::clamp(glm::dot(-scene.GetDirLightForward(), faceNormal), 0.0f, 1.0f);
-      const ColorRGBA objColor = scene.GetGeomColor(rayhit.hit.geomID, rayhit.hit.u, rayhit.hit.v);
+      const ColorRGBA objColor = gameObjRef.GetColor(rayhit.hit.u, rayhit.hit.v);
       renderTarget[yIdx][x].r = std::clamp(static_cast<int>(objColor.r * diffuseFactor + 96 * specularFactor) + 32, 0, 255);
       renderTarget[yIdx][x].g = std::clamp(static_cast<int>(objColor.g * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
       renderTarget[yIdx][x].b = std::clamp(static_cast<int>(objColor.b * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
