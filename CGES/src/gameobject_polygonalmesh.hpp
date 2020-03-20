@@ -17,7 +17,7 @@ public:
                 const char* const filePath, 
                 const ColorRGBA diffuseColor, 
                 const ColorRGBA emissionColor, 
-                brdf::BRDFType* brdf);
+                const material::Base& material);
 
   bool HasAttribute() override;
 
@@ -44,6 +44,6 @@ std::unique_ptr<gameobject::PolygonalMesh> MakePolygonalMesh(const RTCDevice dev
                                                              const char* const filePath, 
                                                              const ColorRGBA diffuseColor, 
                                                              const ColorRGBA emissionColor, 
-                                                             brdf::BRDFType* brdf);
+                                                             const material::Base& material);
 
 } // namespace cges
