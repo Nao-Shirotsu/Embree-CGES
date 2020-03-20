@@ -16,14 +16,14 @@ public:
          const float radius, 
          const char* const textureFilePath, 
          const ColorRGBA emissionColor,
-         brdf::BRDFType* brdf);
+         const material::Base& material);
 
   Sphere(const RTCDevice device,
          const glm::vec3& posWorld, 
          const float radius, 
          const ColorRGBA diffuseColor,
          const ColorRGBA emissionColor,
-         brdf::BRDFType* brdf);
+         const material::Base& material);
 
   bool HasAttribute() override;
 
@@ -48,13 +48,13 @@ std::unique_ptr<gameobject::Sphere> MakeSphere(const RTCDevice device,
                                                const float radius, 
                                                const char* const textureFilePath,
                                                const ColorRGBA emissionColor,
-                                               brdf::BRDFType* brdf);
+                                               const material::Base& material);
 
 std::unique_ptr<gameobject::Sphere> MakeSphere(const RTCDevice device, 
                                                const glm::vec3& posWorld, 
                                                const float radius, 
                                                const ColorRGBA diffuseColor,
                                                const ColorRGBA emissionColor,
-                                               brdf::BRDFType* brdf);
+                                               const material::Base& material);
 
 } // namespace cges
