@@ -16,8 +16,8 @@ Sphere::Sphere(const RTCDevice device,
                const float radius, 
                const char* const textureFilePath, 
                const ColorRGBA emissionColor,
-               brdf::BRDFType* brdf)
-    : Base(device, RTC_GEOMETRY_TYPE_SPHERE_POINT, emissionColor, brdf)
+               const material::Base& material)
+    : Base(device, RTC_GEOMETRY_TYPE_SPHERE_POINT, emissionColor, material)
     , m_posWorld(posWorld)
     , m_radius(radius)
     , m_texture(textureFilePath) {
@@ -39,8 +39,8 @@ Sphere::Sphere(const RTCDevice device,
                const float radius, 
                const ColorRGBA diffuseColor,
                const ColorRGBA emissionColor,
-               brdf::BRDFType* brdf)
-    : Base(device, RTC_GEOMETRY_TYPE_SPHERE_POINT, emissionColor, brdf)
+               const material::Base& material)
+    : Base(device, RTC_GEOMETRY_TYPE_SPHERE_POINT, emissionColor, material)
     , m_posWorld(posWorld)
     , m_radius(radius)
     , m_texture(diffuseColor) {
@@ -80,8 +80,8 @@ std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice devic
                                                            const float radius, 
                                                            const char* const textureFilePath,
                                                            const ColorRGBA emissionColor,
-                                                           brdf::BRDFType* brdf) {
-  return std::make_unique<gameobject::Sphere>(device, posWorld, radius, textureFilePath, emissionColor, brdf);
+                                                           const material::Base& material) {
+  return std::make_unique<gameobject::Sphere>(device, posWorld, radius, textureFilePath, emissionColor, material);
 }
 
 std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice device, 
@@ -89,6 +89,6 @@ std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice devic
                                                            const float radius, 
                                                            const ColorRGBA diffuseColor, 
                                                            const ColorRGBA emissionColor,
-                                                           brdf::BRDFType* brdf) {
-  return std::make_unique<gameobject::Sphere>(device, posWorld, radius, diffuseColor, emissionColor, brdf);
+                                                           const material::Base& material) {
+  return std::make_unique<gameobject::Sphere>(device, posWorld, radius, diffuseColor, emissionColor, material);
 }

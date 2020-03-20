@@ -70,7 +70,7 @@ void PathTracer::ParallelDraw(const Camera& camera,
         renderTarget[yIdx][xIdx].b = static_cast<uint8_t>(bgColorIntensity);
         continue;
       }
-
+      
       // パストレの1つ経路が無事光源に到達した時、サンプリング1回分の放射輝度の計算開始
       glm::vec3 cumulativeRadiance; // レンダリング方程式の左辺
       {

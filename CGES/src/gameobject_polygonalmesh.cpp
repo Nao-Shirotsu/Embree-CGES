@@ -14,8 +14,8 @@ PolygonalMesh::PolygonalMesh(const RTCDevice device,
                              const char* const filePath, 
                              const ColorRGBA diffuseColor, 
                              const ColorRGBA emissionColor,
-                             brdf::BRDFType* brdf) 
-    : Base(device, RTC_GEOMETRY_TYPE_TRIANGLE, emissionColor, brdf)
+                             const material::Base& material) 
+    : Base(device, RTC_GEOMETRY_TYPE_TRIANGLE, emissionColor, material)
     , m_posWorld(posWorld)
     , m_diffuseColor(diffuseColor){
 #ifdef _DEBUG
@@ -82,7 +82,7 @@ std::unique_ptr<cges::gameobject::PolygonalMesh> cges::MakePolygonalMesh(const R
                                                                          const char* const filePath, 
                                                                          const ColorRGBA diffuseColor, 
                                                                          const ColorRGBA emissionColor,
-                                                                         brdf::BRDFType* brdf) {
-  return std::make_unique<gameobject::PolygonalMesh>(device, posWorld, filePath, diffuseColor, emissionColor, brdf);
+                                                                         const material::Base& material) {
+  return std::make_unique<gameobject::PolygonalMesh>(device, posWorld, filePath, diffuseColor, emissionColor, material);
 }
 
