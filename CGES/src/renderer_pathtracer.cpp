@@ -15,8 +15,7 @@ constexpr size_t TRACE_LIMIT = 64;
 constexpr float ROULETTE_HIT_RATE = 0.25f;
 
 bool HasEmission(const cges::Scene& scene, const unsigned int geomID) {
-  const auto& gameObjRef = scene.GetGeomRef(geomID);
-  return gameObjRef.GetEmission().r > 0 && gameObjRef.GetEmission().g > 0 && gameObjRef.GetEmission().b > 0;
+  return scene.GetGeomEmission(geomID).r > 0 && scene.GetGeomEmission(geomID).g > 0 && scene.GetGeomEmission(geomID).b > 0;
 }
 
 struct Intersection {
@@ -72,12 +71,10 @@ void PathTracer::ParallelDraw(const Camera& camera,
         continue;
       }
       
-      const auto& gameObj = scene.GetGeomRef(rayhit.hit.geomID);
-
       // パストレの1つ経路が無事光源に到達した時、サンプリング1回分の放射輝度の計算開始
       glm::vec3 cumulativeRadiance; // レンダリング方程式の左辺
       {
-        const auto emission = gameObj.GetEmission();
+        const auto emission = scene.GetGeomEmission(rayhit.hit.geomID);
         cumulativeRadiance = { static_cast<float>(emission.r),
                                static_cast<float>(emission.g),
                                static_cast<float>(emission.b) };
@@ -95,7 +92,7 @@ void PathTracer::ParallelDraw(const Camera& camera,
         const auto incomingRayDir = currentPoint - incomingRayOrg;
         intersectionStack.pop();
         const auto outgoingRayDir = intersectionStack.top().pos - currentPoint;
-        cumulativeRadiance = gameObj.BRDF(currentPoint, outgoingRayDir, incomingRayDir, currentNormal, gameObj.GetColor(0.0f, 0.0f)) * cumulativeRadiance * glm::dot(currentNormal, incomingRayDir);
+        cumulativeRadiance = scene.GetGeomBRDFValue(currentObjID, currentPoint, outgoingRayDir, incomingRayDir, currentNormal) * cumulativeRadiance * glm::dot(currentNormal, incomingRayDir);
         incomingRayOrg = currentPoint;
       }
 
