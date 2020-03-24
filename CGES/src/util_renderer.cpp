@@ -53,15 +53,6 @@ bool WasIntersected(const unsigned int geomID) noexcept{
   return geomID != static_cast<int>(-1);
 }
 
-void SetRayDirection(RTCRayHit* ray, const glm::vec3& org, const glm::vec3& dir) {
-  ray->ray.org_x = org.x;
-  ray->ray.org_y = org.y;
-  ray->ray.org_z = org.z;
-  ray->ray.dir_x = dir.x;
-  ray->ray.dir_y = dir.y;
-  ray->ray.dir_z = dir.z;
-}
-
 glm::vec3 SampleHemisphericalVec(const glm::vec3& org, const glm::vec3 normal) noexcept {
   
   return glm::vec3();

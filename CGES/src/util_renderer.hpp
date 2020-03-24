@@ -36,6 +36,4 @@ bool IsInterpolatable(const RTCGeometryType geomType) noexcept;
 
 bool WasIntersected(const unsigned int geomID) noexcept;
 
-void SetRayDirection(RTCRayHit* ray, const glm::vec3& org, const glm::vec3& dir);
-
 } // namespace cges

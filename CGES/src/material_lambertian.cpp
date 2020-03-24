@@ -13,7 +13,7 @@ constexpr float DENOM = 255.0f / PI; // ColorRGBAÇ0.0~1.0Ç…ê≥ãKâªÇ∑ÇÈÇΩÇﬂ255Ç≈ä
 
 cges::RandomGenerator rnd;
 
-glm::vec3 SampleHemisphericalVec(const glm::vec3& org, const glm::vec3& axisW) noexcept {
+glm::vec3 SampleHemisphericalVec(const glm::vec3& axisW) noexcept {
   // îºãÖÇÃê≥ãKíºåäÓíÍ
   glm::vec3 axisU;
 
@@ -24,13 +24,10 @@ glm::vec3 SampleHemisphericalVec(const glm::vec3& org, const glm::vec3& axisW) n
     axisU = glm::normalize(glm::cross({ 1.0f, 0.0f, 0.0f }, axisW));
   }
   glm::vec3 axisV = glm::normalize(glm::cross(axisW, axisU));
-  const float r1 = 2.0f * PI * rnd();
-  const float r2 = rnd();
-  const float rootR2 = std::sqrtf(r2);
 
-  return glm::normalize(axisU * std::cosf(r1) * rootR2 + 
-                        axisV * std::sinf(r1) * rootR2 +
-                        axisW * std::sqrtf(1.0f - r2));
+  return glm::normalize(axisU * (rnd() - 0.5f) +
+                        axisV * (rnd() - 0.5f) +
+                        axisW * (rnd() * 0.5f));
 }
 
 }// anonymous namespace
@@ -38,7 +35,7 @@ glm::vec3 SampleHemisphericalVec(const glm::vec3& org, const glm::vec3& axisW) n
 namespace cges::material {
 
 glm::vec3 Lambertian::ComputeReflectedDir(const glm::vec3& faceNormal, const glm::vec3& incomingRayDir) const {
-  return glm::vec3();
+  return SampleHemisphericalVec(faceNormal);
 }
 
 glm::vec3 Lambertian::BRDF(const glm::vec3& surfacePoint, const glm::vec3& outgoingDir, const glm::vec3& incomingDir, const glm::vec3& normal, const ColorRGBA albedo) const {

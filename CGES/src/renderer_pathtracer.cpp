@@ -10,19 +10,16 @@ namespace {
 
 constexpr float EPSILON = 1.0e-6f;
 constexpr float MIN = std::numeric_limits<float>::min();
-
-constexpr size_t TRACE_LIMIT = 64;
 constexpr float ROULETTE_HIT_RATE = 0.25f;
+constexpr float PI = 3.14159265358979323846f;
+constexpr unsigned int TRACE_INITIAL_ID = 1;
+constexpr size_t TRACE_LIMIT = 64;
+constexpr size_t NUM_SAMPLING = 32;
 
 bool HasEmission(const cges::Scene& scene, const unsigned int geomID) {
-  return scene.GetGeomEmission(geomID).r > 0 && scene.GetGeomEmission(geomID).g > 0 && scene.GetGeomEmission(geomID).b > 0;
+  const auto& gameObj = scene.GetGeomRef(geomID);
+  return gameObj.GetEmission().r > 0 && gameObj.GetEmission().g > 0 && gameObj.GetEmission().b > 0;
 }
-
-struct Intersection {
-  glm::vec3 pos;
-  glm::vec3 normal;
-  unsigned int objID;
-};
 
 }
 
@@ -44,58 +41,78 @@ void PathTracer::ParallelDraw(const Camera& camera,
     const float bgColorIntensity = 255 * (1.0f - yRate);
     const size_t yIdx = renderTarget.GetHeight() - y - 1; // openGLの描画はleft-bottom-upなので逆にする
     for (size_t xIdx = 0; xIdx < renderTarget.GetWidth(); ++xIdx) {
-      RTCIntersectContext context;
-      rtcInitIntersectContext(&context);
       const float xRate = xIdx / static_cast<float>(renderTarget.GetWidth());
       const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
-      const glm::vec3 primalRayDir = pixelPos - cameraPos;
-      RTCRayHit rayhit;
-      InitRayHit(rayhit, cameraPos, primalRayDir);
+      glm::vec3 cumulativeRadiance = { 0.0f, 0.0f, 0.0f };
+      for (auto sampling = 0u; sampling < NUM_SAMPLING; ++sampling) {
+        glm::vec3 rayDir = pixelPos - cameraPos;
+        glm::vec3 rayOrg = cameraPos;
+        RTCRayHit rayhit;
+        RTCIntersectContext context;
+        rtcInitIntersectContext(&context);
 
-      // 通った経路の交差点情報を順に保存するスタック
-      std::stack<Intersection> intersectionStack;
-      // トレース元(カメラ)の情報を一番下に入れておく
-      intersectionStack.push({ cameraPos, {}, RTC_INVALID_GEOMETRY_ID});
+        // レンダリング方程式の左辺 [0.0f, 1.0f]で値を持つ
+        glm::vec3 radiance;
 
-      // 光源に到達するまでパストレ(交差点情報をスタックしていく)
-      while (!roulette.Spin() && WasIntersected(rayhit.hit.geomID) && !HasEmission(scene, rayhit.hit.geomID)) {
+        // 交差点に関する[BRDFとcosΘの積]の値を保存するスタック
+        std::stack<float> brdfCosStack; // 元からある程度の大きさのバッファ用意した方がスタックより速いかも
 
-        glm::vec3 faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
+        // 光源に到達するまでパストレ(上の係数をスタックしていく)
+        while (!roulette.Spin()) {
+          // レイを1本飛ばす
+          InitRayHit(rayhit, rayOrg, rayDir);
+          rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
+          if (!WasIntersected(rayhit.hit.geomID) || HasEmission(scene, rayhit.hit.geomID)) {
+            break;
+          }
+
+          // 最後に交差した物体
+          const auto& intersectedObj = scene.GetGeomRef(rayhit.hit.geomID);
+
+          // ↑の面法線
+          const glm::vec3 faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
+
+          // 次のRayをトレースする発射位置/方向を求め、ループの次の周のために更新
+          rayOrg = rayOrg + rayhit.ray.tfar * rayDir; 
+          rayDir = intersectedObj.ComputeReflectedDir(faceNormal, rayDir);
+
+          // BRDF*cosΘを保存
+          brdfCosStack.push(glm::dot(faceNormal, rayDir));
+        }
+
+        // primal rayがどこにも衝突していない or ロシルレがトレース回数限度に達した
+        if (brdfCosStack.empty() || brdfCosStack.size() > TRACE_LIMIT) {
+          radiance = { 0.0f, 0.0f, 0.0f };
+          continue;
+        }
+
+        // 最後に衝突したオブジェクト(必ず光源になるはず)
+        const auto& lastIntesectedObj = scene.GetGeomRef(rayhit.hit.geomID);
+
+        // パストレの1つ経路が無事光源に到達した時、サンプリング1回分の放射輝度の計算開始
+        {
+          const auto emission = lastIntesectedObj.GetEmission();
+          radiance = { static_cast<float>(emission.r),
+                                 static_cast<float>(emission.g),
+                                 static_cast<float>(emission.b) };
+        }
+
+        while (!brdfCosStack.empty()) {
+          radiance *= brdfCosStack.top();
+          brdfCosStack.pop();
+        }
+
+        cumulativeRadiance += radiance;
       }
 
-      // primal rayがどこにも衝突していない or ロシルレがトレース回数限度に達した
-      if (intersectionStack.size() == 1 || intersectionStack.size() > TRACE_LIMIT) {
+      if (cumulativeRadiance == glm::vec3(0.0f, 0.0f, 0.0f)) {
         renderTarget[yIdx][xIdx].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);
         renderTarget[yIdx][xIdx].g = static_cast<uint8_t>(bgColorIntensity / 1.5f);
         renderTarget[yIdx][xIdx].b = static_cast<uint8_t>(bgColorIntensity);
         continue;
       }
-      
-      // パストレの1つ経路が無事光源に到達した時、サンプリング1回分の放射輝度の計算開始
-      glm::vec3 cumulativeRadiance; // レンダリング方程式の左辺
-      {
-        const auto emission = scene.GetGeomEmission(rayhit.hit.geomID);
-        cumulativeRadiance = { static_cast<float>(emission.r),
-                               static_cast<float>(emission.g),
-                               static_cast<float>(emission.b) };
-      }
-      glm::vec3 incomingRayOrg = intersectionStack.top().pos;
-      intersectionStack.pop();
-      glm::vec3 currentPoint;
-      glm::vec3 currentNormal;
-      unsigned int currentObjID;
 
-      while (intersectionStack.size() > 1) {
-        currentPoint = intersectionStack.top().pos;
-        currentNormal = intersectionStack.top().normal;
-        currentObjID = intersectionStack.top().objID;
-        const auto incomingRayDir = currentPoint - incomingRayOrg;
-        intersectionStack.pop();
-        const auto outgoingRayDir = intersectionStack.top().pos - currentPoint;
-        cumulativeRadiance = scene.GetGeomBRDFValue(currentObjID, currentPoint, outgoingRayDir, incomingRayDir, currentNormal) * cumulativeRadiance * glm::dot(currentNormal, incomingRayDir);
-        incomingRayOrg = currentPoint;
-      }
-
+      cumulativeRadiance = cumulativeRadiance * 2.0f * PI / static_cast<float>(NUM_SAMPLING);
       cumulativeRadiance.r = std::clamp(cumulativeRadiance.r, 0.0f, 1.0f);
       cumulativeRadiance.g = std::clamp(cumulativeRadiance.g, 0.0f, 1.0f);
       cumulativeRadiance.b = std::clamp(cumulativeRadiance.b, 0.0f, 1.0f);
