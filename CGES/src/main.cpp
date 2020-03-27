@@ -17,7 +17,7 @@ constexpr int WINDOW_HEIGHT = 450;
 int main() {
   auto embreeDevice = rtcNewDevice(nullptr);
   auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
-  auto camera = cges::Camera({ 0, 0, 0 }, 40.0f, 90.0f);
+  auto camera = cges::Camera({ 0.0f, 0.0f, 0.0f }, 10.0f, 90.0f);
   auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
   auto scene = cges::Scene(embreeDevice);
   auto renderer = cges::renderer::PathTracer();
