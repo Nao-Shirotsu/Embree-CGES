@@ -53,9 +53,4 @@ bool WasIntersected(const unsigned int geomID) noexcept{
   return geomID != static_cast<int>(-1);
 }
 
-glm::vec3 SampleHemisphericalVec(const glm::vec3& org, const glm::vec3 normal) noexcept {
-  
-  return glm::vec3();
-}
-
 } // namespace cges

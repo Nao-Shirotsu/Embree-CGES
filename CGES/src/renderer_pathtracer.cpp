@@ -6,7 +6,8 @@
 #include <limits> // float minimum
 #include <stack>
 
-//#include <iostream>
+#include <cassert>
+#include <iostream>
 
 namespace {
 
@@ -21,6 +22,39 @@ constexpr size_t NUM_SAMPLING = 32;
 bool HasEmission(const cges::Scene& scene, const unsigned int geomID) {
   const auto& gameObj = scene.GetGeomRef(geomID);
   return gameObj.GetEmission().r > 0 && gameObj.GetEmission().g > 0 && gameObj.GetEmission().b > 0;
+}
+
+glm::vec3 ComputeRadiance(RTCIntersectContext& context, 
+                          const glm::vec3& rayOrg, 
+                          const glm::vec3& incomingDir, 
+                          cges::RussianRoulette& roulette,
+                          const cges::Scene& scene) {
+  using namespace cges;
+
+  RTCRayHit rayhit;
+  InitRayHit(rayhit, rayOrg, incomingDir);
+  rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
+
+  if (!WasIntersected(rayhit.hit.geomID)) {
+    return { 0.0f, 0.0f, 0.0f };
+  }
+
+  const auto& intersectedObj = scene.GetGeomRef(rayhit.hit.geomID);
+  const glm::vec3 surfaceEmission = { static_cast<float>(intersectedObj.GetEmission().r),
+                                      static_cast<float>(intersectedObj.GetEmission().g),
+                                      static_cast<float>(intersectedObj.GetEmission().b) };
+
+  if (roulette.Spin()) {
+    return surfaceEmission;
+  }
+
+  const glm::vec3 faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
+  const glm::vec3 surfacePos = rayOrg + rayhit.ray.tfar * incomingDir;
+  const glm::vec3 outgoingDir = intersectedObj.ComputeReflectedDir(faceNormal, incomingDir);
+  const glm::vec3 incomingRadiance = ComputeRadiance(context, surfacePos, outgoingDir, roulette, scene);
+  const glm::vec3 brdfValue = intersectedObj.BRDF(surfacePos, outgoingDir, incomingDir, faceNormal, intersectedObj.GetColor(0.0f, 0.0f));
+
+  return surfaceEmission + incomingRadiance * brdfValue * glm::dot(faceNormal, -incomingDir) * 2.0f * PI;
 }
 
 }
@@ -62,84 +96,90 @@ void PathTracer::ParallelDraw(const Camera& camera,
         continue;
       }
 
-      // primal rayが衝突したオブジェクトが発光体だった時、その光の色を描画して次のピクセルへ
-      if (HasEmission(scene, rayhit.hit.geomID)) {
-        renderTarget[yIdx][xIdx] = scene.GetGeomRef(rayhit.hit.geomID).GetEmission();
-        continue;
-      }
-
-      // primal rayが発光体以外に衝突した時、レンダリング方程式の積分項を再帰的に計算する
+      // primal rayが何かに衝突した時、レンダリング方程式の右辺を再帰的に計算する
       glm::vec3 cumulativeRadiance = { 0.0f, 0.0f, 0.0f }; // MC積分の総和項(あとでサンプリング回数で割る)
       for (auto sampling = 0u; sampling < NUM_SAMPLING; ++sampling) {
-        // レンダリング方程式の左辺, RGBを[0.0f, 255.0f]の範囲で値を保持
-        // 1つの経路が運ぶ放射輝度を保持する
-        glm::vec3 radiance = {0.0f, 0.0f, 0.0f};
-
-        // 交差点に関する[BRDFとcosΘの積]の値を保存するスタック
-        std::stack<float> brdfCosStack; // 元からある程度の大きさのバッファ用意した方がスタックより速いかも
-
-        // 放射輝度関数評価の再帰回数限度をロシルレで管理
         RussianRoulette roulette(randomGen, TRACE_LIMIT, ROULETTE_HIT_RATE);
+        //// 交差点に関する[BRDF*cosΘ/pdf]の値を保存するスタック
+        //std::stack<float> factorStack; // 元からある程度の大きさのバッファ用意した方がスタックより速いかも
 
-        // 光源に到達するまでパストレ(上の係数をスタックしていく)
-        while (!roulette.Spin()) {
-          // レイを1本飛ばす
-          InitRayHit(rayhit, rayOrg, rayDir);
-          rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
+        //// 交差点の発光量(RGB)を保存するスタック
+        //std::stack<glm::vec3> emissionStack;
 
-          // 何にも衝突しなかったら何も足さず1つの経路のトレース終了
-          if (!WasIntersected(rayhit.hit.geomID)) {
-            break;
-          }
+        //// 放射輝度関数評価の再帰回数限度をロシルレで管理
+        //RussianRoulette roulette(randomGen, TRACE_LIMIT, ROULETTE_HIT_RATE);
 
-          // 発光体に衝突したらそのemissionを足して1つの経路のトレース終了
-          if (HasEmission(scene, rayhit.hit.geomID)) {
-            {
-              const auto emission = scene.GetGeomRef(rayhit.hit.geomID).GetEmission();
-              radiance = { static_cast<float>(emission.r),
-                           static_cast<float>(emission.g),
-                           static_cast<float>(emission.b) };
-            }
-            break;
-          }
+        //// 反射回数限度までパストレ(上の係数をスタックしていく)
+        //while (true) {
+        //  if (roulette.Spin()) {
+        //    emissionStack.push({ 0.0f, 0.0f, 0.0f });
+        //    break;
+        //  }
 
-          // 非発光体に衝突したらrayを反射させる
-          // 最後に交差した物体
-          const auto& intersectedObj = scene.GetGeomRef(rayhit.hit.geomID);
+        //  // レイを1本飛ばす
+        //  InitRayHit(rayhit, rayOrg, rayDir);
+        //  rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
 
-          // ↑の面法線
-          const glm::vec3 faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
+        //  // 何にも衝突しなかったら1つの経路のトレース終了
+        //  if (!WasIntersected(rayhit.hit.geomID)) {
+        //    emissionStack.push({ 0.0f, 0.0f, 0.0f });
+        //    break;
+        //  }
 
-          // 次のRayの発射位置/方向を求め、ループの次の周のために更新
-          rayOrg = rayOrg + rayhit.ray.tfar * rayDir; 
-          rayDir = intersectedObj.ComputeReflectedDir(faceNormal, rayDir);
+        //  // 最後に交差した物体
+        //  const auto& intersectedObj = scene.GetGeomRef(rayhit.hit.geomID);
 
-          // BRDF*cosΘを保存
-          brdfCosStack.push(glm::dot(faceNormal, rayDir));
-        }
+        //  // 衝突物体のemissionをスタックにpush
+        //  emissionStack.push({ static_cast<float>(intersectedObj.GetEmission().r),
+        //                        static_cast<float>(intersectedObj.GetEmission().g),
+        //                        static_cast<float>(intersectedObj.GetEmission().b) });
 
-        // 上のパストレースで結局発光体までたどり着けなかった場合、MC積分の次の周の評価へ
-        if (!WasIntersected(rayhit.hit.geomID)) {
-          continue;
-        }
+        //  // ↑の面法線
+        //  const glm::vec3 faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
 
-        // 光源までパストレースが成功しているなら、ここに辿り着くはず
+        //  const glm::vec3 surfacePos = rayOrg + rayhit.ray.tfar * rayDir;
+        //  const glm::vec3 outgoingDir = intersectedObj.ComputeReflectedDir(faceNormal, rayDir);
+        //  //std::cout << "normal : (" << faceNormal.x << ", " << faceNormal.y << ", " << faceNormal.z << ")\n";
+        //  //std::cout << "outDir : (" << outgoingDir.x << ", " << outgoingDir.y << ", " << outgoingDir.z << ")\n"<< std::endl;
 
-        // 最後に衝突したオブジェクト(必ず光源になるはず)
-        const auto& lastIntesectedObj = scene.GetGeomRef(rayhit.hit.geomID);
+        //  const float brdfVal = intersectedObj.BRDF(surfacePos, -rayDir, outgoingDir, faceNormal, intersectedObj.GetColor(0.0f, 0.0f)).r;
 
-        // 1つの経路の放射輝度の計算
-        // 蓄積したBRDF*cosΘを最後に衝突した光源のemissionにかけていく
-        while (!brdfCosStack.empty()) {
-          radiance *= brdfCosStack.top();
-          brdfCosStack.pop();
-        }
+        //  // 次のRayの発射位置/方向を求め、ループの次の周のために更新
+        //  rayOrg = rayOrg + rayhit.ray.tfar * rayDir;
+        //  rayDir = outgoingDir;
 
-        // MC積分の総和項に足す(後でサンプリング回数で割る)
-        cumulativeRadiance += radiance;
+        //  // BRDF*cosΘを保存   
+        //  factorStack.push(brdfVal * glm::dot(faceNormal, -rayDir));
+        //  /////////////////////////////////////////////
+        //  /*             ↑      ↑      ↑
+        //  * diffuseしか考えない形になってるのであとで修正しろ
+        //  * ちょっと上のbrdfValも
+        //  *
+        //  *////////////////////////////////////////////
+        //}
+
+        //// 1つの経路が運ぶ放射輝度
+        //glm::vec3 radiance = emissionStack.top();
+        //emissionStack.pop();
+
+        ////std::cout << "E : " << emissionStack.size() << "\nF : " <<  factorStack.size() << std::endl;;
+
+        //while (!factorStack.empty()) {
+        //  radiance *= factorStack.top();
+        //  factorStack.pop();
+        //  radiance += emissionStack.top();
+        //  emissionStack.pop();
+        //}
+        //radiance *= 2.0f * PI;
+
+        //// MC積分の総和項に足す(後でサンプリング回数で割る)
+        //cumulativeRadiance += radiance;
+        cumulativeRadiance += ComputeRadiance(context, rayOrg, rayDir, roulette, scene);
       }
 
-      cumulativeRadiance = cumulativeRadiance * 2.0f * PI / static_cast<float>(NUM_SAMPLING);
+      cumulativeRadiance = cumulativeRadiance / static_cast<float>(NUM_SAMPLING);
+
+      // オーバーフロー対策で一応clampする
       cumulativeRadiance.r = std::clamp(cumulativeRadiance.r, 0.0f, 255.0f);
       cumulativeRadiance.g = std::clamp(cumulativeRadiance.g, 0.0f, 255.0f);
       cumulativeRadiance.b = std::clamp(cumulativeRadiance.b, 0.0f, 255.0f);
