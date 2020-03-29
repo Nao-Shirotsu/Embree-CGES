@@ -2,9 +2,17 @@
 
 #include <cmath>
 
+namespace {
+
+constexpr float PI = 3.14159265358979323846f;
+
+}
+
 cges::Camera::Camera(const glm::vec3& posWorld, const float radius, const float fov) 
   : posWorld{ posWorld }
   , radius{ radius }
+  , radXZ{ PI * 0.5f }
+  , radYZ{ PI * 0.5f }
   , fov{ fov } {
   UpdatePosLocal();
 }
