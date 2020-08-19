@@ -27,6 +27,10 @@ bool RussianRoulette::Spin() noexcept {
   return false;
 }
 
+void RussianRoulette::SetHitRate(const float rate) {
+  m_hitRate = rate;
+}
+
 void cges::InitRayHit(RTCRayHit& rayhit, const glm::vec3& org, const glm::vec3& dir) noexcept {
   rayhit.ray.org_x = org.x;
   rayhit.ray.org_y = org.y;
