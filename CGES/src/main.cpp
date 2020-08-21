@@ -24,16 +24,16 @@ int main() {
 
   scene.Add(cges::MakePolygonalMesh(embreeDevice, 
                                     {0.0f, 0.0f, 0.0f}, 
-                                    "bin/goat_filled.obj", 
+                                    "bin/goat_filled.obj",
                                     { 64, 64, 255 }, 
                                     {0, 0, 0},
                                     cges::material::Lambertian())); //山羊のオブジェ
   scene.Add(cges::MakePlane(embreeDevice, 
                             { 0.0f, 0.0f, 0.0f }, 
                             { +3.0f, -3.0f, +3.0f }, 
-                            { +3.0f, -3.0f, -3.0f }, 
+                            { +3.0f, +3.0f, +3.0f }, 
                             { +3.0f, +3.0f, -3.0f }, 
-                            { 255, 64, 64 },
+                            { 192, 192, 192 },
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // 右壁
   scene.Add(cges::MakePlane(embreeDevice, 
@@ -77,8 +77,8 @@ int main() {
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // 下壁
   scene.Add(cges::MakeSphere(embreeDevice, 
-                             { 1.5f, -1.5f, 1.5f }, 
-                             1.0f, 
+                             { 1.5f, -1.5f, 0.0f }, 
+                             0.75f, 
                              {0, 255, 0},
                              { 0, 0, 0 },
                              cges::material::Lambertian())); // 緑球
@@ -86,7 +86,7 @@ int main() {
                              { 0.0f, 3.0f, 0.0f },
                              0.75f,
                              { 0, 0, 0 },
-                             { 128, 128, 128 },
+                             { 239, 239, 239 },
                              cges::material::Lambertian())); // 光源球
 
   while (!graphicsEngine.ShouldTerminate()) {

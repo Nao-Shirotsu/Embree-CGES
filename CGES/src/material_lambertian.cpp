@@ -26,9 +26,12 @@ glm::vec3 SampleHemisphericalVec(const glm::vec3& axisW) noexcept {
   }
   glm::vec3 axisV = glm::normalize(glm::cross(axisW, axisU));
 
-  return glm::normalize(axisU * (rnd() - 0.5f) +
-                        axisV * (rnd() - 0.5f) +
-                        axisW * (rnd() * 0.5f));
+  const float theta = 2.0f * PI * rnd(); // xz平面のラジアン
+  const float phi   = PI * rnd(); // xy平面のラジアン sinで正になるように[0, PI]
+  
+  return glm::normalize(axisU * std::cosf(theta) +
+                        axisV * std::sinf(theta) +
+                        axisW * std::sinf(phi));
 }
 
 }// anonymous namespace
@@ -36,7 +39,10 @@ glm::vec3 SampleHemisphericalVec(const glm::vec3& axisW) noexcept {
 namespace cges::material {
 
 glm::vec3 Lambertian::ComputeReflectedDir(const glm::vec3& faceNormal, const glm::vec3& incomingRayDir) const {
-  return SampleHemisphericalVec(faceNormal);
+  //if (glm::dot(faceNormal, incomingRayDir) < 0.0f) {
+    return SampleHemisphericalVec(faceNormal);
+  //}
+  //return SampleHemisphericalVec(-faceNormal);
 }
 
 glm::vec3 Lambertian::BRDF(const glm::vec3& surfacePoint, const glm::vec3& outgoingDir, const glm::vec3& incomingDir, const glm::vec3& normal, const ColorRGBA albedo) const {
