@@ -16,19 +16,15 @@ RussianRoulette::RussianRoulette(RandomGenerator& rnd, const size_t limit, const
     : m_rnd(rnd)
     , m_numTrials(0)
     , m_recursionLimit(limit)
-    , m_hitRate(hitRate)
     , m_continuationRate(1.0f - hitRate) {}
 
 bool RussianRoulette::Spin() noexcept {
   ++m_numTrials;
-  if (m_numTrials >= m_recursionLimit || m_rnd() > m_continuationRate) {
-    return true;
-  }
-  return false;
+  return m_numTrials >= m_recursionLimit || m_rnd() > m_continuationRate;
 }
 
-void RussianRoulette::SetHitRate(const float rate) {
-  m_hitRate = rate;
+void RussianRoulette::SetContinueRate(const float rate) {
+  m_continuationRate = rate;
 }
 
 void cges::InitRayHit(RTCRayHit& rayhit, const glm::vec3& org, const glm::vec3& dir) noexcept {

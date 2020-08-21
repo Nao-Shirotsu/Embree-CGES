@@ -21,13 +21,12 @@ class RussianRoulette {
 public:
   RussianRoulette(RandomGenerator& rnd, const size_t limit, const float hitRate);
   bool Spin() noexcept;
-  void SetHitRate(const float rate);
+  void SetContinueRate(const float rate);
 
 private:
   RandomGenerator& m_rnd;
   size_t m_numTrials;
   const size_t m_recursionLimit;
-  float m_hitRate;    // 1回試行してヒットする確率
   float m_continuationRate; // 継続率 : 再帰回数がLIMIT以上になると低くなっていく
 };
 
