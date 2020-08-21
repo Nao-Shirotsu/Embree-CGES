@@ -12,19 +12,30 @@ float RandomGenerator::operator()() {
   return distr(mt);
 }
 
-RussianRoulette::RussianRoulette(RandomGenerator& rnd, const size_t limit, const float hitRate)
+RussianRoulette::RussianRoulette(RandomGenerator& rnd, const size_t lowerLimit, const size_t upperLimit, const float hitRate)
     : m_rnd(rnd)
     , m_numTrials(0)
-    , m_recursionLimit(limit)
+    , m_lowerRecursionLimit(lowerLimit)
+    , m_upperRecursionLimit(upperLimit)
     , m_continuationRate(1.0f - hitRate) {}
 
 bool RussianRoulette::Spin() noexcept {
   ++m_numTrials;
-  return m_numTrials >= m_recursionLimit || m_rnd() > m_continuationRate;
+  if (m_numTrials < m_lowerRecursionLimit) {
+    return false;
+  }
+  return m_numTrials >= m_upperRecursionLimit || m_rnd() > m_continuationRate;
 }
 
-void RussianRoulette::SetContinueRate(const float rate) {
+void RussianRoulette::SetContinueRate(const float rate) noexcept{
   m_continuationRate = rate;
+}
+
+float RussianRoulette::ContinueRate() const noexcept {
+  if (m_numTrials < m_lowerRecursionLimit) {
+    return 1.0f;
+  }
+  return m_continuationRate;
 }
 
 void cges::InitRayHit(RTCRayHit& rayhit, const glm::vec3& org, const glm::vec3& dir) noexcept {

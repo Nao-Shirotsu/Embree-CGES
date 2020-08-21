@@ -17,13 +17,13 @@ constexpr int WINDOW_HEIGHT = 450;
 int main() {
   auto embreeDevice = rtcNewDevice(nullptr);
   auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
-  auto camera = cges::Camera({ 0.0f, 0.0f, 0.0f }, 3.0f, 130.0f);
+  auto camera = cges::Camera({ 1.0f, 0.0f, 0.0f }, 3.0f, 130.0f);
   auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
   auto scene = cges::Scene(embreeDevice);
   auto renderer = cges::renderer::PathTracer();
 
   scene.Add(cges::MakePolygonalMesh(embreeDevice, 
-                                    {0.0f, 0.0f, 0.0f}, 
+                                    {-0.5f, -0.25f, 0.0f}, 
                                     "bin/goat_filled.obj",
                                     { 64, 64, 255 }, 
                                     {0, 0, 0},
@@ -33,7 +33,7 @@ int main() {
                             { +3.0f, -3.0f, +3.0f }, 
                             { +3.0f, +3.0f, +3.0f }, 
                             { +3.0f, +3.0f, -3.0f }, 
-                            { 192, 192, 192 },
+                            { 255, 100, 100 },
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // âEï«
   scene.Add(cges::MakePlane(embreeDevice, 
@@ -54,10 +54,11 @@ int main() {
                             cges::material::Lambertian())); // éËëOï«
   scene.Add(cges::MakePlane(embreeDevice,
                             { 0.0f, 0.0f, 0.0f }, 
+                            { -3.0f, +3.0f, +3.0f }, 
                             { -3.0f, -3.0f, +3.0f }, 
                             { -3.0f, -3.0f, -3.0f }, 
-                            { -3.0f, +3.0f, -3.0f }, 
-                            "bin/textest.jpg",
+                            "bin/texstone.jpg",
+                            //{ 100, 100, 255 },
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // ç∂ï«
   scene.Add(cges::MakePlane(embreeDevice, 
@@ -79,15 +80,17 @@ int main() {
   scene.Add(cges::MakeSphere(embreeDevice, 
                              { 1.5f, -1.5f, 0.0f }, 
                              0.75f, 
-                             {0, 255, 0},
+                             {192, 192, 192},
                              { 0, 0, 0 },
-                             cges::material::Lambertian())); // óŒãÖ
-  scene.Add(cges::MakeSphere(embreeDevice,
-                             { 0.0f, 3.0f, 0.0f },
-                             0.75f,
-                             { 0, 0, 0 },
-                             { 239, 239, 239 },
-                             cges::material::Lambertian())); // åıåπãÖ
+                             cges::material::Lambertian())); // îíãÖ
+  scene.Add(cges::MakePlane(embreeDevice,
+                            { 0.0f, 0.0f, 0.0f },
+                            { -2.0f, +2.75f, +1.5f },
+                            { +2.0f, +2.75f, +1.5f },
+                            { +2.0f, +2.75f, -1.5f },
+                            { 0, 0, 0 },
+                            { 223, 223, 223 },
+                            cges::material::Lambertian())); // ìVà‰ÇÃåıåπî¬
 
   while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera);

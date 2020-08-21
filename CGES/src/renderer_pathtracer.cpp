@@ -14,9 +14,13 @@ constexpr float EPSILON = 1.0e-6f;
 constexpr float MIN = std::numeric_limits<float>::min();
 constexpr float INITIAL_ROULETTE_HIT_RATE = 0.25f;
 constexpr float PI = 3.14159265358979323846f;
-constexpr unsigned int TRACE_INITIAL_ID = 1;
-constexpr size_t TRACE_LIMIT = 64;
+constexpr size_t TRACE_LOWER_LIMIT = 5;
+constexpr size_t TRACE_UPPER_LIMIT = 64;
 constexpr size_t NUM_SAMPLING = 32;
+
+uint8_t ToByte(const float intensity) {
+  return static_cast<uint8_t>(std::powf(std::clamp(intensity, 0.0f, 1.0f), 1.0f / 2.2f) * 255.0f + 0.5f);
+}
 
 // 色の強さは[0.0, 1.0]で返す
 glm::vec3 ComputeRadiance(RTCIntersectContext& context,
@@ -41,14 +45,16 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
     static_cast<float>(intersectedObj.GetEmission().b) / 255.0f
   };
 
-  const glm::vec3 pointColor = {
+  const glm::vec3 surfaceAlbedo = {
     static_cast<float>(intersectedObj.GetColor(rayhit.hit.u, rayhit.hit.v).r) / 255.0f,
     static_cast<float>(intersectedObj.GetColor(rayhit.hit.u, rayhit.hit.v).g) / 255.0f,
     static_cast<float>(intersectedObj.GetColor(rayhit.hit.u, rayhit.hit.v).b) / 255.0f
   };
 
-  const auto continueRate = std::max(std::max(pointColor.r, pointColor.g), pointColor.b);
-  roulette.SetContinueRate(continueRate);
+  {
+    const auto continueRate = std::max(std::max(surfaceAlbedo.r, surfaceAlbedo.g), surfaceAlbedo.b);
+    roulette.SetContinueRate(continueRate);
+  }
 
   if (roulette.Spin()) {
     return surfaceEmission;
@@ -57,11 +63,10 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
   const glm::vec3 faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
   const glm::vec3 surfacePos = rayOrg + rayhit.ray.tfar * incomingDir;
   const glm::vec3 outgoingDir = intersectedObj.ComputeReflectedDir(faceNormal, incomingDir);
-  const glm::vec3 incomingRadiance = ComputeRadiance(context, surfacePos, outgoingDir, roulette, scene);
-  const glm::vec3 radianceWeight = intersectedObj.IntegrandFactor(surfacePos, outgoingDir, incomingDir, faceNormal, pointColor);
-  //const glm::vec3 brdfValue = intersectedObj.BRDF(surfacePos, outgoingDir, incomingDir, faceNormal, pointColor);
+  const glm::vec3 radianceWeight = intersectedObj.IntegrandFactor(surfacePos, outgoingDir, incomingDir, faceNormal, surfaceAlbedo) / roulette.ContinueRate();
+  //const glm::vec3 brdfValue = intersectedObj.BRDF(surfacePos, outgoingDir, incomingDir, faceNormal, surfaceAlbedo);
 
-  return surfaceEmission + radianceWeight * incomingRadiance / continueRate; // diffuseのみ
+  return surfaceEmission + radianceWeight * ComputeRadiance(context, surfacePos, outgoingDir, roulette, scene);
 }
 
 }
@@ -107,20 +112,21 @@ void PathTracer::ParallelDraw(const Camera& camera,
       // primal rayが何かに衝突した時、レンダリング方程式の右辺を再帰的に計算する
       glm::vec3 cumulativeRadiance = { 0.0f, 0.0f, 0.0f }; // MC積分の総和項(あとでサンプリング回数で割る)
       for (auto sampling = 0u; sampling < NUM_SAMPLING; ++sampling) {
-        RussianRoulette roulette(randomGen, TRACE_LIMIT, INITIAL_ROULETTE_HIT_RATE);
+        RussianRoulette roulette(randomGen, TRACE_LOWER_LIMIT, TRACE_UPPER_LIMIT, INITIAL_ROULETTE_HIT_RATE);
         const auto radi = ComputeRadiance(context, rayOrg, rayDir, roulette, scene);
         cumulativeRadiance += radi;
       }
 
       cumulativeRadiance = cumulativeRadiance / static_cast<float>(NUM_SAMPLING);
 
-      // オーバーフロー対策で一応clampする
-      /*cumulativeRadiance.r = std::clamp(cumulativeRadiance.r, 0.0f, 255.0f);
-      cumulativeRadiance.g = std::clamp(cumulativeRadiance.g, 0.0f, 255.0f);
-      cumulativeRadiance.b = std::clamp(cumulativeRadiance.b, 0.0f, 255.0f);*/
-      renderTarget[yIdx][xIdx].r = static_cast<uint8_t>(cumulativeRadiance.r * 255.0f);
-      renderTarget[yIdx][xIdx].g = static_cast<uint8_t>(cumulativeRadiance.g * 255.0f);
-      renderTarget[yIdx][xIdx].b = static_cast<uint8_t>(cumulativeRadiance.b * 255.0f);
+      renderTarget[yIdx][xIdx].r = ToByte(cumulativeRadiance.r);
+      renderTarget[yIdx][xIdx].g = ToByte(cumulativeRadiance.g);
+      renderTarget[yIdx][xIdx].b = ToByte(cumulativeRadiance.b);
+
+      if (xIdx > 1 && renderTarget [yIdx][xIdx].r == 0 && renderTarget[yIdx][xIdx].g == 0 && renderTarget[yIdx][xIdx].b == 0 && renderTarget[yIdx][xIdx - 1].r == 0 && renderTarget[yIdx][xIdx - 1].g == 0 && renderTarget[yIdx][xIdx - 1].b == 0) {
+        int a = 5;
+      }
+      
     }
   }
 }

@@ -19,14 +19,16 @@ private:
 
 class RussianRoulette {
 public:
-  RussianRoulette(RandomGenerator& rnd, const size_t limit, const float hitRate);
+  RussianRoulette(RandomGenerator& rnd, const size_t lowerLimit, const size_t upperLimit, const float hitRate);
   bool Spin() noexcept;
-  void SetContinueRate(const float rate);
+  void SetContinueRate(const float rate) noexcept;
+  float ContinueRate() const noexcept;
 
 private:
   RandomGenerator& m_rnd;
   size_t m_numTrials;
-  const size_t m_recursionLimit;
+  const size_t m_lowerRecursionLimit;
+  const size_t m_upperRecursionLimit;
   float m_continuationRate; // Œp‘±—¦ : Ä‹A‰ñ”‚ªLIMITˆÈã‚É‚È‚é‚Æ’á‚­‚È‚Á‚Ä‚¢‚­
 };
 

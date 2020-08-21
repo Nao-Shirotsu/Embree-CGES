@@ -40,7 +40,10 @@ glm::vec3 SampleHemisphericalVec(const glm::vec3& axisW) noexcept {
 namespace cges::material {
 
 glm::vec3 Lambertian::ComputeReflectedDir(const glm::vec3& faceNormal, const glm::vec3& incomingRayDir) const {
-  return SampleHemisphericalVec(faceNormal);
+  if (glm::dot(faceNormal, incomingRayDir) < 0.0f) {
+    return SampleHemisphericalVec(faceNormal);
+  }
+  return SampleHemisphericalVec(-faceNormal);
 }
 
 glm::vec3 Lambertian::IntegrandFactor(const glm::vec3& surfacePoint, const glm::vec3& outgoingDir, const glm::vec3& incomingDir, const glm::vec3& normal, const glm::vec3& albedo) const {
