@@ -10,7 +10,6 @@ namespace {
 
 constexpr float EPSILON = 1.0e-6f;
 constexpr float PI = 3.14159265358979323846f;
-constexpr float DENOM = 255.0f; // ColorRGBAを0.0~1.0に正規化するため255で割る
 
 cges::RandomGenerator rnd;
 
@@ -26,12 +25,14 @@ glm::vec3 SampleHemisphericalVec(const glm::vec3& axisW) noexcept {
   }
   glm::vec3 axisV = glm::normalize(glm::cross(axisW, axisU));
 
-  const float theta = 2.0f * PI * rnd(); // xz平面のラジアン
-  const float phi   = PI * rnd(); // xy平面のラジアン sinで正になるように[0, PI]
-  
-  return glm::normalize(axisU * std::cosf(theta) +
-                        axisV * std::sinf(theta) +
-                        axisW * std::sinf(phi));
+  const float r1 = 2.0f * PI * rnd();
+  const float r2 = rnd();
+  const float r2s = std::sqrtf(r2);
+  return glm::normalize(
+      axisU * std::cosf(r1) * r2s + 
+      axisV * std::sinf(r1) * r2s + 
+      axisW * std::sqrtf(1.0 - r2)
+  );
 }
 
 }// anonymous namespace
@@ -39,18 +40,11 @@ glm::vec3 SampleHemisphericalVec(const glm::vec3& axisW) noexcept {
 namespace cges::material {
 
 glm::vec3 Lambertian::ComputeReflectedDir(const glm::vec3& faceNormal, const glm::vec3& incomingRayDir) const {
-  //if (glm::dot(faceNormal, incomingRayDir) < 0.0f) {
-    return SampleHemisphericalVec(faceNormal);
-  //}
-  //return SampleHemisphericalVec(-faceNormal);
+  return SampleHemisphericalVec(faceNormal);
 }
 
-glm::vec3 Lambertian::BRDF(const glm::vec3& surfacePoint, const glm::vec3& outgoingDir, const glm::vec3& incomingDir, const glm::vec3& normal, const ColorRGBA albedo) const {
-  return {
-    static_cast<float>(albedo.r) / DENOM / PI,
-    static_cast<float>(albedo.g) / DENOM / PI,
-    static_cast<float>(albedo.b) / DENOM / PI
-  };
+glm::vec3 Lambertian::IntegrandFactor(const glm::vec3& surfacePoint, const glm::vec3& outgoingDir, const glm::vec3& incomingDir, const glm::vec3& normal, const glm::vec3& albedo) const {
+  return albedo;
 }
 
 } // namespace cges::material

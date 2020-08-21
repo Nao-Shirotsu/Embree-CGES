@@ -58,9 +58,10 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
   const glm::vec3 surfacePos = rayOrg + rayhit.ray.tfar * incomingDir;
   const glm::vec3 outgoingDir = intersectedObj.ComputeReflectedDir(faceNormal, incomingDir);
   const glm::vec3 incomingRadiance = ComputeRadiance(context, surfacePos, outgoingDir, roulette, scene);
+  const glm::vec3 radianceWeight = intersectedObj.IntegrandFactor(surfacePos, outgoingDir, incomingDir, faceNormal, pointColor);
   //const glm::vec3 brdfValue = intersectedObj.BRDF(surfacePos, outgoingDir, incomingDir, faceNormal, pointColor);
 
-  return surfaceEmission + incomingRadiance * pointColor / continueRate; // diffuse‚Ì‚Ý
+  return surfaceEmission + radianceWeight * incomingRadiance / continueRate; // diffuse‚Ì‚Ý
 }
 
 }
