@@ -46,9 +46,9 @@ int main() {
                             cges::material::Lambertian())); // âúï«
   scene.Add(cges::MakePlane(embreeDevice,
                             { 0.0f, 0.0f, 0.0f },
-                            { -3.0f, -3.0f, 3.0f },
-                            { +3.0f, -3.0f, 3.0f },
                             { +3.0f, +3.0f, 3.0f },
+                            { +3.0f, -3.0f, 3.0f },
+                            { -3.0f, -3.0f, 3.0f },
                             { 192, 192, 192 },
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // éËëOï«
@@ -61,12 +61,12 @@ int main() {
                             //{ 100, 100, 255 },
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // ç∂ï«
-  scene.Add(cges::MakePlane(embreeDevice, 
-                            { 0.0f, 0.0f, 0.0f }, 
-                            { -3.0f, +3.0f, +3.0f }, 
-                            { +3.0f, +3.0f, +3.0f }, 
-                            { +3.0f, +3.0f, -3.0f }, 
-                            { 192, 192, 192 }, 
+  scene.Add(cges::MakePlane(embreeDevice,
+                            { 0.0f, 0.0f, 0.0f },
+                            { +3.0f, +3.0f, -3.0f },
+                            { +3.0f, +3.0f, +3.0f },
+                            { -3.0f, +3.0f, +3.0f },
+                            { 192, 192, 192 },
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // è„ï«
   scene.Add(cges::MakePlane(embreeDevice, 
