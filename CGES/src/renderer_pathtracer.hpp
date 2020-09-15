@@ -6,6 +6,10 @@ namespace cges::renderer {
 
 class PathTracer : public Base {
 public:
+  PathTracer(const size_t traceLowerLimit,
+             const size_t traceUpperLimit,
+             const size_t samplingLimit);
+
   void Update(const Camera& camera) override;
 
 private:

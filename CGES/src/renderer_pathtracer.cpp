@@ -5,7 +5,6 @@
 #include <glm/glm.hpp>
 #include <limits> // float minimum
 #include <stack>
-
 #include <iostream>
 
 namespace {
@@ -14,9 +13,6 @@ constexpr float EPSILON = 1.0e-6f;
 constexpr float MIN = std::numeric_limits<float>::min();
 constexpr float INITIAL_ROULETTE_HIT_RATE = 0.25f;
 constexpr float PI = 3.14159265358979323846f;
-constexpr size_t TRACE_LOWER_LIMIT = 5;
-constexpr size_t TRACE_UPPER_LIMIT = 64;
-constexpr size_t NUM_SAMPLING = 512;
 
 uint8_t ToByte(const float intensity) {
   return static_cast<uint8_t>(std::powf(std::clamp(intensity, 0.0f, 1.0f), 1.0f / 2.2f) * 255.0f + 0.5f);
@@ -70,8 +66,14 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
 }
 
 namespace cges::renderer {
+
+PathTracer::PathTracer(const size_t traceLowerLimit, const size_t traceUpperLimit, const size_t samplingLimit)
+    : Base(traceLowerLimit, traceUpperLimit, samplingLimit) {
+}
+
 void PathTracer::Update(const Camera& camera) {
-  ++m_numSampling;
+  std::cout << m_numSampling << std::endl;
+  m_numSampling *= 2;
   if (camera.JustMoved()) {
     m_numSampling = 1;
   }
@@ -88,7 +90,6 @@ void PathTracer::ParallelDraw(const Camera& camera,
   const auto cameraPos = camera.posWorld + camera.GetPosLocal();
   RandomGenerator randomGen;
   for (size_t y = loopMin; y < loopMax; ++y) {
-    std::cout << "column " << y << std::endl;
     const float yRate = y / static_cast<float>(renderTarget.GetHeight());
     const float bgColorIntensity = 255 * (1.0f - yRate);
     const size_t yIdx = renderTarget.GetHeight() - y - 1; // openGLの描画はleft-bottom-upなので逆にする
@@ -113,22 +114,17 @@ void PathTracer::ParallelDraw(const Camera& camera,
 
       // primal rayが何かに衝突した時、レンダリング方程式の右辺を再帰的に計算する
       glm::vec3 cumulativeRadiance = { 0.0f, 0.0f, 0.0f }; // MC積分の総和項(あとでサンプリング回数で割る)
-      for (auto sampling = 0u; sampling < NUM_SAMPLING; ++sampling) {
-        RussianRoulette roulette(randomGen, TRACE_LOWER_LIMIT, TRACE_UPPER_LIMIT, INITIAL_ROULETTE_HIT_RATE);
+      for (auto sampling = 0u; sampling < m_numSampling; ++sampling) {
+        RussianRoulette roulette(randomGen, m_traceLowerLimit, m_traceUpperLimit, INITIAL_ROULETTE_HIT_RATE);
         const auto radi = ComputeRadiance(context, rayOrg, rayDir, roulette, scene);
         cumulativeRadiance += radi;
       }
 
-      cumulativeRadiance = cumulativeRadiance / static_cast<float>(NUM_SAMPLING);
+      cumulativeRadiance = cumulativeRadiance / static_cast<float>(m_numSampling);
 
       renderTarget[yIdx][xIdx].r = ToByte(cumulativeRadiance.r);
       renderTarget[yIdx][xIdx].g = ToByte(cumulativeRadiance.g);
       renderTarget[yIdx][xIdx].b = ToByte(cumulativeRadiance.b);
-
-      if (xIdx > 1 && renderTarget [yIdx][xIdx].r == 0 && renderTarget[yIdx][xIdx].g == 0 && renderTarget[yIdx][xIdx].b == 0 && renderTarget[yIdx][xIdx - 1].r == 0 && renderTarget[yIdx][xIdx - 1].g == 0 && renderTarget[yIdx][xIdx - 1].b == 0) {
-        int a = 5;
-      }
-      
     }
   }
 }
