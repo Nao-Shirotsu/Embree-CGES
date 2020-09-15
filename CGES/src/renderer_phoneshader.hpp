@@ -4,7 +4,12 @@
 
 namespace cges::renderer {
 
-class PhoneShader : public Base {
+class PhongShader : public Base {
+public:
+  PhongShader();
+
+  void Update(const Camera& camera) override;
+
 private:
   void ParallelDraw(const Camera& camera,
                     RenderBuffer& renderTarget,

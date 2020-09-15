@@ -13,7 +13,8 @@ cges::Camera::Camera(const glm::vec3& posWorld, const float radius, const float 
   , radius{ radius }
   , radXZ{ PI * 0.5f }
   , radYZ{ PI * 0.5f }
-  , fov{ fov } {
+  , fov{ fov }
+  , m_justMoved(false){
   UpdatePosLocal();
 }
 
@@ -22,8 +23,18 @@ void cges::Camera::UpdatePosLocal() {
   m_posLocal.x = radius * sinYZ * std::cosf(radXZ);
   m_posLocal.y = radius * std::cosf(radYZ);
   m_posLocal.z = radius * sinYZ * std::sinf(radXZ);
+
+  m_justMoved = true;
+}
+
+void cges::Camera::StayPosition() {
+  m_justMoved = false;
 }
 
 glm::vec3 cges::Camera::GetPosLocal() const{
   return m_posLocal;
+}
+
+bool cges::Camera::JustMoved() const {
+  return m_justMoved;
 }
