@@ -43,7 +43,7 @@ Base::Base(const size_t traceLowerLimit, const size_t traceUpperLimit, const siz
 Base::~Base() {}
 
 void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& scene) const {
-  if (m_numSampling >= m_samplingLimit) {
+  if (m_numSampling > m_samplingLimit) {
     return;
   }
 

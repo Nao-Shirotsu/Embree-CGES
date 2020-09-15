@@ -72,11 +72,14 @@ PathTracer::PathTracer(const size_t traceLowerLimit, const size_t traceUpperLimi
 }
 
 void PathTracer::Update(const Camera& camera) {
-  std::cout << "Pathtracing (" << m_numSampling << " samples)" << std::endl;
-  m_numSampling *= 2;
   if (camera.JustMoved()) {
     m_numSampling = 1;
   }
+  if (m_numSampling > m_samplingLimit) {
+    return;
+  }
+  std::cout << "Pathtracing (" << m_numSampling << " samples)" << std::endl;
+  m_numSampling *= 2;
 }
 
 void PathTracer::ParallelDraw(const Camera& camera,
@@ -89,6 +92,10 @@ void PathTracer::ParallelDraw(const Camera& camera,
                               const glm::vec3& screenHorizontalVec) const {
   const auto cameraPos = camera.posWorld + camera.GetPosLocal();
   RandomGenerator randomGen;
+
+  const float onePixelSizeRateX = 1.0f / static_cast<float>(renderTarget.GetWidth());
+  const float onePixelSizeRateY = 1.0f / static_cast<float>(renderTarget.GetHeight());
+
   for (size_t y = loopMin; y < loopMax; ++y) {
     const float yRate = y / static_cast<float>(renderTarget.GetHeight());
     const float bgColorIntensity = 255 * (1.0f - yRate);
@@ -97,8 +104,8 @@ void PathTracer::ParallelDraw(const Camera& camera,
       const float xRate = xIdx / static_cast<float>(renderTarget.GetWidth());
       const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
 
-      glm::vec3 rayDir = pixelPos - cameraPos;
-      glm::vec3 rayOrg = cameraPos;
+      const glm::vec3 rayDir = pixelPos - cameraPos;
+      const glm::vec3 rayOrg = cameraPos;
       WrappedRayHit rayhit(rayOrg, rayDir);
       
       RTCIntersectContext context;
@@ -116,8 +123,15 @@ void PathTracer::ParallelDraw(const Camera& camera,
       glm::vec3 cumulativeRadiance = { 0.0f, 0.0f, 0.0f }; // MC積分の総和項(あとでサンプリング回数で割る)
       for (auto sampling = 0u; sampling < m_numSampling; ++sampling) {
         RussianRoulette roulette(randomGen, m_traceLowerLimit, m_traceUpperLimit, INITIAL_ROULETTE_HIT_RATE);
-        const auto radi = ComputeRadiance(context, rayOrg, rayDir, roulette, scene);
-        cumulativeRadiance += radi;
+
+        // スーパーサンプリング
+        const float ssYRate = yRate + randomGen() * onePixelSizeRateY;
+        const float ssXRate = xRate + randomGen() * onePixelSizeRateX;
+        const auto ssPixelPos = initialPos + (ssYRate * screenVerticalVec) + (ssXRate * screenHorizontalVec);
+        const auto ssRayDir = ssPixelPos - cameraPos;
+
+        // MC積分のサンプリング1回分
+        cumulativeRadiance += ComputeRadiance(context, rayOrg, ssRayDir, roulette, scene);
       }
 
       cumulativeRadiance = cumulativeRadiance / static_cast<float>(m_numSampling);
