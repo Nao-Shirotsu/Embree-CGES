@@ -9,7 +9,9 @@ public:
   Camera(const glm::vec3& posWorld, const float radius, const float fov);
 
   void UpdatePosLocal();
+  void StayPosition();
   glm::vec3 GetPosLocal() const;
+  bool JustMoved() const;
 
   glm::vec3 posWorld = { 0.0f, 0.0f, 0.0f };
   glm::vec3 upwardWorld = { 0.0f, 1.0f, 0.0f };
@@ -20,6 +22,7 @@ public:
 
 private:
   glm::vec3 m_posLocal;
+  bool m_justMoved;
 };
 
 }// namespace cges

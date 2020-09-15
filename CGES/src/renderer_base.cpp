@@ -6,6 +6,7 @@
 #include <thread>
 #include <vector>
 #include <memory>
+#include <iostream>
 
 #include <glm/glm.hpp>
 
@@ -21,13 +22,29 @@ float DegToRad(const float degree) {
 }
 
 namespace cges::renderer {
-
 Base::Base()
-  : m_maxThreads{ std::thread::hardware_concurrency() } {}
+    : m_maxThreads(std::thread::hardware_concurrency())
+    , m_traceLowerLimit(0)
+    , m_traceUpperLimit(0)
+    , m_samplingLimit(2)
+    , m_numSampling(0) {
+}
+
+Base::Base(const size_t traceLowerLimit, const size_t traceUpperLimit, const size_t samplingLimit)
+    : m_maxThreads(std::thread::hardware_concurrency())
+    , m_traceLowerLimit(traceLowerLimit)
+    , m_traceUpperLimit(traceUpperLimit)
+    , m_samplingLimit(samplingLimit)
+    , m_numSampling(1) {
+}
 
 Base::~Base() {}
 
 void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& scene) const {
+  if (m_numSampling >= m_samplingLimit) {
+    return;
+  }
+
   const auto width = renderTarget.GetWidth();
   const auto height = renderTarget.GetHeight();
   const float aspectRatio = height / static_cast<float>(width);

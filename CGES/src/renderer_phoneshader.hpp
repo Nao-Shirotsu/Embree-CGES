@@ -5,6 +5,9 @@
 namespace cges::renderer {
 
 class PhoneShader : public Base {
+public:
+  void Update(const Camera& camera) override;
+
 private:
   void ParallelDraw(const Camera& camera,
                     RenderBuffer& renderTarget,

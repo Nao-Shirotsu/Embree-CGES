@@ -35,6 +35,10 @@ Engine::~Engine() {
 }
 
 void Engine::Update(Camera& camera) {
+  if (camera.JustMoved()) {
+    camera.StayPosition();
+  }
+
   if (glfwGetKey(m_window, GLFW_KEY_UP)) {
     camera.radYZ = std::clamp(camera.radYZ - DELTA_SPIN_RADIAN, DELTA_SPIN_RADIAN, PI - DELTA_SPIN_RADIAN);
     camera.UpdatePosLocal();

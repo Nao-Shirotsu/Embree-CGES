@@ -5,6 +5,7 @@
 #include <algorithm> // for std::clamp
 
 namespace cges::renderer {
+void PhoneShader::Update(const Camera& camera) {}
 
 void PhoneShader::ParallelDraw(const Camera& camera,
                                RenderBuffer& renderTarget,

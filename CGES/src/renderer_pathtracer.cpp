@@ -70,6 +70,12 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
 }
 
 namespace cges::renderer {
+void PathTracer::Update(const Camera& camera) {
+  ++m_numSampling;
+  if (camera.JustMoved()) {
+    m_numSampling = 1;
+  }
+}
 
 void PathTracer::ParallelDraw(const Camera& camera,
                               RenderBuffer& renderTarget,

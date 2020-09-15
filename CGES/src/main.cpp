@@ -20,7 +20,7 @@ int main() {
   auto camera = cges::Camera({ 1.0f, 0.0f, 0.0f }, 3.0f, 130.0f);
   auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
   auto scene = cges::Scene(embreeDevice);
-  auto renderer = cges::renderer::PathTracer();
+  auto renderer = cges::renderer::PhoneShader();
 
   scene.Add(cges::MakePolygonalMesh(embreeDevice, 
                                     {-0.5f, -0.25f, 0.0f}, 
@@ -95,6 +95,7 @@ int main() {
   while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera);
     scene.Update();
+    
     renderer.Draw(camera, renderTarget, scene);
     graphicsEngine.Draw(renderTarget);
   }
