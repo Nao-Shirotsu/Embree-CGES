@@ -1,4 +1,4 @@
-# Embree_CGES
+# CGES
 
 **This README is UNDER CONSTRUCTION**
 
@@ -6,7 +6,8 @@
 
 ![phongshading](https://imgur.com/VeMHXqI.png) ![pathtracing](https://imgur.com/M6Pphya.png)
 
-CGES is switchable interactive renderer to compare rendering methods.
+CGES is switchable interactive renderer made with [Intel's Embree](https://www.embree.org/index.html), to compare rendering methods.
+"CGES" comes from "CG effects switcher".
 
 ## Build
 
