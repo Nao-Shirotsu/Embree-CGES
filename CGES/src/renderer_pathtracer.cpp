@@ -16,7 +16,7 @@ constexpr float INITIAL_ROULETTE_HIT_RATE = 0.25f;
 constexpr float PI = 3.14159265358979323846f;
 constexpr size_t TRACE_LOWER_LIMIT = 5;
 constexpr size_t TRACE_UPPER_LIMIT = 64;
-constexpr size_t NUM_SAMPLING = 32;
+constexpr size_t NUM_SAMPLING = 512;
 
 uint8_t ToByte(const float intensity) {
   return static_cast<uint8_t>(std::powf(std::clamp(intensity, 0.0f, 1.0f), 1.0f / 2.2f) * 255.0f + 0.5f);
@@ -60,10 +60,9 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
   }
 
   const glm::vec3 faceNormal = glm::normalize(rayhit.HitNormal());
-  const glm::vec3 surfacePos = rayOrg + rayhit.RayTfar() * incomingDir;
+  const glm::vec3 surfacePos = rayOrg + rayhit.RayTfar() * incomingDir + faceNormal * (EPSILON * 100); // o+td+始点オフセット
   const glm::vec3 outgoingDir = intersectedObj.ComputeReflectedDir(faceNormal, incomingDir);
   const glm::vec3 radianceWeight = intersectedObj.IntegrandFactor(surfacePos, outgoingDir, incomingDir, faceNormal, surfaceAlbedo) / roulette.ContinueRate();
-  //const glm::vec3 brdfValue = intersectedObj.BRDF(surfacePos, outgoingDir, incomingDir, faceNormal, surfaceAlbedo);
 
   return surfaceEmission + radianceWeight * ComputeRadiance(context, surfacePos, outgoingDir, roulette, scene);
 }

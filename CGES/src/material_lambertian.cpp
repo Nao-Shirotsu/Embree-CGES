@@ -31,7 +31,7 @@ glm::vec3 SampleHemisphericalVec(const glm::vec3& axisW) noexcept {
   return glm::normalize(
       axisU * std::cosf(r1) * r2s + 
       axisV * std::sinf(r1) * r2s + 
-      axisW * std::sqrtf(1.0 - r2)
+      axisW * std::sqrtf(1.0f - r2)
   );
 }
 
