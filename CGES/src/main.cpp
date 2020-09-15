@@ -17,23 +17,23 @@ constexpr int WINDOW_HEIGHT = 450;
 int main() {
   auto embreeDevice = rtcNewDevice(nullptr);
   auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
-  auto camera = cges::Camera({ 0, 0, 0 }, 40.0f, 90.0f);
+  auto camera = cges::Camera({ 1.0f, 0.0f, 0.0f }, 3.0f, 130.0f);
   auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
   auto scene = cges::Scene(embreeDevice);
   auto renderer = cges::renderer::PathTracer();
 
   scene.Add(cges::MakePolygonalMesh(embreeDevice, 
-                                    {0.0f, 0.0f, 0.0f}, 
-                                    "bin/goat_filled.obj", 
+                                    {-0.5f, -0.25f, 0.0f}, 
+                                    "bin/goat_filled.obj",
                                     { 64, 64, 255 }, 
                                     {0, 0, 0},
                                     cges::material::Lambertian())); //山羊のオブジェ
   scene.Add(cges::MakePlane(embreeDevice, 
                             { 0.0f, 0.0f, 0.0f }, 
                             { +3.0f, -3.0f, +3.0f }, 
-                            { +3.0f, -3.0f, -3.0f }, 
+                            { +3.0f, +3.0f, +3.0f }, 
                             { +3.0f, +3.0f, -3.0f }, 
-                            { 255, 64, 64 },
+                            { 255, 100, 100 },
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // 右壁
   scene.Add(cges::MakePlane(embreeDevice, 
@@ -45,19 +45,28 @@ int main() {
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // 奥壁
   scene.Add(cges::MakePlane(embreeDevice,
-                            { 0.0f, 0.0f, 0.0f }, 
-                            { -3.0f, -3.0f, +3.0f }, 
-                            { -3.0f, -3.0f, -3.0f }, 
-                            { -3.0f, +3.0f, -3.0f }, 
-                            "bin/textest.jpg",
+                            { 0.0f, 0.0f, 0.0f },
+                            { +3.0f, +3.0f, 3.0f },
+                            { +3.0f, -3.0f, 3.0f },
+                            { -3.0f, -3.0f, 3.0f },
+                            { 192, 192, 192 },
                             { 0, 0, 0 },
-                            cges::material::Lambertian())); // 左壁
-  scene.Add(cges::MakePlane(embreeDevice, 
+                            cges::material::Lambertian())); // 手前壁
+  scene.Add(cges::MakePlane(embreeDevice,
                             { 0.0f, 0.0f, 0.0f }, 
                             { -3.0f, +3.0f, +3.0f }, 
-                            { +3.0f, +3.0f, +3.0f }, 
-                            { +3.0f, +3.0f, -3.0f }, 
-                            { 192, 192, 192 }, 
+                            { -3.0f, -3.0f, +3.0f }, 
+                            { -3.0f, -3.0f, -3.0f }, 
+                            "bin/texstone.jpg",
+                            //{ 100, 100, 255 },
+                            { 0, 0, 0 },
+                            cges::material::Lambertian())); // 左壁
+  scene.Add(cges::MakePlane(embreeDevice,
+                            { 0.0f, 0.0f, 0.0f },
+                            { +3.0f, +3.0f, -3.0f },
+                            { +3.0f, +3.0f, +3.0f },
+                            { -3.0f, +3.0f, +3.0f },
+                            { 192, 192, 192 },
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // 上壁
   scene.Add(cges::MakePlane(embreeDevice, 
@@ -69,17 +78,19 @@ int main() {
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // 下壁
   scene.Add(cges::MakeSphere(embreeDevice, 
-                             { 1.5f, -1.5f, 1.5f }, 
-                             1.0f, 
-                             {0, 255, 0},
+                             { 1.5f, -1.5f, 0.0f }, 
+                             0.75f, 
+                             {192, 192, 192},
                              { 0, 0, 0 },
-                             cges::material::Lambertian())); // 緑球
-  scene.Add(cges::MakeSphere(embreeDevice,
-                             { 0.0f, 3.0f, 0.0f },
-                             0.75f,
-                             { 0, 0, 0 },
-                             { 128, 128, 128 },
-                             cges::material::Lambertian())); // 光源球
+                             cges::material::Lambertian())); // 白球
+  scene.Add(cges::MakePlane(embreeDevice,
+                            { 0.0f, 0.0f, 0.0f },
+                            { -2.0f, +2.75f, +1.5f },
+                            { +2.0f, +2.75f, +1.5f },
+                            { +2.0f, +2.75f, -1.5f },
+                            { 0, 0, 0 },
+                            { 223, 223, 223 },
+                            cges::material::Lambertian())); // 天井の光源板
 
   while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera);
