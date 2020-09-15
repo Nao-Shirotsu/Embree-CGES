@@ -73,7 +73,7 @@ PathTracer::PathTracer(const size_t traceLowerLimit, const size_t traceUpperLimi
 
 void PathTracer::Update(const Camera& camera) {
   std::cout << "Pathtracing (" << m_numSampling << " samples)" << std::endl;
-  m_numSampling *= 2;
+  m_numSampling += 2;
   if (camera.JustMoved()) {
     m_numSampling = 1;
   }
