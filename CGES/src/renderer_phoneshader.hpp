@@ -4,9 +4,9 @@
 
 namespace cges::renderer {
 
-class PhoneShader : public Base {
+class PhongShader : public Base {
 public:
-  PhoneShader();
+  PhongShader();
 
   void Update(const Camera& camera) override;
 

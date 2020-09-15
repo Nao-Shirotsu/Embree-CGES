@@ -43,8 +43,8 @@ void Engine::Update(Camera& camera, std::shared_ptr<renderer::Base>& renderer) {
   }
 
   // ======ƒŒƒ“ƒ_ƒ‰Ø‚è‘Ö‚¦======
-  if (glfwGetKey(m_window, GLFW_KEY_1) && renderer->RenderMethod() != renderer::Method::PhoneShading) {
-    renderer = std::make_shared<renderer::PhoneShader>();
+  if (glfwGetKey(m_window, GLFW_KEY_1) && renderer->RenderMethod() != renderer::Method::PhongShading) {
+    renderer = std::make_shared<renderer::PhongShader>();
   }
 
   if (glfwGetKey(m_window, GLFW_KEY_2) && renderer->RenderMethod() != renderer::Method::Pathtracing) {

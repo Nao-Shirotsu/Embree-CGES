@@ -5,11 +5,11 @@
 #include <algorithm> // for std::clamp
 
 namespace cges::renderer {
-PhoneShader::PhoneShader() : Base(Method::PhoneShading){
+PhongShader::PhongShader() : Base(Method::PhongShading){
 }
-void PhoneShader::Update(const Camera& camera) {}
+void PhongShader::Update(const Camera& camera) {}
 
-void PhoneShader::ParallelDraw(const Camera& camera,
+void PhongShader::ParallelDraw(const Camera& camera,
                                RenderBuffer& renderTarget,
                                const Scene& scene,
                                const size_t loopMin,

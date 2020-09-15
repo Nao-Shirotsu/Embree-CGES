@@ -11,7 +11,7 @@
 namespace cges::renderer {
 
 enum class Method {
-  PhoneShading,
+  PhongShading,
   Pathtracing,
 };
 
