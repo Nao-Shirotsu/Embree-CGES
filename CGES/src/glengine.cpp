@@ -44,10 +44,12 @@ void Engine::Update(Camera& camera, std::shared_ptr<renderer::Base>& renderer) {
 
   // ======ƒŒƒ“ƒ_ƒ‰Ø‚è‘Ö‚¦======
   if (glfwGetKey(m_window, GLFW_KEY_1) && renderer->RenderMethod() != renderer::Method::PhongShading) {
+    std::cout << "Render mode switched : Phong Shading" << std::endl;
     renderer = std::make_shared<renderer::PhongShader>();
   }
 
   if (glfwGetKey(m_window, GLFW_KEY_2) && renderer->RenderMethod() != renderer::Method::Pathtracing) {
+    std::cout << "Render mode switched : Pathtracing" << std::endl;
     renderer = std::make_shared<cges::renderer::PathTracer>(5, 64, 512);
   }
 
