@@ -6,6 +6,8 @@ namespace cges::renderer {
 
 class PhoneShader : public Base {
 public:
+  PhoneShader();
+
   void Update(const Camera& camera) override;
 
 private:

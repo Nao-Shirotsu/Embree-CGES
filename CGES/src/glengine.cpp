@@ -1,10 +1,13 @@
 #include "glengine.hpp"
 
 #include "renderbuffer.hpp"
+#include "renderer_phoneshader.hpp"
+#include "renderer_pathtracer.hpp"
 
 #include <algorithm>
 #include <cassert>
 #include <glm/glm.hpp>
+#include <iostream>
 
 namespace {
 
@@ -34,15 +37,31 @@ Engine::~Engine() {
   glfwTerminate();
 }
 
-void Engine::Update(Camera& camera) {
+void Engine::Update(Camera& camera, std::shared_ptr<renderer::Base>& renderer) {
   if (camera.JustMoved()) {
     camera.StayPosition();
+  }
+
+  // ======レンダラ切り替え======
+  if (glfwGetKey(m_window, GLFW_KEY_1) && renderer->RenderMethod() != renderer::Method::PhoneShading) {
+    renderer = std::make_shared<renderer::PhoneShader>();
+  }
+
+  if (glfwGetKey(m_window, GLFW_KEY_2) && renderer->RenderMethod() != renderer::Method::Pathtracing) {
+    renderer = std::make_shared<cges::renderer::PathTracer>(5, 64, 512);
+  }
+
+  // ======カメラ移動入力======
+  if (glfwGetKey(m_window, GLFW_KEY_UP)) {
+    camera.radYZ = std::clamp(camera.radYZ - DELTA_SPIN_RADIAN, DELTA_SPIN_RADIAN, PI - DELTA_SPIN_RADIAN);
+    camera.UpdatePosLocal();
   }
 
   if (glfwGetKey(m_window, GLFW_KEY_UP)) {
     camera.radYZ = std::clamp(camera.radYZ - DELTA_SPIN_RADIAN, DELTA_SPIN_RADIAN, PI - DELTA_SPIN_RADIAN);
     camera.UpdatePosLocal();
   }
+
   if (glfwGetKey(m_window, GLFW_KEY_RIGHT)) {
     camera.radXZ += DELTA_SPIN_RADIAN;
     if (camera.radXZ > 2.0f * PI) {
@@ -50,10 +69,12 @@ void Engine::Update(Camera& camera) {
     }
     camera.UpdatePosLocal();
   }
+
   if (glfwGetKey(m_window, GLFW_KEY_DOWN)) {
     camera.radYZ = std::clamp(camera.radYZ + DELTA_SPIN_RADIAN, DELTA_SPIN_RADIAN, PI - DELTA_SPIN_RADIAN);
     camera.UpdatePosLocal();
   }
+
   if (glfwGetKey(m_window, GLFW_KEY_LEFT)) {
     camera.radXZ -= DELTA_SPIN_RADIAN;
     if (camera.radXZ < DELTA_SPIN_RADIAN) {
@@ -61,6 +82,7 @@ void Engine::Update(Camera& camera) {
     }
     camera.UpdatePosLocal();
   }
+
   if (glfwGetKey(m_window, GLFW_KEY_I)) {
     camera.radius -= 0.5f;
     if (camera.radius < 0.0f) {
@@ -68,10 +90,13 @@ void Engine::Update(Camera& camera) {
     }
     camera.UpdatePosLocal();
   }
+
   if (glfwGetKey(m_window, GLFW_KEY_O)) {
     camera.radius += 0.5f;
     camera.UpdatePosLocal();
   }
+
+  // ======ゲーム終了======
   if (glfwGetKey(m_window, GLFW_KEY_ESCAPE)) {
     glfwSetWindowShouldClose(m_window, static_cast<int>(true));
   }

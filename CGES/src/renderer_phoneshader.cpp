@@ -5,6 +5,8 @@
 #include <algorithm> // for std::clamp
 
 namespace cges::renderer {
+PhoneShader::PhoneShader() : Base(Method::PhoneShading){
+}
 void PhoneShader::Update(const Camera& camera) {}
 
 void PhoneShader::ParallelDraw(const Camera& camera,

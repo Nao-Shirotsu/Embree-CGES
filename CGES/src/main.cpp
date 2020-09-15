@@ -10,6 +10,7 @@
 #include "material_lambertian.hpp"
 
 #include <embree3/rtcore.h>
+#include <memory>
 
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 450;
@@ -17,10 +18,10 @@ constexpr int WINDOW_HEIGHT = 450;
 int main() {
   auto embreeDevice = rtcNewDevice(nullptr);
   auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
-  auto camera = cges::Camera({ 1.0f, 0.0f, 0.0f }, 3.0f, 130.0f);
+  auto camera = cges::Camera({ 0.0f, 0.0f, 0.0f }, 3.0f, 130.0f);
   auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
   auto scene = cges::Scene(embreeDevice);
-  auto renderer = cges::renderer::PathTracer(5, 64, 512);
+  std::shared_ptr<cges::renderer::Base> renderer = std::make_shared<cges::renderer::PathTracer>(5, 64, 512);
 
   scene.Add(cges::MakePolygonalMesh(embreeDevice, 
                                     {-0.5f, -0.25f, 0.0f}, 
@@ -93,10 +94,10 @@ int main() {
                             cges::material::Lambertian())); // “Vˆä‚ÌŒõŒ¹”Â
 
   while (!graphicsEngine.ShouldTerminate()) {
-    graphicsEngine.Update(camera);
+    graphicsEngine.Update(camera, renderer);
     scene.Update();
-    renderer.Update(camera);
-    renderer.Draw(camera, renderTarget, scene);
+    renderer->Update(camera);
+    renderer->Draw(camera, renderTarget, scene);
     graphicsEngine.Draw(renderTarget);
   }
 

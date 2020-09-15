@@ -22,20 +22,22 @@ float DegToRad(const float degree) {
 }
 
 namespace cges::renderer {
-Base::Base()
+Base::Base(Method method)
     : m_maxThreads(std::thread::hardware_concurrency())
     , m_traceLowerLimit(0)
     , m_traceUpperLimit(0)
     , m_samplingLimit(2)
-    , m_numSampling(0) {
+    , m_numSampling(0)
+    , m_method(method){
 }
 
-Base::Base(const size_t traceLowerLimit, const size_t traceUpperLimit, const size_t samplingLimit)
+Base::Base(const size_t traceLowerLimit, const size_t traceUpperLimit, const size_t samplingLimit, Method method)
     : m_maxThreads(std::thread::hardware_concurrency())
     , m_traceLowerLimit(traceLowerLimit)
     , m_traceUpperLimit(traceUpperLimit)
     , m_samplingLimit(samplingLimit)
-    , m_numSampling(1) {
+    , m_numSampling(1) 
+    , m_method(method){
 }
 
 Base::~Base() {}
@@ -91,6 +93,10 @@ void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& s
   for (auto& th : threads) {
     th.join();
   }
+}
+
+Method Base::RenderMethod() {
+  return m_method;
 }
 
 } // namespace cges::renderer

@@ -68,7 +68,7 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
 namespace cges::renderer {
 
 PathTracer::PathTracer(const size_t traceLowerLimit, const size_t traceUpperLimit, const size_t samplingLimit)
-    : Base(traceLowerLimit, traceUpperLimit, samplingLimit) {
+    : Base(traceLowerLimit, traceUpperLimit, samplingLimit, Method::Pathtracing) {
 }
 
 void PathTracer::Update(const Camera& camera) {

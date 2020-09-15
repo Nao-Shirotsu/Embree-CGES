@@ -10,17 +10,25 @@
 
 namespace cges::renderer {
 
+enum class Method {
+  PhoneShading,
+  Pathtracing,
+};
+
 class Base {
 public:
-  Base();
+  Base(const Method method);
   Base(const size_t traceLowerLimit,
        const size_t traceUpperLimit,
-       const size_t samplingLimit);
+       const size_t samplingLimit,
+       const Method method);
   virtual ~Base();
+
+  virtual void Update(const Camera& camera) = 0;
 
   void Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& scene) const;
 
-  virtual void Update(const Camera& camera) = 0;
+  Method RenderMethod();
 
 protected:
   // [loopMin, loopMax) ÇÃîÕàÕÇÃçsÇï`âÊÇ∑ÇÈ
@@ -38,6 +46,7 @@ protected:
   const size_t m_traceUpperLimit;
   const size_t m_samplingLimit;
   size_t m_numSampling;
+  const Method m_method;
 };
 
 } // namespace cges::renderer
