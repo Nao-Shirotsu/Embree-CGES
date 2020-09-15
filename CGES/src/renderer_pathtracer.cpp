@@ -30,25 +30,24 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
                           const cges::Scene& scene) {
   using namespace cges;
 
-  RTCRayHit rayhit;
-  InitRayHit(rayhit, rayOrg, incomingDir);
-  rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
-
-  if (!WasIntersected(rayhit.hit.geomID)) {
+  WrappedRayHit rayhit(rayOrg, incomingDir);
+  if (!rayhit.Intersect(scene, context)) {
     return { 0.0f, 0.0f, 0.0f };
   }
 
-  const auto& intersectedObj = scene.GetGeomRef(rayhit.hit.geomID);
+  const auto& intersectedObj = scene.GetGeomRef(rayhit.HitGeomId());
   const glm::vec3 surfaceEmission = {
     static_cast<float>(intersectedObj.GetEmission().r) / 255.0f,
     static_cast<float>(intersectedObj.GetEmission().g) / 255.0f,
     static_cast<float>(intersectedObj.GetEmission().b) / 255.0f
   };
 
+  const float texU = rayhit.HitU();
+  const float texV = rayhit.HitV();
   const glm::vec3 surfaceAlbedo = {
-    static_cast<float>(intersectedObj.GetColor(rayhit.hit.u, rayhit.hit.v).r) / 255.0f,
-    static_cast<float>(intersectedObj.GetColor(rayhit.hit.u, rayhit.hit.v).g) / 255.0f,
-    static_cast<float>(intersectedObj.GetColor(rayhit.hit.u, rayhit.hit.v).b) / 255.0f
+    static_cast<float>(intersectedObj.GetColor(texU, texV).r) / 255.0f,
+    static_cast<float>(intersectedObj.GetColor(texU, texV).g) / 255.0f,
+    static_cast<float>(intersectedObj.GetColor(texU, texV).b) / 255.0f
   };
 
   {
@@ -60,8 +59,8 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
     return surfaceEmission;
   }
 
-  const glm::vec3 faceNormal = glm::normalize(glm::vec3(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z));
-  const glm::vec3 surfacePos = rayOrg + rayhit.ray.tfar * incomingDir;
+  const glm::vec3 faceNormal = glm::normalize(rayhit.HitNormal());
+  const glm::vec3 surfacePos = rayOrg + rayhit.RayTfar() * incomingDir;
   const glm::vec3 outgoingDir = intersectedObj.ComputeReflectedDir(faceNormal, incomingDir);
   const glm::vec3 radianceWeight = intersectedObj.IntegrandFactor(surfacePos, outgoingDir, incomingDir, faceNormal, surfaceAlbedo) / roulette.ContinueRate();
   //const glm::vec3 brdfValue = intersectedObj.BRDF(surfacePos, outgoingDir, incomingDir, faceNormal, surfaceAlbedo);
@@ -91,18 +90,16 @@ void PathTracer::ParallelDraw(const Camera& camera,
     for (size_t xIdx = 0; xIdx < renderTarget.GetWidth(); ++xIdx) {
       const float xRate = xIdx / static_cast<float>(renderTarget.GetWidth());
       const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
+
       glm::vec3 rayDir = pixelPos - cameraPos;
       glm::vec3 rayOrg = cameraPos;
-      RTCRayHit rayhit;
+      WrappedRayHit rayhit(rayOrg, rayDir);
+      
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
 
-      // primal ray ÇîÚÇŒÇ∑
-      InitRayHit(rayhit, rayOrg, rayDir);
-      rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
-
-      // primal rayÇ™âΩÇ…Ç‡è’ìÀÇµÇ»Ç©Ç¡ÇΩÇÁîwåiêFÇï`âÊÇµÇƒéüÇÃÉsÉNÉZÉãÇ÷
-      if (!WasIntersected(rayhit.hit.geomID)) {
+      // primal rayÇîÚÇŒÇµÇƒâΩÇ…Ç‡è’ìÀÇµÇ»Ç©Ç¡ÇΩÇÁîwåiêFÇï`âÊÇµÇƒéüÇÃÉsÉNÉZÉãÇ÷
+      if (!rayhit.Intersect(scene, context)) {
         renderTarget[yIdx][xIdx].r = static_cast<uint8_t>(bgColorIntensity / 1.5f);
         renderTarget[yIdx][xIdx].g = static_cast<uint8_t>(bgColorIntensity / 1.5f);
         renderTarget[yIdx][xIdx].b = static_cast<uint8_t>(bgColorIntensity);
