@@ -57,6 +57,7 @@
     <ClCompile Include="src\material_lambertian.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\material_specular.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -121,6 +122,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\material_lambertian.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\material_specular.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -158,6 +158,7 @@
     <ClCompile Include="src\glengine.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\material_lambertian.cpp" />
+    <ClCompile Include="src\material_specular.cpp" />
     <ClCompile Include="src\renderer_base.cpp" />
     <ClCompile Include="src\renderbuffer.cpp" />
     <ClCompile Include="src\renderer_pathtracer.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="src\directionallight.hpp" />
     <ClInclude Include="src\material_base.hpp" />
     <ClInclude Include="src\material_lambertian.hpp" />
+    <ClInclude Include="src\material_specular.hpp" />
     <ClInclude Include="src\renderer_base.hpp" />
     <ClInclude Include="src\renderbuffer.hpp" />
     <ClInclude Include="src\renderer_pathtracer.hpp" />

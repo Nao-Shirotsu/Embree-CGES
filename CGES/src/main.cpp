@@ -8,6 +8,7 @@
 #include "gameobject_polygonalmesh.hpp"
 #include "gameobject_plane.hpp"
 #include "material_lambertian.hpp"
+#include "material_specular.hpp"
 
 #include <embree3/rtcore.h>
 #include <memory>
@@ -79,11 +80,11 @@ int main() {
                             { 0, 0, 0 },
                             cges::material::Lambertian())); // ‰º•Ç
   scene.Add(cges::MakeSphere(embreeDevice, 
-                             { 1.5f, -1.5f, 0.0f }, 
+                             { 1.125f, -1.5f, 0.0f }, 
                              0.75f, 
-                             {192, 192, 192},
+                             {150, 210, 150},
                              { 0, 0, 0 },
-                             cges::material::Lambertian())); // ”’‹…
+                             cges::material::Specular())); // —Î‹¾‹…
   scene.Add(cges::MakePlane(embreeDevice,
                             { 0.0f, 0.0f, 0.0f },
                             { -2.0f, +2.75f, +1.5f },
