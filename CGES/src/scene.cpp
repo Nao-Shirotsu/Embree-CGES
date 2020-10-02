@@ -2,12 +2,21 @@
 
 #include <cmath>
 
+namespace {
+
+bool IsEmitting(cges::ColorRGBA emission) {
+  return emission.r > 0 || emission.g > 0 || emission.b > 0;
+}
+
+}// anonymous namespace
+
 namespace cges {
 
 Scene::Scene(const RTCDevice rtcDevice)
     : m_rtcScene{ rtcNewScene(rtcDevice) }
-    , m_objects( 0 )
-    , m_lightSrcs( 0 )
+    , m_objects(0)
+    , m_lightSrcs(0)
+    , m_lightIdx()
     , m_sceneChanged{false} {
   const float divRoot3 = 1.0f / std::sqrtf(3.0f);
   m_dirLight.dir = { -divRoot3, -divRoot3, -divRoot3 };
@@ -30,6 +39,10 @@ void Scene::Add(std::unique_ptr<gameobject::Base> object) {
   m_objects.push_back(std::move(object));
   (*(m_objects.end() - 1))->AttachTo(m_rtcScene, static_cast<unsigned int>(m_objects.size()) - 1);
   m_sceneChanged = true;
+
+  if (IsEmitting(m_objects.back()->GetEmission())) {
+    m_lightIdx.push_back(static_cast<unsigned int>(m_objects.size()) - 1);
+  }
 }
 
 const RTCScene Scene::GetRTCScene() const {

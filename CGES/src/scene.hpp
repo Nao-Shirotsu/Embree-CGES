@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <type_traits>
 
 #include <glm/vec3.hpp>
 #include <embree3/rtcore.h>
@@ -23,6 +24,11 @@ public:
   const glm::vec3& GetDirLightForward() const;
   const gameobject::Base& GetGeomRef(const unsigned int objID) const;
 
+  //template <typename Func>
+  //inline auto ForEachLight() const -> std::enable_if_t<std::is_function_v<Func>, > {
+  //  Func();
+  //}
+
 private:
   Scene(const Scene& other) = delete;
   Scene& operator=(const Scene& other) = delete;
@@ -31,6 +37,7 @@ private:
   std::vector<std::unique_ptr<gameobject::Base>> m_objects;
   std::vector<DirectionalLight> m_lightSrcs;
   DirectionalLight m_dirLight;
+  std::vector<unsigned int> m_lightIdx;
   bool m_sceneChanged;
 };
 

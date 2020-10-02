@@ -57,6 +57,9 @@
     <ClCompile Include="src\material_lambertian.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\renderer_bpt.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -121,6 +124,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\material_lambertian.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_bpt.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
