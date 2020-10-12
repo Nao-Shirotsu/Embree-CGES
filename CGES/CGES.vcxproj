@@ -162,6 +162,7 @@
     <ClCompile Include="src\renderbuffer.cpp" />
     <ClCompile Include="src\renderer_pathtracer.cpp" />
     <ClCompile Include="src\renderer_phoneshader.cpp" />
+    <ClCompile Include="src\renderer_photonmapper.cpp" />
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\util_objfile.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="src\renderbuffer.hpp" />
     <ClInclude Include="src\renderer_pathtracer.hpp" />
     <ClInclude Include="src\renderer_phoneshader.hpp" />
+    <ClInclude Include="src\renderer_photonmapper.hpp" />
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\texture.hpp" />
     <ClInclude Include="src\util_objfile.hpp" />
