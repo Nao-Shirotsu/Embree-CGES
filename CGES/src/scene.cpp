@@ -7,12 +7,8 @@ namespace cges {
 Scene::Scene(const RTCDevice rtcDevice)
     : m_rtcScene{ rtcNewScene(rtcDevice) }
     , m_objects( 0 )
-    , m_lightSrcs( 0 )
-    , m_sceneChanged{false} {
-  const float divRoot3 = 1.0f / std::sqrtf(3.0f);
-  m_dirLight.dir = { -divRoot3, -divRoot3, -divRoot3 };
-  m_dirLight.emitColor = { 128, 128, 128, 255 };
-}
+    //, m_lightIdx( 0 )
+    , m_sceneChanged{false} {}
 
 Scene::~Scene() noexcept {
   rtcReleaseScene(m_rtcScene);
@@ -34,10 +30,6 @@ void Scene::Add(std::unique_ptr<gameobject::Base> object) {
 
 const RTCScene Scene::GetRTCScene() const {
   return m_rtcScene;
-}
-
-const glm::vec3& Scene::GetDirLightForward() const {
-  return m_dirLight.dir;
 }
 
 const gameobject::Base& Scene::GetGeomRef(const unsigned int objID) const {
