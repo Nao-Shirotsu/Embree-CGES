@@ -116,7 +116,10 @@ glm::vec3 Plane::GetPosWorld() const {
 }
 
 glm::vec3 Plane::SampleSurfacePoint() const noexcept {
-  return glm::vec3(); // TODO:ŽÀ‘•
+  RandomGenerator rnd;
+  const auto v2tov3 = glm::normalize(m_vertexBuf[3] - m_vertexBuf[2]);
+  const auto v2tov1 = glm::normalize(m_vertexBuf[1] - m_vertexBuf[2]);
+  return m_vertexBuf[2] + v2tov1 * rnd() + v2tov3 * rnd();
 }
 
 }// namespace cges::gameobject
