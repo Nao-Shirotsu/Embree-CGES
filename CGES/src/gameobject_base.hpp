@@ -2,6 +2,7 @@
 
 #include "color.hpp"
 #include "material_base.hpp"
+#include "gameobject_emittable.hpp"
 
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
@@ -10,7 +11,7 @@
 namespace cges::gameobject{
 
 // シーンに配置される任意の3Dモデルのクラス
-class Base {
+class Base : public Emittable{
 public:
   Base(const RTCDevice device, 
        const RTCGeometryType geomType, 
@@ -24,8 +25,6 @@ public:
 
   // オブジェクトのテクスチャ座標から色取得
   virtual ColorRGBA GetColor(const float u, const float v) const = 0;
-
-  ColorRGBA GetEmission() const;
 
   virtual RTCGeometryType GetGeomType() const = 0;
 
@@ -48,7 +47,6 @@ public:
 protected:
   const RTCDevice m_rtcDevice;
   RTCGeometry m_rtcGeometry;
-  const ColorRGBA m_emissionColor;
   const material::Base& m_material;
 };
 

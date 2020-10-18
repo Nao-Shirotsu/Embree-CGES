@@ -1,23 +1,13 @@
 #pragma once
 
 #include "scene.hpp"
+#include "randomgenerator.hpp"
 
-#include <random>
 #include <glm/vec3.hpp>
 #include <embree3/rtcore_ray.h>
 #include <embree3/rtcore_geometry.h>
 
 namespace cges {
-
-class RandomGenerator {
-public:
-  RandomGenerator();
-  float operator()();
-
-private:
-  std::mt19937_64 mt;
-  std::uniform_real_distribution<float> distr;
-};
 
 class RussianRoulette {
 public:

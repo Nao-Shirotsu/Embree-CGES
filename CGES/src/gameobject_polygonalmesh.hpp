@@ -27,6 +27,8 @@ public:
 
   glm::vec3 GetPosWorld() const override;
 
+  glm::vec3 SampleSurfacePoint() const noexcept override;
+
 private:
   std::vector<glm::vec3> m_vertexBuf;
   std::vector<PolygonIndex> m_indexBuf;

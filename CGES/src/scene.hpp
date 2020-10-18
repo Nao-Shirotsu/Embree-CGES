@@ -21,7 +21,6 @@ public:
   void Update();
   void Add(std::unique_ptr<gameobject::Base> object);
   const RTCScene GetRTCScene() const;
-  const glm::vec3& GetDirLightForward() const;
   const gameobject::Base& GetGeomRef(const unsigned int objID) const;
 
   //template <typename Func>
@@ -35,8 +34,6 @@ private:
 
   RTCScene m_rtcScene;
   std::vector<std::unique_ptr<gameobject::Base>> m_objects;
-  std::vector<DirectionalLight> m_lightSrcs;
-  DirectionalLight m_dirLight;
   std::vector<unsigned int> m_lightIdx;
   bool m_sceneChanged;
 };
