@@ -19,11 +19,11 @@ constexpr float DELTA_SPIN_RADIAN = PI / 15.0f;
 
 namespace cges::gl {
 
-Engine::Engine(const size_t windowWidth, const size_t windowHeight, const char* const windowTitle) {
+Engine::Engine(const size_t windowWidth, const size_t windowHeight) {
   if (glfwInit() == GL_FALSE) {
     assert(false);
   }
-  m_window = glfwCreateWindow(static_cast<int>(windowWidth), static_cast<int>(windowHeight), windowTitle, nullptr, nullptr);
+  m_window = glfwCreateWindow(static_cast<int>(windowWidth), static_cast<int>(windowHeight), "CGES [Phong Shading]", nullptr, nullptr);
   if (!m_window) {
     return;
   }
@@ -45,14 +45,17 @@ void Engine::Update(Camera& camera, std::shared_ptr<renderer::Base>& renderer) {
 
   // ======ƒŒƒ“ƒ_ƒ‰Ø‚è‘Ö‚¦======
   if (glfwGetKey(m_window, GLFW_KEY_1) && renderer->RenderMethod() != renderer::Method::PhongShading) {
+    glfwSetWindowTitle(m_window, "CGES [Phong Shading]");
     renderer = std::make_shared<renderer::PhongShader>();
   }
 
   if (glfwGetKey(m_window, GLFW_KEY_2) && renderer->RenderMethod() != renderer::Method::Pathtracing) {
+    glfwSetWindowTitle(m_window, "CGES [Pathtracing]");
     renderer = std::make_shared<cges::renderer::PathTracer>(5, 64, 512);
   }
 
   if (glfwGetKey(m_window, GLFW_KEY_3) && renderer->RenderMethod() != renderer::Method::BidirectionalPathtracing) {
+    glfwSetWindowTitle(m_window, "CGES [Bidirectional Pathtracing]");
     renderer = std::make_shared<cges::renderer::BidirectionalPathTracer>(5, 64, 512);
   }
 

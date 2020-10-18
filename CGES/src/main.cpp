@@ -18,7 +18,7 @@ int main() {
   auto embreeDevice = rtcNewDevice(nullptr);
   auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
   auto camera = cges::Camera({ 0.0f, 0.0f, 0.0f }, 3.0f, 130.0f);
-  auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Interactive Raytracer");
+  auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT);
   auto scene = cges::Scene(embreeDevice);
   std::shared_ptr<cges::renderer::Base> renderer = std::make_shared<cges::renderer::PhongShader>();
 
