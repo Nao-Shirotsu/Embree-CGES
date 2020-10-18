@@ -63,6 +63,9 @@
     <ClCompile Include="src\gameobject_emittable.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\randomgenerator.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -133,6 +136,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\gameobject_emittable.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\randomgenerator.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
