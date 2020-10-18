@@ -13,6 +13,7 @@ namespace cges::renderer {
 enum class Method {
   PhongShading,
   Pathtracing,
+  BidirectionalPathtracing,
   PhotonMapping,
 };
 

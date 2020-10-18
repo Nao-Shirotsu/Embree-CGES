@@ -1,145 +1,161 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="src">
-      <UniqueIdentifier>{5ea70346-3746-4030-aa97-b74e6c491696}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\util_objfile.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scene.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>cpp</Filter>
     </ClCompile>
     <ClCompile Include="src\gameobject_base.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gameobject_polygonalmesh.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\renderbuffer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glengine.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\camera.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\texture.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gameobject_sphere.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\util_texture.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\util_renderer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\renderer_base.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\renderer_phoneshader.cpp">
-      <Filter>src</Filter>
+      <Filter>cpp</Filter>
     </ClCompile>
     <ClCompile Include="src\gameobject_plane.cpp">
-      <Filter>src</Filter>
+      <Filter>cpp</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer_pathtracer.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\gameobject_polygonalmesh.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gameobject_sphere.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glengine.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>cpp</Filter>
     </ClCompile>
     <ClCompile Include="src\material_lambertian.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\renderer_photonmapper.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gameobject_emittable.cpp">
-      <Filter>src</Filter>
+      <Filter>cpp</Filter>
     </ClCompile>
     <ClCompile Include="src\randomgenerator.cpp">
-      <Filter>src</Filter>
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderbuffer.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer_base.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer_bpt.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer_pathtracer.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer_phoneshader.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer_photonmapper.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texture.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util_objfile.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util_renderer.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util_texture.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\operators.cpp">
+      <Filter>cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".clang-format" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\color.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util_objfile.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\scene.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gameobject_base.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gameobject_polygonalmesh.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\bufferelements.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\glengine.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderbuffer.hpp">
-      <Filter>src</Filter>
+      <Filter>hpp</Filter>
     </ClInclude>
     <ClInclude Include="src\camera.hpp">
-      <Filter>src</Filter>
+      <Filter>hpp</Filter>
     </ClInclude>
-    <ClInclude Include="src\texture.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gameobject_sphere.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util_texture.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util_renderer.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderer_base.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderer_phoneshader.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gameobject_plane.hpp">
-      <Filter>src</Filter>
+    <ClInclude Include="src\color.hpp">
+      <Filter>hpp</Filter>
     </ClInclude>
     <ClInclude Include="src\directionallight.hpp">
-      <Filter>src</Filter>
+      <Filter>hpp</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer_pathtracer.hpp">
-      <Filter>src</Filter>
+    <ClInclude Include="src\gameobject_base.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gameobject_polygonalmesh.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gameobject_plane.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gameobject_sphere.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\glengine.hpp">
+      <Filter>hpp</Filter>
     </ClInclude>
     <ClInclude Include="src\material_base.hpp">
-      <Filter>src</Filter>
+      <Filter>hpp</Filter>
     </ClInclude>
     <ClInclude Include="src\material_lambertian.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderer_photonmapper.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gameobject_emittable.hpp">
-      <Filter>src</Filter>
+      <Filter>hpp</Filter>
     </ClInclude>
     <ClInclude Include="src\randomgenerator.hpp">
-      <Filter>src</Filter>
+      <Filter>hpp</Filter>
     </ClInclude>
+    <ClInclude Include="src\renderbuffer.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_base.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_bpt.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_pathtracer.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_phoneshader.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_photonmapper.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\texture.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util_objfile.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util_renderer.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util_texture.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\operators.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".clang-format">
+      <Filter>config</Filter>
+    </None>
+    <None Include="packages.config">
+      <Filter>config</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="cpp">
+      <UniqueIdentifier>{a7ec35fa-2e92-4a5d-bd6c-d7ce10a704d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hpp">
+      <UniqueIdentifier>{c6e51d53-27db-4129-b2b8-8060c63a1d8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{ba99d774-62d5-4e74-a56f-58d824e595d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

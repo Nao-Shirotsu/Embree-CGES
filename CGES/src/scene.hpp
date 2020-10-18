@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <type_traits>
 
 #include <glm/vec3.hpp>
 #include <embree3/rtcore.h>
@@ -21,6 +22,7 @@ public:
   void Add(std::unique_ptr<gameobject::Base> object);
   const RTCScene GetRTCScene() const;
   const gameobject::Base& GetGeomRef(const unsigned int objID) const;
+  const std::vector<unsigned int>& GetLightIndices() const;
 
 private:
   Scene(const Scene& other) = delete;
