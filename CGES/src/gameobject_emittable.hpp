@@ -10,6 +10,8 @@ class Emittable {
 public:
   Emittable(const ColorRGBA emissionColor);
 
+  bool IsEmitting() const noexcept;
+
   ColorRGBA GetEmission() const noexcept;
 
   virtual glm::vec3 SampleSurfacePoint() const noexcept = 0;
