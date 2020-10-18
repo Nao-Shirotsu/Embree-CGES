@@ -33,6 +33,7 @@ CGES is switchable interactive renderer made with [Intel's Embree](https://www.e
 
   1. Phong shading
   2. Pathtracing
+  3. Bidirectional Pathtracing
 
 
 
