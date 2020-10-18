@@ -156,6 +156,7 @@
     <ClCompile Include="src\gameobject_polygonalmesh.cpp" />
     <ClCompile Include="src\gameobject_sphere.cpp" />
     <ClCompile Include="src\glengine.cpp" />
+    <ClCompile Include="src\operators.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\material_lambertian.cpp" />
     <ClCompile Include="src\randomgenerator.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="src\gameobject_sphere.hpp" />
     <ClInclude Include="src\glengine.hpp" />
     <ClInclude Include="src\directionallight.hpp" />
+    <ClInclude Include="src\operators.hpp" />
     <ClInclude Include="src\material_base.hpp" />
     <ClInclude Include="src\material_lambertian.hpp" />
     <ClInclude Include="src\randomgenerator.hpp" />
