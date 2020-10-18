@@ -3,17 +3,13 @@
 namespace cges::gameobject{
 
 Base::Base(const RTCDevice device, const RTCGeometryType geomType, const ColorRGBA emissionColor, const material::Base& material) 
-    : m_rtcDevice(device)
+    : Emittable(emissionColor)
+    , m_rtcDevice(device)
     , m_rtcGeometry(rtcNewGeometry(device, geomType))
-    , m_emissionColor(emissionColor) 
     , m_material(material) {}
 
 Base::~Base() noexcept {
   rtcReleaseGeometry(m_rtcGeometry);
-}
-
-ColorRGBA Base::GetEmission() const {
-  return m_emissionColor;
 }
 
 glm::vec3 Base::ComputeReflectedDir(const glm::vec3& faceNormal, const glm::vec3& incomingRayDir) const {

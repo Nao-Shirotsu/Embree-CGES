@@ -5,14 +5,6 @@
 
 namespace cges {
 
-RandomGenerator::RandomGenerator()
-    : mt(std::random_device()())
-    , distr(0.0f, 1.0f) {}
-
-float RandomGenerator::operator()() {
-  return distr(mt);
-}
-
 RussianRoulette::RussianRoulette(RandomGenerator& rnd, const size_t lowerLimit, const size_t upperLimit, const float hitRate)
     : m_rnd(rnd)
     , m_numTrials(0)

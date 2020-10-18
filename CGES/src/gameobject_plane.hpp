@@ -39,6 +39,8 @@ public:
 
   glm::vec3 GetPosWorld() const override;
 
+  glm::vec3 SampleSurfacePoint() const noexcept override;
+
 private:
   std::array<glm::vec3, 4> m_vertexBuf;
   const std::array<unsigned int, 4> m_indexBuf;

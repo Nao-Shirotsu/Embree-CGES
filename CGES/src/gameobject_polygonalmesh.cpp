@@ -75,6 +75,10 @@ glm::vec3 PolygonalMesh::GetPosWorld() const {
   return m_posWorld;
 }
 
+glm::vec3 PolygonalMesh::SampleSurfacePoint() const noexcept {
+  return glm::vec3(); // TODO:ŽÀ‘•
+}
+
 } // namespace cges::gameobject
 
 std::unique_ptr<cges::gameobject::PolygonalMesh> cges::MakePolygonalMesh(const RTCDevice device, 
