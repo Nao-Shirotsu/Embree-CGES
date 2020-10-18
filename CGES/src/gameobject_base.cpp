@@ -3,10 +3,11 @@
 namespace cges::gameobject{
 
 Base::Base(const RTCDevice device, const RTCGeometryType geomType, const ColorRGBA emissionColor, const material::Base& material) 
-    : Emittable(emissionColor)
-    , m_rtcDevice(device)
+    : m_rtcDevice(device)
     , m_rtcGeometry(rtcNewGeometry(device, geomType))
-    , m_material(material) {}
+    , m_material(material) 
+    , m_emissionColor(emissionColor)
+    , m_isEmitting(m_emissionColor.r > 0 || m_emissionColor.g > 0 || m_emissionColor.b > 0) {}
 
 Base::~Base() noexcept {
   rtcReleaseGeometry(m_rtcGeometry);
@@ -26,6 +27,14 @@ glm::vec3 Base::IntegrandFactor(const glm::vec3& surfacePoint, const glm::vec3& 
 
 void Base::AttachTo(const RTCScene scene, const unsigned int geomID) {
   rtcAttachGeometryByID(scene, m_rtcGeometry, geomID);
+}
+
+bool Base::IsEmitting() const noexcept {
+  return m_isEmitting;
+}
+
+ColorRGBA Base::GetEmission() const noexcept {
+  return m_emissionColor;
 }
 
 } // namespace cges::gameobject

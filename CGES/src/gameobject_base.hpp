@@ -2,7 +2,6 @@
 
 #include "color.hpp"
 #include "material_base.hpp"
-#include "gameobject_emittable.hpp"
 
 #include <embree3/rtcore_geometry.h>
 #include <embree3/rtcore_scene.h>
@@ -11,7 +10,7 @@
 namespace cges::gameobject{
 
 // シーンに配置される任意の3Dモデルのクラス
-class Base : public Emittable{
+class Base{
 public:
   Base(const RTCDevice device, 
        const RTCGeometryType geomType, 
@@ -31,6 +30,8 @@ public:
   // ワールド座標位置を取得 (メンバ変数のアラインメントの都合で純粋仮想)
   virtual glm::vec3 GetPosWorld() const = 0;
 
+  virtual glm::vec3 SampleSurfacePoint() const noexcept = 0;
+
   // このオブジェクトに向かってきたRayがどの方向に反射するか求める(マテリアルによって多態)
   glm::vec3 ComputeReflectedDir(const glm::vec3& faceNormal, const glm::vec3& incomingRayDir) const;
 
@@ -44,10 +45,16 @@ public:
   // Embree管理下のシーンにこのオブジェクトを登録
   void AttachTo(const RTCScene scene, const unsigned int geomID);
 
+  bool IsEmitting() const noexcept;
+
+  ColorRGBA GetEmission() const noexcept;
+
 protected:
   const RTCDevice m_rtcDevice;
   RTCGeometry m_rtcGeometry;
   const material::Base& m_material;
+  const ColorRGBA m_emissionColor;
+  bool m_isEmitting;
 };
 
 } // namespace cges::gameobject
