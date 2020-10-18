@@ -73,6 +73,10 @@ glm::vec3 Sphere::GetPosWorld() const {
   return m_posWorld;
 }
 
+glm::vec3 Sphere::SampleSurfacePoint() const noexcept {
+  return glm::vec3(); // TODO:ŽÀ‘•
+}
+
 }// namespace cges::gameobject
 
 std::unique_ptr<cges::gameobject::Sphere> cges::MakeSphere(const RTCDevice device, 

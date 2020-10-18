@@ -1,5 +1,6 @@
 #include "gameobject_plane.hpp"
 #include "bufferelements.hpp"
+#include "randomgenerator.hpp"
 
 #include <embree3/rtcore_geometry.h>
 #include <glm/glm.hpp>
@@ -112,6 +113,10 @@ RTCGeometryType Plane::GetGeomType() const {
 
 glm::vec3 Plane::GetPosWorld() const {
   return m_posWorld;
+}
+
+glm::vec3 Plane::SampleSurfacePoint() const noexcept {
+  return glm::vec3(); // TODO:ŽÀ‘•
 }
 
 }// namespace cges::gameobject

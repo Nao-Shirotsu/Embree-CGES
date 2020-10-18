@@ -33,6 +33,8 @@ public:
 
   glm::vec3 GetPosWorld() const override;
 
+  glm::vec3 SampleSurfacePoint() const noexcept override;
+
 private:
   glm::vec3 m_posWorld;
   float m_radius;
