@@ -32,7 +32,7 @@ void Scene::Update() {
 
 void Scene::Add(std::unique_ptr<gameobject::Base> object) {
   m_objects.push_back(std::move(object));
-  const auto geomId = static_cast<unsigned int>(m_objects.size()) - 1);
+  const auto geomId = static_cast<unsigned int>(m_objects.size()) - 1;
   m_objects.back()->AttachTo(m_rtcScene, geomId);
   m_sceneChanged = true;
 
@@ -47,6 +47,10 @@ const RTCScene Scene::GetRTCScene() const {
 
 const gameobject::Base& Scene::GetGeomRef(const unsigned int objID) const {
   return *(m_objects[objID]);
+}
+
+const std::vector<unsigned int>& Scene::GetLightIndices() const {
+  return m_lightIdx;
 }
 
 } //namespace cges

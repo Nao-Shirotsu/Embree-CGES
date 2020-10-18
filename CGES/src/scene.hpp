@@ -22,11 +22,7 @@ public:
   void Add(std::unique_ptr<gameobject::Base> object);
   const RTCScene GetRTCScene() const;
   const gameobject::Base& GetGeomRef(const unsigned int objID) const;
-
-  //template <typename Func>
-  //inline auto ForEachLight() const -> std::enable_if_t<std::is_function_v<Func>, > {
-  //  Func();
-  //}
+  const std::vector<unsigned int>& GetLightIndices() const;
 
 private:
   Scene(const Scene& other) = delete;
