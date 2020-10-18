@@ -1,11 +1,11 @@
 #include "renderer_bpt.hpp"
 #include "util_renderer.hpp"
+#include "operators.hpp"
 
 #include <algorithm> // std::clamp
 #include <glm/glm.hpp>
 #include <iostream>
 #include <limits> // float minimum
-#include <stack>
 
 namespace {
 
@@ -16,6 +16,10 @@ constexpr float PI = 3.14159265358979323846f;
 
 uint8_t ToByte(const float intensity) {
   return static_cast<uint8_t>(std::powf(std::clamp(intensity, 0.0f, 1.0f), 1.0f / 2.2f) * 255.0f + 0.5f);
+}
+
+bool LhsIsMoreContributing(const glm::vec3& lhs, const glm::vec3& rhs) {
+  return (lhs.r - rhs.r) + (lhs.g - rhs.g) + (lhs.b - rhs.b) > 0.0f;
 }
 
 // 色の強さは[0.0, 1.0]で返す
@@ -51,8 +55,34 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
     roulette.SetContinueRate(continueRate);
   }
 
+  // ロシルレ試行
   if (roulette.Spin()) {
-    return surfaceEmission;
+    // intersectedObjそのものが光源ならそのまま再帰終了
+    if (intersectedObj.IsEmitting()) {
+      return surfaceEmission;
+    }
+    // 光源でないなら、光源と直接結ぶパスがあるか調べる
+    // パスの候補が複数ある場合は最も寄与率が高いものを採用する
+    glm::vec3 mostContributingWeight = {};
+    ColorRGBA mostContributingEmission = {};
+    for (const auto& lightIdx : scene.GetLightIndices()) {
+      const auto& light = scene.GetGeomRef(lightIdx);
+      const auto lightSurfacePos = light.SampleSurfacePoint();
+      const glm::vec3 objSurfaceNormal = glm::normalize(rayhit.HitNormal());
+      const glm::vec3 objSurfacePos = rayOrg + rayhit.RayTfar() * incomingDir + objSurfaceNormal * (EPSILON * 100); // o+td+始点オフセット
+      const glm::vec3 outgoingDir = glm::normalize(lightSurfacePos - objSurfacePos);
+      WrappedRayHit rayToLight(objSurfacePos, outgoingDir);
+      rayToLight.Intersect(scene, context);
+      if (rayhit.HitGeomId() != lightIdx) { // 光源との間に障害物がある時そのパスはreject
+        continue;
+      }
+      const glm::vec3 radianceWeight = intersectedObj.IntegrandFactor(objSurfacePos, outgoingDir, incomingDir, objSurfaceNormal, surfaceAlbedo) / roulette.ContinueRate();
+      if (LhsIsMoreContributing(radianceWeight, mostContributingWeight)) {
+        mostContributingWeight = radianceWeight;
+        mostContributingEmission = light.GetEmission();
+      }
+    }
+    return mostContributingWeight * mostContributingEmission;
   }
 
   const glm::vec3 faceNormal = glm::normalize(rayhit.HitNormal());

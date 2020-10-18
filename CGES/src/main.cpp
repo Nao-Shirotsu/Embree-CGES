@@ -2,6 +2,7 @@
 #include "renderbuffer.hpp"
 #include "renderer_phoneshader.hpp"
 #include "renderer_pathtracer.hpp"
+#include "renderer_bpt.hpp"
 #include "glengine.hpp"
 #include "scene.hpp"
 #include "gameobject_sphere.hpp"
