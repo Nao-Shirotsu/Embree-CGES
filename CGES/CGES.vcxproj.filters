@@ -64,6 +64,9 @@
     <ClCompile Include="src\operators.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
+    <ClCompile Include="src\pm_photon.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\bufferelements.hpp">
@@ -136,6 +139,9 @@
       <Filter>hpp</Filter>
     </ClInclude>
     <ClInclude Include="src\operators.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pm_photon.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
   </ItemGroup>

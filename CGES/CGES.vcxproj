@@ -159,6 +159,7 @@
     <ClCompile Include="src\operators.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\material_lambertian.cpp" />
+    <ClCompile Include="src\pm_photon.cpp" />
     <ClCompile Include="src\randomgenerator.cpp" />
     <ClCompile Include="src\renderer_base.cpp" />
     <ClCompile Include="src\renderbuffer.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="src\operators.hpp" />
     <ClInclude Include="src\material_base.hpp" />
     <ClInclude Include="src\material_lambertian.hpp" />
+    <ClInclude Include="src\pm_photon.hpp" />
     <ClInclude Include="src\randomgenerator.hpp" />
     <ClInclude Include="src\renderer_base.hpp" />
     <ClInclude Include="src\renderbuffer.hpp" />
