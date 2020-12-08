@@ -96,7 +96,11 @@ void PathTracer::ParallelDraw(const Camera& camera,
   const float onePixelSizeRateX = 1.0f / static_cast<float>(renderTarget.GetWidth());
   const float onePixelSizeRateY = 1.0f / static_cast<float>(renderTarget.GetHeight());
 
+  unsigned int count = 0;
   for (size_t y = loopMin; y < loopMax; ++y) {
+    ++count;
+    int progress = (int)(100.0f * (float)count / (loopMax - loopMin));
+    std::cout << progress << "%" << std::endl;
     const float yRate = y / static_cast<float>(renderTarget.GetHeight());
     const float bgColorIntensity = 255 * (1.0f - yRate);
     const size_t yIdx = renderTarget.GetHeight() - y - 1; // openGL‚Ì•`‰æ‚Íleft-bottom-up‚È‚Ì‚Å‹t‚É‚·‚é

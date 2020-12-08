@@ -36,7 +36,7 @@ Base::Base(const size_t traceLowerLimit, const size_t traceUpperLimit, const siz
     , m_traceLowerLimit(traceLowerLimit)
     , m_traceUpperLimit(traceUpperLimit)
     , m_samplingLimit(samplingLimit)
-    , m_numSampling(1) 
+    , m_numSampling(1024) 
     , m_method(method){
 }
 

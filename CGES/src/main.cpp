@@ -1,6 +1,7 @@
 #include "camera.hpp"
 #include "renderbuffer.hpp"
 #include "renderer_phoneshader.hpp"
+#include "renderer_pathtracer.hpp"
 #include "glengine.hpp"
 #include "scene.hpp"
 #include "gameobject_sphere.hpp"
@@ -10,9 +11,42 @@
 
 #include <embree3/rtcore.h>
 #include <memory>
+#include <chrono>
+#include <string>
+#include <iostream>
 
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 450;
+
+class StopWatch {
+public:
+  StopWatch() noexcept
+      : start()
+      , elapsedTime(std::chrono::microseconds(0)) {}
+
+  void Start() noexcept {
+    start = std::chrono::system_clock::now();
+  }
+
+  void Stop() noexcept {
+    using namespace std::chrono;
+    elapsedTime += duration_cast<microseconds>(system_clock::now() - start);
+  }
+
+  void Reset() noexcept {
+    using namespace std::chrono;
+    elapsedTime = microseconds(0);
+  }
+
+  unsigned int GetMicroseconds() const noexcept {
+    using namespace std::chrono;
+    return static_cast<unsigned int>(elapsedTime.count());
+  }
+
+private:
+  std::chrono::system_clock::time_point start;
+  std::chrono::microseconds elapsedTime;
+};
 
 int main() {
   auto embreeDevice = rtcNewDevice(nullptr);
@@ -92,13 +126,27 @@ int main() {
                             { 223, 223, 223 },
                             cges::material::Lambertian())); // “Vˆä‚ÌŒõŒ¹”Â
 
-  while (!graphicsEngine.ShouldTerminate()) {
+  /*while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera, renderer);
     scene.Update();
     renderer->Update(camera);
     renderer->Draw(camera, renderTarget, scene);
     graphicsEngine.Draw(renderTarget);
-  }
+  }*/
+
+  StopWatch timer;
+
+  scene.Update();
+  
+  auto path = cges::renderer::PathTracer(5, 32, 1024);
+  timer.Start();
+  path.Draw(camera, renderTarget, scene);
+  timer.Stop();
+  std::cout << timer.GetMicroseconds() << std::endl;
+  auto filename = std::string("path") + std::to_string(timer.GetMicroseconds()) + std::string(".ppm");
+  renderTarget.SaveAsPpm(filename.c_str());
+
+  timer.Reset();
 
   rtcReleaseDevice(embreeDevice);
 }

@@ -1,6 +1,7 @@
 #include "renderer_phoneshader.hpp"
 #include "util_renderer.hpp"
 #include "color.hpp"
+#include "util_renderer.hpp"
 
 #include <glm/glm.hpp>
 #include <algorithm> // for std::clamp
@@ -71,6 +72,22 @@ void PhongShader::ParallelDraw(const Camera& camera,
       renderTarget[yIdx][x].r = std::clamp(static_cast<int>(objColor.r * diffuseFactor + 96 * specularFactor) + 32, 0, 255);
       renderTarget[yIdx][x].g = std::clamp(static_cast<int>(objColor.g * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
       renderTarget[yIdx][x].b = std::clamp(static_cast<int>(objColor.b * diffuseFactor + 96 * specularFactor) + 16, 0, 255);
+
+      // shadowing
+      const glm::vec3 hitPos = cameraPos + rayhit.ray.tfar * glm::vec3(rayhit.ray.dir_x, rayhit.ray.dir_y, rayhit.ray.dir_z);
+      for (const auto& idx : scene.GetLightIndices()) {
+        auto shadowRayDir = glm::normalize(scene.GetGeomRef(idx).SampleSurfacePoint() - hitPos);
+        RTCRayHit shadowRayhit;
+        InitRayHit(shadowRayhit, cameraPos + (0.0001f * shadowRayDir), shadowRayDir);
+        rtcIntersect1(scene.GetRTCScene(), &context, &shadowRayhit);
+        if (shadowRayhit.hit.geomID == idx) {
+          continue;
+        }
+        renderTarget[yIdx][x].r *= 0.75f;
+        renderTarget[yIdx][x].g *= 0.75f;
+        renderTarget[yIdx][x].b *= 0.75f;
+      }
+      
     }
   }
 }
