@@ -1,4 +1,4 @@
-#include "renderer_bpt.hpp"
+#include "renderer_neept.hpp"
 #include "util_renderer.hpp"
 #include "operators.hpp"
 
@@ -97,11 +97,11 @@ glm::vec3 ComputeRadiance(RTCIntersectContext& context,
 
 namespace cges::renderer {
 
-BidirectionalPathTracer::BidirectionalPathTracer(const size_t traceLowerLimit, const size_t traceUpperLimit, const size_t samplingLimit)
-    : Base(traceLowerLimit, traceUpperLimit, samplingLimit, Method::BidirectionalPathtracing) {
+NEEPathTracer::NEEPathTracer(const size_t traceLowerLimit, const size_t traceUpperLimit, const size_t samplingLimit)
+    : Base(traceLowerLimit, traceUpperLimit, samplingLimit, Method::NEEPathtracing) {
 }
 
-void BidirectionalPathTracer::Update(const Camera& camera) {
+void NEEPathTracer::Update(const Camera& camera) {
   if (camera.JustMoved()) {
     m_numSampling = 1;
   }
@@ -112,7 +112,7 @@ void BidirectionalPathTracer::Update(const Camera& camera) {
   m_numSampling *= 2;
 }
 
-void BidirectionalPathTracer::ParallelDraw(const Camera& camera,
+void NEEPathTracer::ParallelDraw(const Camera& camera,
                               RenderBuffer& renderTarget,
                               const Scene& scene,
                               const size_t loopMin,
