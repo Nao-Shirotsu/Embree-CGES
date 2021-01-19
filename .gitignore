@@ -331,6 +331,7 @@ ASALocalRun/
 
 *.md
 !README.md
+!embree_intro_en.md
 
 build/
 embree3/
