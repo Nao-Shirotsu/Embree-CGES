@@ -9,6 +9,10 @@
 CGES is switchable interactive renderer made with [Intel's Embree](https://www.embree.org/index.html), to compare rendering methods.
 "CGES" comes from "CG effects switcher".
 
+## Demo movie
+https://www.youtube.com/watch?v=hRr8_boZRdo
+
+
 ## Build
 
 (WIP)
