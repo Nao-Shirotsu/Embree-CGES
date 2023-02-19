@@ -143,9 +143,6 @@
     <None Include=".clang-format">
       <Filter>config</Filter>
     </None>
-    <None Include="packages.config">
-      <Filter>config</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="cpp">
