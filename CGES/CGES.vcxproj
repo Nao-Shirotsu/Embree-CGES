@@ -74,6 +74,7 @@
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;C:\Program Files\Intel\Embree3_x64\lib</LibraryPath>
     <ExecutablePath>$(VC_ExecutablePath_x64);$(CommonExecutablePath);C:\Program Files\Intel\Embree3_x64\bin</ExecutablePath>
     <GlfwPlatformToolset>v142</GlfwPlatformToolset>
+    <OutDir>$(SolutionDir)\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ExecutablePath>$(VC_ExecutablePath_x86);$(CommonExecutablePath);C:\Program Files\Intel\Embree3 x64\bin</ExecutablePath>
