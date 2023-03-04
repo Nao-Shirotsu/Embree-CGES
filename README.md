@@ -22,10 +22,11 @@ https://www.youtube.com/watch?v=hRr8_boZRdo
 
 - Build steps:
   1. Clone this repository.
-  2. Open powershell and execute `install_dependencies.ps1`. Libraries required to compile are automatically downloaded from the internet and placed to appropriate directories.
+  2. Open powershell and execute `install_dependencies.ps1`. Libraries required to compile will be automatically downloaded from the internet and placed to appropriate directories.
   3. Open `CGES.sln` in Visual Studio and build.
   4. `bin/` containing an executable file will appear in the project root directory.
-- The executable file will be aborted with exception without no data(3D models, textures). We are now dealing with distributing such data in progress.
+- The executable file will be aborted with exception without no data(3D models, textures). 
+  - Redistribution of the data we use is prohibited. We are now dealing with this problem in progress.
 
 ## How to operate
 
@@ -47,7 +48,7 @@ https://www.youtube.com/watch?v=hRr8_boZRdo
 
   1. Phong shading
   2. Pathtracing
-  3. Bidirectional Pathtracing
+  3. Bidirectional Pathtracing(WIP)
 
 
 
