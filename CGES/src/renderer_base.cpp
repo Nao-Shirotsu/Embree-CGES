@@ -2,6 +2,7 @@
 #include "gameobject_polygonalmesh.hpp"
 #include "gameobject_sphere.hpp"
 #include "util_renderer.hpp"
+#include "stopwatch.hpp"
 
 #include <thread>
 #include <vector>
@@ -14,6 +15,8 @@ namespace {
 
 constexpr float PI = 3.14159265358979323846f;
 constexpr float SCREEN_WIDTH = 0.25f;
+
+cges::StopWatch stopWatch;
 
 float DegToRad(const float degree) {
   return degree * PI / 180.0f;
@@ -43,6 +46,9 @@ Base::Base(const size_t traceLowerLimit, const size_t traceUpperLimit, const siz
 Base::~Base() {}
 
 void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& scene) const {
+  stopWatch.Reset();
+  stopWatch.Start();
+
   if (m_numSampling > m_samplingLimit) {
     return;
   }
@@ -93,6 +99,11 @@ void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& s
   for (auto& th : threads) {
     th.join();
   }
+
+  stopWatch.Stop();
+  std::cout << "-----------------------------" << std::endl;
+
+  std::cout << "Render time: " << stopWatch.GetMilliseconds() << " ms." << std::endl;
 }
 
 Method Base::RenderMethod() {
