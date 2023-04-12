@@ -1,5 +1,6 @@
 #include "renderer_pathtracer.hpp"
 #include "util_renderer.hpp"
+#include "stopwatch.hpp"
 
 #include <algorithm> // std::clamp
 #include <glm/glm.hpp>
