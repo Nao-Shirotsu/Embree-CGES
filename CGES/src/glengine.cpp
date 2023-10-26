@@ -122,4 +122,8 @@ bool Engine::ShouldTerminate() const noexcept {
   return glfwWindowShouldClose(m_window);
 }
 
+bool Engine::InterruptionRequested() const noexcept {
+  return false;
+}
+
 } // namespace gl::enginea
