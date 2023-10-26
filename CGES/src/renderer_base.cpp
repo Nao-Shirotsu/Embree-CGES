@@ -26,7 +26,7 @@ float DegToRad(const float degree) {
 
 namespace cges::renderer {
 Base::Base(Method method)
-    : m_maxThreads(std::thread::hardware_concurrency())
+    : m_maxThreads(std::thread::hardware_concurrency() / 2)
     , m_traceLowerLimit(0)
     , m_traceUpperLimit(0)
     , m_samplingLimit(2)
@@ -35,7 +35,7 @@ Base::Base(Method method)
 }
 
 Base::Base(const size_t traceLowerLimit, const size_t traceUpperLimit, const size_t samplingLimit, Method method)
-    : m_maxThreads(std::thread::hardware_concurrency())
+    : m_maxThreads(std::thread::hardware_concurrency() / 2)
     , m_traceLowerLimit(traceLowerLimit)
     , m_traceUpperLimit(traceUpperLimit)
     , m_samplingLimit(samplingLimit)
