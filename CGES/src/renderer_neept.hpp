@@ -4,9 +4,9 @@
 
 namespace cges::renderer {
 
-class BidirectionalPathTracer : public Base {
+class NEEPathTracer : public Base {
 public:
-  BidirectionalPathTracer(const size_t traceLowerLimit,
+  NEEPathTracer(const size_t traceLowerLimit,
                           const size_t traceUpperLimit,
                           const size_t samplingLimit);
 

@@ -34,9 +34,6 @@
     <ClCompile Include="src\renderer_base.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer_bpt.cpp">
-      <Filter>cpp</Filter>
-    </ClCompile>
     <ClCompile Include="src\renderer_pathtracer.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
@@ -62,6 +59,9 @@
       <Filter>cpp</Filter>
     </ClCompile>
     <ClCompile Include="src\operators.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer_neept.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
   </ItemGroup>
@@ -108,9 +108,6 @@
     <ClInclude Include="src\renderer_base.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer_bpt.hpp">
-      <Filter>hpp</Filter>
-    </ClInclude>
     <ClInclude Include="src\renderer_pathtracer.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
@@ -136,6 +133,9 @@
       <Filter>hpp</Filter>
     </ClInclude>
     <ClInclude Include="src\operators.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderer_neept.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
   </ItemGroup>

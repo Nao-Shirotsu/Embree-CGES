@@ -3,7 +3,7 @@
 #include "renderbuffer.hpp"
 #include "renderer_phoneshader.hpp"
 #include "renderer_pathtracer.hpp"
-#include "renderer_bpt.hpp"
+#include "renderer_neept.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -54,9 +54,9 @@ void Engine::Update(Camera& camera, std::shared_ptr<renderer::Base>& renderer) {
     renderer = std::make_shared<cges::renderer::PathTracer>(5, 64, 512);
   }
 
-  if (glfwGetKey(m_window, GLFW_KEY_3) && renderer->RenderMethod() != renderer::Method::BidirectionalPathtracing) {
-    glfwSetWindowTitle(m_window, "CGES [Bidirectional Pathtracing]");
-    renderer = std::make_shared<cges::renderer::BidirectionalPathTracer>(5, 64, 512);
+  if (glfwGetKey(m_window, GLFW_KEY_3) && renderer->RenderMethod() != renderer::Method::NEEPathtracing) {
+    glfwSetWindowTitle(m_window, "CGES [Pathtracing with Next Event Estimation]");
+    renderer = std::make_shared<cges::renderer::NEEPathTracer>(5, 64, 512);
   }
 
   // ======ƒJƒƒ‰ˆÚ“®“ü—Í======
