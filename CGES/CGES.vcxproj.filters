@@ -37,10 +37,7 @@
     <ClCompile Include="src\renderer_pathtracer.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer_phoneshader.cpp">
-      <Filter>cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="src\renderer_photonmapper.cpp">
+    <ClCompile Include="src\renderer_phongshader.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
     <ClCompile Include="src\scene.cpp">
@@ -64,6 +61,7 @@
     <ClCompile Include="src\renderer_neept.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
+    <ClCompile Include="src\stopwatch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\bufferelements.hpp">
@@ -111,10 +109,7 @@
     <ClInclude Include="src\renderer_pathtracer.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer_phoneshader.hpp">
-      <Filter>hpp</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderer_photonmapper.hpp">
+    <ClInclude Include="src\renderer_phongshader.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
     <ClInclude Include="src\scene.hpp">
@@ -136,6 +131,10 @@
       <Filter>hpp</Filter>
     </ClInclude>
     <ClInclude Include="src\renderer_neept.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stopwatch.hpp" />
+    <ClInclude Include="src\util.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,6 +12,10 @@ public:
 
   void Update(const Camera& camera) override;
 
+  ColorRGBA ComputeLightTransport(const Scene& scene,
+                                  const glm::vec3& org,
+                                  const glm::vec3& dir) const override;
+
 private:
   void ParallelDraw(const Camera& camera,
                     RenderBuffer& renderTarget,

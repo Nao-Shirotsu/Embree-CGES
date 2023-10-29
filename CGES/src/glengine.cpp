@@ -1,7 +1,7 @@
 #include "glengine.hpp"
 
 #include "renderbuffer.hpp"
-#include "renderer_phoneshader.hpp"
+#include "renderer_phongshader.hpp"
 #include "renderer_pathtracer.hpp"
 #include "renderer_neept.hpp"
 
@@ -120,10 +120,6 @@ void Engine::Draw(const RenderBuffer& renderTarget) const {
 
 bool Engine::ShouldTerminate() const noexcept {
   return glfwWindowShouldClose(m_window);
-}
-
-bool Engine::InterruptionRequested() const noexcept {
-  return false;
 }
 
 } // namespace gl::enginea

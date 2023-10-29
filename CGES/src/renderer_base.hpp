@@ -32,6 +32,11 @@ public:
 
   Method RenderMethod();
 
+
+  virtual ColorRGBA ComputeLightTransport(const Scene& scene,
+                                          const glm::vec3& org,
+                                          const glm::vec3& dir) const = 0;
+
 protected:
   // [loopMin, loopMax) ‚Ì”ÍˆÍ‚Ìs‚ğ•`‰æ‚·‚é
   virtual void ParallelDraw(const Camera& camera, 

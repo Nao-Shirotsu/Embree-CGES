@@ -166,8 +166,7 @@
     <ClCompile Include="src\renderbuffer.cpp" />
     <ClCompile Include="src\renderer_neept.cpp" />
     <ClCompile Include="src\renderer_pathtracer.cpp" />
-    <ClCompile Include="src\renderer_phoneshader.cpp" />
-    <ClCompile Include="src\renderer_photonmapper.cpp" />
+    <ClCompile Include="src\renderer_phongshader.cpp" />
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\stopwatch.cpp" />
     <ClCompile Include="src\texture.cpp" />
@@ -196,11 +195,11 @@
     <ClInclude Include="src\renderbuffer.hpp" />
     <ClInclude Include="src\renderer_neept.hpp" />
     <ClInclude Include="src\renderer_pathtracer.hpp" />
-    <ClInclude Include="src\renderer_phoneshader.hpp" />
-    <ClInclude Include="src\renderer_photonmapper.hpp" />
+    <ClInclude Include="src\renderer_phongshader.hpp" />
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\stopwatch.hpp" />
     <ClInclude Include="src\texture.hpp" />
+    <ClInclude Include="src\util.hpp" />
     <ClInclude Include="src\util_objfile.hpp" />
     <ClInclude Include="src\util_renderer.hpp" />
     <ClInclude Include="src\util_texture.hpp" />

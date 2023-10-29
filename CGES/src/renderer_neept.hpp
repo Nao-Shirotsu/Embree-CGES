@@ -7,10 +7,14 @@ namespace cges::renderer {
 class NEEPathTracer : public Base {
 public:
   NEEPathTracer(const size_t traceLowerLimit,
-                          const size_t traceUpperLimit,
-                          const size_t samplingLimit);
+                const size_t traceUpperLimit,
+                const size_t samplingLimit);
 
   void Update(const Camera& camera) override;
+
+  ColorRGBA ComputeLightTransport(const Scene& scene,
+                                  const glm::vec3& org,
+                                  const glm::vec3& dir) const override;
 
 private:
   void ParallelDraw(const Camera& camera,
