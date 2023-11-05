@@ -158,6 +158,8 @@
     <ClCompile Include="src\gameobject_polygonalmesh.cpp" />
     <ClCompile Include="src\gameobject_sphere.cpp" />
     <ClCompile Include="src\glengine.cpp" />
+    <ClCompile Include="src\multithread_scheduler.cpp" />
+    <ClCompile Include="src\multithread_mutexrenderprogress.cpp" />
     <ClCompile Include="src\operators.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\material_lambertian.cpp" />
@@ -187,6 +189,8 @@
     <ClInclude Include="src\gameobject_sphere.hpp" />
     <ClInclude Include="src\glengine.hpp" />
     <ClInclude Include="src\directionallight.hpp" />
+    <ClInclude Include="src\multithread_scheduler.hpp" />
+    <ClInclude Include="src\multithread_mutexrenderprogress.hpp" />
     <ClInclude Include="src\operators.hpp" />
     <ClInclude Include="src\material_base.hpp" />
     <ClInclude Include="src\material_lambertian.hpp" />

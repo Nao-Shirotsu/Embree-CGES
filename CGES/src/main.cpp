@@ -7,6 +7,7 @@
 #include "gameobject_polygonalmesh.hpp"
 #include "gameobject_plane.hpp"
 #include "material_lambertian.hpp"
+#include "multithread_scheduler.hpp"
 
 #include <embree3/rtcore.h>
 #include <memory>
@@ -92,13 +93,16 @@ int main() {
                             { 223, 223, 223 },
                             cges::material::Lambertian())); // “Vˆä‚ÌŒõŒ¹”Â
 
-  while (!graphicsEngine.ShouldTerminate()) {
+  /*while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera, renderer);
     scene.Update();
     renderer->Update(camera);
     renderer->Draw(camera, renderTarget, scene);
     graphicsEngine.Draw(renderTarget);
-  }
+  }*/
+
+  cges::multithread::Scheduler scheduler(renderTarget, scene, *renderer);
+  scheduler.Dispatch();
 
   rtcReleaseDevice(embreeDevice);
 }

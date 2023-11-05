@@ -61,7 +61,15 @@
     <ClCompile Include="src\renderer_neept.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
-    <ClCompile Include="src\stopwatch.cpp" />
+    <ClCompile Include="src\multithread_scheduler.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stopwatch.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\multithread_mutexrenderprogress.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\bufferelements.hpp">
@@ -133,8 +141,16 @@
     <ClInclude Include="src\renderer_neept.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
-    <ClInclude Include="src\stopwatch.hpp" />
     <ClInclude Include="src\util.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multithread_scheduler.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stopwatch.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multithread_mutexrenderprogress.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
   </ItemGroup>
