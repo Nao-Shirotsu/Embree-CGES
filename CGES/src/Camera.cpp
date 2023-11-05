@@ -1,6 +1,7 @@
 #include "camera.hpp"
 
 #include <cmath>
+#include <glm/glm.hpp>
 
 namespace {
 
@@ -37,4 +38,8 @@ glm::vec3 cges::Camera::GetPosLocal() const{
 
 bool cges::Camera::JustMoved() const {
   return m_justMoved;
+}
+
+glm::vec3 cges::Camera::GetFrontDir() const noexcept {
+  return glm::normalize(glm::vec3{ 0, 0, 0 } - GetPosLocal());
 }

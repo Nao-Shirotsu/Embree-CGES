@@ -12,6 +12,7 @@ public:
   void StayPosition();
   glm::vec3 GetPosLocal() const;
   bool JustMoved() const;
+  glm::vec3 GetFrontDir() const noexcept;
 
   glm::vec3 posWorld = { 0.0f, 0.0f, 0.0f };
   glm::vec3 upwardWorld = { 0.0f, 1.0f, 0.0f };
