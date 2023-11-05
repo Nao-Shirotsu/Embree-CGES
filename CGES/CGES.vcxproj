@@ -170,6 +170,7 @@
     <ClCompile Include="src\renderer_pathtracer.cpp" />
     <ClCompile Include="src\renderer_phongshader.cpp" />
     <ClCompile Include="src\scene.cpp" />
+    <ClCompile Include="src\screengeometricinfo.cpp" />
     <ClCompile Include="src\stopwatch.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\util_objfile.cpp" />
@@ -201,9 +202,10 @@
     <ClInclude Include="src\renderer_pathtracer.hpp" />
     <ClInclude Include="src\renderer_phongshader.hpp" />
     <ClInclude Include="src\scene.hpp" />
+    <ClInclude Include="src\screengeometricinfo.hpp" />
     <ClInclude Include="src\stopwatch.hpp" />
     <ClInclude Include="src\texture.hpp" />
-    <ClInclude Include="src\util.hpp" />
+    <ClInclude Include="src\util_general.hpp" />
     <ClInclude Include="src\util_objfile.hpp" />
     <ClInclude Include="src\util_renderer.hpp" />
     <ClInclude Include="src\util_texture.hpp" />

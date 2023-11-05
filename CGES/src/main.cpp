@@ -12,14 +12,15 @@
 #include <embree3/rtcore.h>
 #include <memory>
 
-constexpr int WINDOW_WIDTH = 800;
-constexpr int WINDOW_HEIGHT = 450;
+//constexpr int WINDOW_WIDTH = 800;
+//constexpr int WINDOW_HEIGHT = 450;
+constexpr int WINDOW_WIDTH = 200;
+constexpr int WINDOW_HEIGHT = 112;
 
 int main() {
   auto embreeDevice = rtcNewDevice(nullptr);
   auto renderTarget = cges::RenderBuffer(WINDOW_WIDTH, WINDOW_HEIGHT);
   auto camera = cges::Camera({ 0.0f, 0.0f, 0.0f }, 3.0f, 130.0f);
-  auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT);
   auto scene = cges::Scene(embreeDevice);
   std::shared_ptr<cges::renderer::Base> renderer = std::make_shared<cges::renderer::PhongShader>();
 
@@ -93,16 +94,24 @@ int main() {
                             { 223, 223, 223 },
                             cges::material::Lambertian())); // “Vˆä‚ÌŒõŒ¹”Â
 
-  /*while (!graphicsEngine.ShouldTerminate()) {
+  auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+  while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera, renderer);
     scene.Update();
     renderer->Update(camera);
     renderer->Draw(camera, renderTarget, scene);
     graphicsEngine.Draw(renderTarget);
-  }*/
+  }
 
-  cges::multithread::Scheduler scheduler(renderTarget, scene, *renderer);
-  scheduler.Dispatch();
+  /*scene.Update();
+  renderer->Update(camera);
+  renderer->Draw(camera, renderTarget, scene);
+  renderTarget.SaveAsPpm("C:\\Users\\albus\\Documents\\dispatch.ppm");*/
+
+  /*cges::multithread::Scheduler scheduler(camera, renderTarget);
+  scheduler.Dispatch(renderTarget, scene, *renderer);
+  renderTarget.SaveAsPpm("C:\\Users\\albus\\Documents\\dispatch.ppm");*/
 
   rtcReleaseDevice(embreeDevice);
 }

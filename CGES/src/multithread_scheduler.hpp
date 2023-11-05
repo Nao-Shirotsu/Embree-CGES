@@ -4,6 +4,8 @@
 #include "scene.hpp"
 #include "renderer_base.hpp"
 #include "multithread_mutexrenderprogress.hpp"
+#include "screengeometricinfo.hpp"
+#include "camera.hpp"
 
 #include <thread>
 #include <vector>
@@ -17,14 +19,12 @@ namespace cges::multithread {
 
 class Scheduler {
 public:
-  Scheduler(const RenderBuffer& renderTarget, const Scene& scene, const renderer::Base& renderer) noexcept;
+  Scheduler(const Camera& camera, const RenderBuffer& renderTarget) noexcept;
   ~Scheduler();
-  void Dispatch();
+  void Dispatch(RenderBuffer& renderTarget, const Scene& scene, const renderer::Base& renderer);
 
 private:
-  const RenderBuffer& m_renderTarget;
-  const Scene& m_scene;
-  const renderer::Base& m_renderer;
+  const ScreenGeometricInfo m_screenGeom;
   MutexRenderProgress m_renderProgress; 
   std::vector<std::thread> m_threads; // hardware_concurrency / 2 ŒÂ‚Ô‚ñ‚­‚ç‚¢‚à‚Â
 };
