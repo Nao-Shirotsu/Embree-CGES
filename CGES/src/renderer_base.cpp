@@ -35,8 +35,7 @@ Base::Base(Method method)
 }
 
 Base::Base(const size_t traceLowerLimit, const size_t traceUpperLimit, const size_t samplingLimit, Method method)
-    : m_maxThreads(0)
-    //: m_maxThreads(std::thread::hardware_concurrency() / 2)
+    : m_maxThreads(std::thread::hardware_concurrency() / 2)
     , m_traceLowerLimit(traceLowerLimit)
     , m_traceUpperLimit(traceUpperLimit)
     , m_samplingLimit(samplingLimit)
@@ -66,7 +65,7 @@ void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& s
   // スクリーン左上(pixel[0][0])のワールド座標
   const glm::vec3 initialPos = screenCenterPos - (glm::vec3{ 0.5, 0.5, 0.5 } * screenVerticalVec) - (glm::vec3{ 0.5, 0.5, 0.5 } * screenHorizontalVec);
 
-  //if (!m_maxThreads) {
+  if (!m_maxThreads) {
     ParallelDraw(std::cref(camera),
                  std::ref(renderTarget),
                  std::cref(scene),
@@ -75,9 +74,9 @@ void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& s
                  initialPos,
                  screenVerticalVec,
                  screenHorizontalVec);
-  //}
+  }
 
-  /*auto threads = std::vector<std::thread>(m_maxThreads);
+  auto threads = std::vector<std::thread>(m_maxThreads);
   const auto numLoop = height / m_maxThreads;
 
   for (size_t y = 0; y < m_maxThreads; ++y) {
@@ -99,7 +98,7 @@ void Base::Draw(const Camera& camera, RenderBuffer& renderTarget, const Scene& s
   }
   for (auto& th : threads) {
     th.join();
-  }*/
+  }
 
   stopWatch.Stop();
   std::cout << "-----------------------------" << std::endl;

@@ -94,22 +94,22 @@ int main() {
 
   auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-  /*while (!graphicsEngine.ShouldTerminate()) {
+  while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera, renderer);
     scene.Update();
     renderer->Update(camera);
     renderer->Draw(camera, renderTarget, scene);
     graphicsEngine.Draw(renderTarget);
-  }*/
+  }
 
-  while (!graphicsEngine.ShouldTerminate()) {
+  /*while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera, renderer);
     scene.Update();
     renderer->Update(camera);
     cges::multithread::Scheduler scheduler(camera, renderTarget);
     scheduler.Dispatch(renderTarget, scene, *renderer);
     graphicsEngine.Draw(renderTarget);
-  }
+  }*/
 
   rtcReleaseDevice(embreeDevice);
 }
