@@ -12,10 +12,8 @@
 #include <embree3/rtcore.h>
 #include <memory>
 
-//constexpr int WINDOW_WIDTH = 800;
-//constexpr int WINDOW_HEIGHT = 450;
-constexpr int WINDOW_WIDTH = 200;
-constexpr int WINDOW_HEIGHT = 112;
+constexpr int WINDOW_WIDTH = 800;
+constexpr int WINDOW_HEIGHT = 450;
 
 int main() {
   auto embreeDevice = rtcNewDevice(nullptr);
@@ -96,22 +94,22 @@ int main() {
 
   auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-  while (!graphicsEngine.ShouldTerminate()) {
+  /*while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera, renderer);
     scene.Update();
     renderer->Update(camera);
     renderer->Draw(camera, renderTarget, scene);
     graphicsEngine.Draw(renderTarget);
+  }*/
+
+  while (!graphicsEngine.ShouldTerminate()) {
+    graphicsEngine.Update(camera, renderer);
+    scene.Update();
+    renderer->Update(camera);
+    cges::multithread::Scheduler scheduler(camera, renderTarget);
+    scheduler.Dispatch(renderTarget, scene, *renderer);
+    graphicsEngine.Draw(renderTarget);
   }
-
-  /*scene.Update();
-  renderer->Update(camera);
-  renderer->Draw(camera, renderTarget, scene);
-  renderTarget.SaveAsPpm("C:\\Users\\albus\\Documents\\dispatch.ppm");*/
-
-  /*cges::multithread::Scheduler scheduler(camera, renderTarget);
-  scheduler.Dispatch(renderTarget, scene, *renderer);
-  renderTarget.SaveAsPpm("C:\\Users\\albus\\Documents\\dispatch.ppm");*/
 
   rtcReleaseDevice(embreeDevice);
 }
