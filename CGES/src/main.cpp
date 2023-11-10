@@ -26,7 +26,7 @@ int main() {
                                     {-0.5f, -0.25f, 0.0f}, 
                                     "bin/goat_filled.obj",
                                     { 64, 64, 255 }, 
-                                    {0, 0, 0},
+                                    { 0, 0, 0 },
                                     cges::material::Lambertian())); //山羊のオブジェ
   scene.Add(cges::MakePlane(embreeDevice, 
                             { 0.0f, 0.0f, 0.0f }, 
@@ -94,22 +94,22 @@ int main() {
 
   auto graphicsEngine = cges::gl::Engine(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-  while (!graphicsEngine.ShouldTerminate()) {
+  /*while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera, renderer);
     scene.Update();
     renderer->Update(camera);
     renderer->Draw(camera, renderTarget, scene);
     graphicsEngine.Draw(renderTarget);
-  }
+  }*/
 
-  /*while (!graphicsEngine.ShouldTerminate()) {
+  while (!graphicsEngine.ShouldTerminate()) {
     graphicsEngine.Update(camera, renderer);
     scene.Update();
     renderer->Update(camera);
     cges::multithread::Scheduler scheduler(camera, renderTarget);
     scheduler.Dispatch(renderTarget, scene, *renderer);
     graphicsEngine.Draw(renderTarget);
-  }*/
+  }
 
   rtcReleaseDevice(embreeDevice);
 }
