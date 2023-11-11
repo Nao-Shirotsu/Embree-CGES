@@ -79,9 +79,9 @@ ColorRGBf PhongShader::ComputeLightTransport(const Scene& scene, const glm::vec3
   const ColorRGBA objAlbedo = gameObjRef.GetColor(rayhit.hit.u, rayhit.hit.v);
 
   return {
-    ToFloat(objAlbedo.r) * diffuseFactor + SPECULAR_BASE_INTENSITY * specularFactor,
-    ToFloat(objAlbedo.g) * diffuseFactor + SPECULAR_BASE_INTENSITY * specularFactor,
-    ToFloat(objAlbedo.b) * diffuseFactor + SPECULAR_BASE_INTENSITY * specularFactor,
+    Saturate(ToFloat(objAlbedo.r) * diffuseFactor + SPECULAR_BASE_INTENSITY * specularFactor),
+    Saturate(ToFloat(objAlbedo.g) * diffuseFactor + SPECULAR_BASE_INTENSITY * specularFactor),
+    Saturate(ToFloat(objAlbedo.b) * diffuseFactor + SPECULAR_BASE_INTENSITY * specularFactor),
   };
 }
 } // namespace cges::renderer
