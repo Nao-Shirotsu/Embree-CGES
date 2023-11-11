@@ -42,6 +42,11 @@ inline constexpr uint8_t ToUInt8(const float x) noexcept {
   return static_cast<uint8_t>(x * 255.0f);
 }
 
+// convert from [0, 255] to [0.0, 1.0)
+inline constexpr float ToFloat(const uint8_t x) noexcept {
+  return x / 255.0f;
+}
+
 // convert glm::vec3 as color to cges::ColorRGBA
 // 変換コンストラクタの方がよくね？ まあいいか...
 inline constexpr ColorRGBA ToColorUInt(const glm::vec3& colorf) noexcept {

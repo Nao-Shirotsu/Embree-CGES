@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <glm/glm.hpp>
 #include "renderer_base.hpp"
+#include "util_general.hpp"
 
 //debug
 #include "stopwatch.hpp"
@@ -30,7 +31,7 @@ void Scheduler::Dispatch(RenderBuffer& renderTarget, const Scene& scene, const r
              ++m_renderProgress;
              const auto pixelPos = m_screenGeom.ComputePixelPos(yIdx, xIdx);
              const auto dir = m_screenGeom.ComputeDirection(yIdx, xIdx);
-             renderTarget[yIdx][xIdx] = renderer.ComputeLightTransport(scene, pixelPos, dir);
+             renderTarget[yIdx][xIdx] = ToColorUInt(renderer.ComputeLightTransport(scene, pixelPos, dir));
            }
          });
    }

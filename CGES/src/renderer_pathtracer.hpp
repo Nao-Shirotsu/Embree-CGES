@@ -12,7 +12,7 @@ public:
 
   void Update(const Camera& camera) override;
 
-  ColorRGBA ComputeLightTransport(const Scene& scene,
+  ColorRGBf ComputeLightTransport(const Scene& scene,
                                   const glm::vec3& org,
                                   const glm::vec3& dir) const override;
 

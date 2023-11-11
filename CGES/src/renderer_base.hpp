@@ -33,7 +33,7 @@ public:
   Method RenderMethod();
 
 
-  virtual ColorRGBA ComputeLightTransport(const Scene& scene,
+  virtual ColorRGBf ComputeLightTransport(const Scene& scene,
                                           const glm::vec3& org,
                                           const glm::vec3& dir) const = 0;
 

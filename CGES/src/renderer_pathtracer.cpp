@@ -144,8 +144,8 @@ void PathTracer::ParallelDraw(const Camera& camera,
   }
 }
 
-ColorRGBA PathTracer::ComputeLightTransport(const Scene& scene, const glm::vec3& org, const glm::vec3& dir) const {
-  return ColorRGBA();
+ColorRGBf PathTracer::ComputeLightTransport(const Scene& scene, const glm::vec3& org, const glm::vec3& dir) const {
+  return ColorRGBf();
 }
 
 } // namespace cges::renderer

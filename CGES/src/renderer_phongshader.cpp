@@ -1,5 +1,6 @@
 #include "renderer_phongshader.hpp"
 #include "util_renderer.hpp"
+#include "util_general.hpp"
 #include "color.hpp"
 
 #include <glm/glm.hpp>
@@ -9,6 +10,9 @@ namespace {
 
 constexpr cges::ColorRGBA EMIT_COLOR = { 100, 100, 100, 255 };
 constexpr cges::ColorRGBA BG_COLOR = { 64, 128, 128, 255 };
+constexpr cges::ColorRGBf BG_COLOR_F = { 0.25f, 0.5f, 0.5f };
+
+constexpr float SPECULAR_BASE_INTENSITY = 1.0f / 4.0f + 1.0f / 8.0f;
 
 }
 
@@ -34,11 +38,11 @@ void PhongShader::ParallelDraw(const Camera& camera,
       const float xRate = x / static_cast<float>(renderTarget.GetWidth());
       const glm::vec3 pixelPos = initialPos + (yRate * screenVerticalVec) + (xRate * screenHorizontalVec);
       const glm::vec3 rayDir = glm::normalize(pixelPos - cameraPos);
-      renderTarget[yIdx][x] = ComputeLightTransport(scene, pixelPos, rayDir);
+      renderTarget[yIdx][x] = ToColorUInt(ComputeLightTransport(scene, pixelPos, rayDir));
     }
   }
 }
-ColorRGBA PhongShader::ComputeLightTransport(const Scene& scene, const glm::vec3& org, const glm::vec3& dir) const {
+ColorRGBf PhongShader::ComputeLightTransport(const Scene& scene, const glm::vec3& org, const glm::vec3& dir) const {
   RTCIntersectContext context;
   rtcInitIntersectContext(&context);
 
@@ -48,7 +52,7 @@ ColorRGBA PhongShader::ComputeLightTransport(const Scene& scene, const glm::vec3
   rtcIntersect1(scene.GetRTCScene(), &context, &rayhit);
 
   if (!WasIntersected(rayhit.hit.geomID)) {
-    return BG_COLOR;
+    return BG_COLOR_F;
   }
 
   const auto& gameObjRef = scene.GetGeomRef(rayhit.hit.geomID);
@@ -75,10 +79,9 @@ ColorRGBA PhongShader::ComputeLightTransport(const Scene& scene, const glm::vec3
   const ColorRGBA objAlbedo = gameObjRef.GetColor(rayhit.hit.u, rayhit.hit.v);
 
   return {
-    static_cast<uint8_t>(std::clamp(static_cast<int>(objAlbedo.r * diffuseFactor + 96 * specularFactor), 0, 255)),
-    static_cast<uint8_t>(std::clamp(static_cast<int>(objAlbedo.g * diffuseFactor + 96 * specularFactor), 0, 255)),
-    static_cast<uint8_t>(std::clamp(static_cast<int>(objAlbedo.b * diffuseFactor + 96 * specularFactor), 0, 255)),
-    0
+    ToFloat(objAlbedo.r) * diffuseFactor + SPECULAR_BASE_INTENSITY * specularFactor,
+    ToFloat(objAlbedo.g) * diffuseFactor + SPECULAR_BASE_INTENSITY * specularFactor,
+    ToFloat(objAlbedo.b) * diffuseFactor + SPECULAR_BASE_INTENSITY * specularFactor,
   };
 }
 } // namespace cges::renderer
